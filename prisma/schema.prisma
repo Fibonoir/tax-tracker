@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/server/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Entry {
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  type        EntryType
+  hours       Float?
+  amount      Float?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([date])
+}
+
+enum EntryType {
+  HOURLY
+  PROJECT
+}
+
+model Settings {
+  id                    Int      @id @default(1)
+  hourlyRate            Float    @default(30)
+  coefficiente          Float    @default(0.67)
+  irpefRate             Float    @default(0.15)
+  inpsType              String   @default("GESTIONE_SEPARATA")
+  inpsRate              Float    @default(0.2607)
+  inpsFixedAnnual       Float    @default(0)
+  inpsMinimaleThreshold Float    @default(18808)
+  inpsExcessRate        Float    @default(0.156)
+  accountantAnnual      Float    @default(300)
+  updatedAt             DateTime @updatedAt @default(now())
+}
+
+model RecurringPayment {
+  id          Int       @id @default(autoincrement())
+  name        String
+  amount      Float
+  frequency   String
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model OneTimePayment {
+  id          Int       @id @default(autoincrement())
+  name        String
+  amount      Float
+  date        DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

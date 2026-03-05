@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Nuxt build
+.nuxt/
+.output/
+
+# Environment
+.env
+
+# Prisma generated client
+app/server/generated/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

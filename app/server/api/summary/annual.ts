@@ -1,0 +1,145 @@
+import { prisma } from '~/server/utils/prisma'
+import { calcTaxesWithSettings, getSettings, type TaxSettings, type TaxBreakdown } from '~/server/utils/taxes'
+
+function annualizeRecurring(payments: { amount: number; frequency: string; active: boolean }[]) {
+  return payments
+    .filter(p => p.active)
+    .reduce((sum, p) => {
+      const multiplier = p.frequency === 'MONTHLY' ? 12 : p.frequency === 'QUARTERLY' ? 4 : 1
+      return sum + p.amount * multiplier
+    }, 0)
+}
+
+function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: TaxSettings, isFirstYear: boolean) {
+  const now = new Date()
+  const inpsQ = settings.inpsFixedAnnual / 4
+
+  const deadlines: { date: string; label: string; estimatedAmount: number }[] = [
+    { date: `${year}-05-16`, label: 'INPS fissi Q1 (Gen-Mar)', estimatedAmount: inpsQ },
+  ]
+
+  if (!isFirstYear) {
+    deadlines.push({
+      date: `${year}-06-30`,
+      label: 'Imposta sost. saldo + 1\u00B0 acconto + INPS ecc.',
+      estimatedAmount: projected.irpef * 0.4 + projected.inpsExcess * 0.4,
+    })
+  }
+
+  deadlines.push({ date: `${year}-08-20`, label: 'INPS fissi Q2 (Apr-Giu)', estimatedAmount: inpsQ })
+  deadlines.push({ date: `${year}-11-16`, label: 'INPS fissi Q3 (Lug-Set)', estimatedAmount: inpsQ })
+
+  if (!isFirstYear) {
+    deadlines.push({
+      date: `${year}-11-30`,
+      label: 'Imposta sost. 2\u00B0 acconto + INPS ecc.',
+      estimatedAmount: projected.irpef * 0.6 + projected.inpsExcess * 0.6,
+    })
+  }
+
+  deadlines.push({ date: `${year + 1}-02-16`, label: 'INPS fissi Q4 (Ott-Dic)', estimatedAmount: inpsQ })
+
+  return deadlines.map(d => ({
+    ...d,
+    estimatedAmount: Math.round(d.estimatedAmount * 100) / 100,
+    isPast: new Date(d.date) < now,
+  }))
+}
+
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth()
+  const year = parseInt(query.year as string) || currentYear
+  const isCurrentYear = year === currentYear
+
+  const [entries, settings, recurringPayments, onetimePayments, prevYearCount] = await Promise.all([
+    prisma.entry.findMany({
+      where: {
+        date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
+      },
+    }),
+    getSettings(),
+    prisma.recurringPayment.findMany(),
+    prisma.oneTimePayment.findMany({
+      where: {
+        date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
+      },
+    }),
+    prisma.entry.count({
+      where: {
+        date: { gte: new Date(year - 1, 0, 1), lt: new Date(year, 0, 1) },
+      },
+    }),
+  ])
+
+  const isFirstYear = prevYearCount === 0
+
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const me = entries.filter(e => new Date(e.date).getMonth() === i)
+    const hourlyGross = me.filter(e => e.type === 'HOURLY').reduce((s, e) => s + (e.hours || 0) * settings.hourlyRate, 0)
+    const projectGross = me.filter(e => e.type === 'PROJECT').reduce((s, e) => s + (e.amount || 0), 0)
+    const totalHours = me.filter(e => e.type === 'HOURLY').reduce((s, e) => s + (e.hours || 0), 0)
+    const gross = hourlyGross + projectGross
+    return { month: i, gross, hourlyGross, projectGross, totalHours, entryCount: me.length }
+  })
+
+  const annualGross = months.reduce((s, m) => s + m.gross, 0)
+
+  const firstIncomeMonth = months.findIndex(m => m.gross > 0)
+  const effectiveStart = firstIncomeMonth >= 0 ? firstIncomeMonth : (isCurrentYear ? currentMonth : 0)
+  const activeMonths = 12 - effectiveStart
+  const monthsElapsed = isCurrentYear
+    ? Math.max(1, currentMonth - effectiveStart + 1)
+    : activeMonths
+
+  const ytdTaxes = calcTaxesWithSettings(annualGross, settings)
+
+  const runningAvgTopLevel = monthsElapsed > 0 ? annualGross / monthsElapsed : 0
+  const projectedAnnualGross = runningAvgTopLevel * activeMonths
+  const projectedTaxes = calcTaxesWithSettings(projectedAnnualGross, settings)
+  const recommendedMonthlySetAside = projectedTaxes.totalTax / activeMonths
+
+  const recurringTotal = annualizeRecurring(recurringPayments)
+  const onetimeTotal = onetimePayments.reduce((s, p) => s + p.amount, 0)
+  const paymentsTotal = recurringTotal + onetimeTotal
+  const monthlyPayments = paymentsTotal / activeMonths
+
+  const paymentDeadlines = buildPaymentDeadlines(year, projectedTaxes, settings, isFirstYear)
+
+  return {
+    year,
+    annualGross,
+    isFirstYear,
+    startMonth: effectiveStart,
+    activeMonths,
+    monthsElapsed,
+    projectedAnnualGross,
+    recommendedMonthlySetAside,
+    monthlyPayments,
+    ytdTaxes: { ...ytdTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: ytdTaxes.annualNet - paymentsTotal },
+    projectedTaxes: { ...projectedTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: projectedTaxes.annualNet - paymentsTotal },
+    paymentDeadlines,
+    months: months.map((m, idx) => {
+      const beforeStart = idx < effectiveStart
+      const cumulativeGross = months.slice(0, idx + 1).reduce((s, x) => s + x.gross, 0)
+      const monthsSinceStart = Math.max(1, idx - effectiveStart + 1)
+      const runningAvg = beforeStart ? 0 : cumulativeGross / monthsSinceStart
+      const runningProjectedAnnual = runningAvg * activeMonths
+
+      const projected = calcTaxesWithSettings(runningProjectedAnnual, settings)
+      const provision = beforeStart ? 0 : projected.totalTax / activeMonths
+
+      return {
+        ...m,
+        cumulativeGross,
+        runningAvgMonthly: runningAvg,
+        runningProjectedAnnual,
+        provision,
+        net: beforeStart ? 0 : m.gross - provision - monthlyPayments,
+        projectedTaxes: beforeStart ? null : projected,
+      }
+    }),
+  }
+})
