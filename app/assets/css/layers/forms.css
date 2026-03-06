@@ -1,12 +1,13 @@
 @layer components {
   .ui-field-label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
   }
 
   .ui-field-help {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
+    margin-top: 0.45rem;
+    font-size: 0.78rem;
+    line-height: 1.55;
     color: var(--color-revolut-muted);
   }
 
@@ -17,7 +18,7 @@
   .ui-form-grid-2 {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 0.85rem;
   }
 
   .ui-form-grid-2--compact {
@@ -30,41 +31,66 @@
   }
 
   .ui-segment-btn {
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
+    display: grid;
+    gap: 0.3rem;
+    text-align: left;
+    padding: 1rem;
+    border-radius: 1rem;
     border: 1px solid var(--color-revolut-border);
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-    font-weight: 500;
+    background: rgb(255 255 255 / 0.02);
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    font-size: 0.92rem;
+    font-weight: 700;
     color: var(--color-revolut-muted);
   }
 
   .ui-segment-btn:hover {
-    border-color: #3a3a3d;
+    transform: translateY(-1px);
+    border-color: rgb(255 255 255 / 0.16);
   }
 
   .ui-segment-btn.is-active {
-    background: var(--color-revolut-card);
-    border-color: var(--color-revolut-green);
-    color: var(--color-revolut-green);
+    background: linear-gradient(180deg, rgb(31 143 105 / 0.18), rgb(31 143 105 / 0.08));
+    border-color: rgb(31 143 105 / 0.36);
+    color: var(--color-revolut-text);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+
+  .light .ui-segment-btn {
+    border-color: var(--color-revolut-light-border);
+    color: var(--color-revolut-light-muted);
+    background: rgb(255 255 255 / 0.65);
+  }
+
+  .light .ui-segment-btn:hover {
+    border-color: rgb(31 46 41 / 0.1);
+    background: #fff;
+  }
+
+  .light .ui-segment-btn.is-active {
+    background: linear-gradient(180deg, rgb(31 143 105 / 0.14), rgb(31 143 105 / 0.05));
+    border-color: rgb(31 143 105 / 0.28);
+    color: var(--color-revolut-light-text);
   }
 
   .ui-pill-toggle {
     display: flex;
-    background: var(--color-revolut-card);
-    border-radius: 0.5rem;
-    padding: 0.125rem;
+    background: rgb(255 255 255 / 0.04);
+    border-radius: 999px;
+    padding: 0.18rem;
+    border: 1px solid var(--color-revolut-border);
   }
 
   .light .ui-pill-toggle {
-    background: var(--color-revolut-light-border);
+    background: rgb(255 255 255 / 0.72);
+    border-color: var(--color-revolut-light-border);
   }
 
   .ui-pill-toggle__btn {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
-    font-family: "JetBrains Mono", monospace;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-family: "IBM Plex Mono", monospace;
     transition: all 0.2s ease;
     color: var(--color-revolut-muted);
   }
@@ -74,19 +100,318 @@
   }
 
   .ui-pill-toggle__btn.is-active {
-    background: var(--color-revolut-dark);
+    background: rgb(255 255 255 / 0.1);
     color: var(--color-revolut-text);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
   }
 
   .light .ui-pill-toggle__btn.is-active {
     background: #fff;
     color: var(--color-revolut-light-text);
+    box-shadow: var(--app-shadow-sm);
   }
-}
 
-@media (min-width: 768px) {
-  .ui-form-grid-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ui-input-shell {
+    width: 100%;
+  }
+
+  .ui-input-shell[data-slot="root"] {
+    width: 100%;
+  }
+
+  .ui-input-base {
+    width: 100%;
+    min-height: 3.45rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-revolut-border);
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-revolut-text);
+    padding: 0 1rem;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .ui-input-base::placeholder {
+    color: var(--color-revolut-muted);
+  }
+
+  .ui-input-base:hover,
+  .ui-input-base:focus-visible {
+    border-color: rgb(255 255 255 / 0.22);
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: 0 0 0 4px rgb(31 143 105 / 0.12);
+    outline: none;
+  }
+
+  .ui-input-base[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  .ui-input-base[type="number"]::-webkit-outer-spin-button,
+  .ui-input-base[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .light .ui-input-base {
+    border-color: var(--color-revolut-light-border);
+    background: rgb(255 255 255 / 0.84);
+    color: var(--color-revolut-light-text);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+
+  .light .ui-input-base::placeholder {
+    color: var(--color-revolut-light-muted);
+  }
+
+  .light .ui-input-base:hover,
+  .light .ui-input-base:focus-visible {
+    border-color: rgb(31 143 105 / 0.22);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgb(31 143 105 / 0.08);
+  }
+
+  .ui-select-value,
+  .ui-select-placeholder {
+    font-size: 0.95rem;
+  }
+
+  .ui-date-trigger {
+    width: 100%;
+    min-height: 3.45rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-revolut-border);
+    background: rgb(255 255 255 / 0.03);
+    color: var(--color-revolut-text);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .ui-date-trigger:hover,
+  .ui-date-trigger:focus-visible {
+    border-color: rgb(255 255 255 / 0.22);
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: 0 0 0 4px rgb(31 143 105 / 0.12);
+    outline: none;
+  }
+
+  .ui-date-trigger.is-empty {
+    color: var(--color-revolut-muted);
+  }
+
+  .light .ui-date-trigger {
+    border-color: var(--color-revolut-light-border);
+    background: rgb(255 255 255 / 0.84);
+    color: var(--color-revolut-light-text);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  }
+
+  .light .ui-date-trigger:hover,
+  .light .ui-date-trigger:focus-visible {
+    border-color: rgb(31 143 105 / 0.22);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgb(31 143 105 / 0.08);
+  }
+
+  .light .ui-date-trigger.is-empty {
+    color: var(--color-revolut-light-muted);
+  }
+
+  .ui-date-panel {
+    width: min(100vw - 2rem, 20rem);
+    padding: 0.85rem;
+    border-radius: 1.3rem;
+    border: 1px solid var(--color-revolut-border);
+    background: rgb(8 19 16 / 0.96);
+    box-shadow: var(--app-shadow-lg);
+  }
+
+  .light .ui-date-panel {
+    border-color: var(--color-revolut-light-border);
+    background: rgb(255 253 248 / 0.97);
+  }
+
+  .ui-date-panel__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  .light .ui-date-panel__footer {
+    border-top-color: var(--color-revolut-light-border);
+  }
+
+  .ui-date-panel__action {
+    padding: 0.35rem 0.55rem;
+    border-radius: 0.7rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--color-revolut-muted);
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+
+  .ui-date-panel__action:hover {
+    color: var(--color-revolut-text);
+    background: rgb(255 255 255 / 0.06);
+  }
+
+  .ui-date-panel__action.is-primary {
+    color: var(--color-revolut-green);
+  }
+
+  .ui-date-calendar[data-slot="root"] {
+    width: 100%;
+  }
+
+  .ui-date-calendar [data-slot="header"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .ui-date-calendar [data-slot="header"] > button {
+    width: 2.1rem;
+    height: 2.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.8rem;
+    border: 1px solid var(--color-revolut-border);
+    background: rgb(255 255 255 / 0.04);
+    color: var(--color-revolut-text);
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+
+  .ui-date-calendar [data-slot="header"] > button:hover {
+    border-color: rgb(255 255 255 / 0.18);
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .ui-date-calendar [data-slot="heading"] {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--color-revolut-text);
+  }
+
+  .light .ui-date-calendar [data-slot="heading"] {
+    color: var(--color-revolut-light-text);
+  }
+
+  .light .ui-date-calendar [data-slot="header"] > button {
+    border-color: var(--color-revolut-light-border);
+    background: rgb(255 255 255 / 0.86);
+    color: var(--color-revolut-light-text);
+  }
+
+  .light .ui-date-calendar [data-slot="header"] > button:hover {
+    border-color: rgb(31 143 105 / 0.16);
+    background: #fff;
+  }
+
+  .ui-date-calendar [data-slot="grid"] {
+    width: 100%;
+  }
+
+  .ui-date-calendar [data-slot="gridWeekDaysRow"] {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .ui-date-calendar [data-slot="headCell"] {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-revolut-muted);
+  }
+
+  .ui-date-calendar [data-slot="gridBody"] {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .ui-date-calendar [data-slot="gridRow"] {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.2rem;
+  }
+
+  .ui-date-calendar [data-slot="cell"] {
+    display: flex;
+  }
+
+  .ui-date-calendar [data-slot="cellTrigger"] {
+    width: 100%;
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+    border-radius: 0.8rem;
+    font-size: 0.92rem;
+    color: var(--color-revolut-text);
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .ui-date-calendar [data-slot="cellTrigger"]:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .ui-date-calendar [data-slot="cellTrigger"][data-selected],
+  .ui-date-calendar [data-slot="cellTrigger"][data-state="checked"] {
+    background: linear-gradient(135deg, var(--color-revolut-green), var(--color-revolut-green-dark));
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  }
+
+  .ui-date-calendar [data-slot="cellTrigger"][data-outside-view] {
+    color: rgb(153 171 165 / 0.46);
+  }
+
+  .light .ui-date-calendar [data-slot="cellTrigger"] {
+    color: var(--color-revolut-light-text);
+  }
+
+  .light .ui-date-calendar [data-slot="cellTrigger"]:hover {
+    background: rgb(31 46 41 / 0.06);
+  }
+
+  .ui-action-button {
+    width: 100%;
+    justify-content: center;
+    min-height: 3.45rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .ui-action-button--ghost {
+    min-height: 3rem;
+    border-radius: 1rem;
+  }
+  @media (min-width: 768px) {
+    .ui-form-grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .ui-form-grid-2--compact {
+      grid-template-columns: 1fr;
+    }
   }
 }

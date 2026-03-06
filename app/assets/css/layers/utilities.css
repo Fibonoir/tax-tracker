@@ -12,7 +12,7 @@
 
 @layer utilities {
   .fade-up {
-    animation: fadeUp 0.4s var(--app-fade-ease) forwards;
+    animation: fadeUp 0.45s var(--app-fade-ease) forwards;
   }
 
   .fade-up-1 {
@@ -41,19 +41,19 @@
   }
 
   .pb-nav {
-    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
 
   .text-white-muted {
-    color: rgb(255 255 255 / 70%);
+    color: rgb(255 255 255 / 76%);
   }
 
   .text-white-soft {
-    color: rgb(255 255 255 / 80%);
+    color: rgb(255 255 255 / 88%);
   }
 
   .text-white-softer {
-    color: rgb(255 255 255 / 90%);
+    color: rgb(255 255 255 / 94%);
   }
 }
 

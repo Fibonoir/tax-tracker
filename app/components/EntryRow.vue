@@ -1,28 +1,34 @@
 <template>
   <div class="ui-entry-row ui-entry-row--interactive" @click="$emit('select', entry)">
-    <div class="ui-entry-meta">
-      <span
-        class="ui-entry-badge"
-        :class="entry.type === 'HOURLY'
-          ? 'is-hourly'
-          : 'is-project'"
-      >
-        {{ entry.type === 'HOURLY' ? `${entry.hours}h` : 'PRJ' }}
-      </span>
+    <div class="ui-entry-main">
+      <div class="ui-entry-meta">
+        <span
+          class="ui-entry-badge"
+          :class="entry.type === 'HOURLY'
+            ? 'is-hourly'
+            : 'is-project'"
+        >
+          {{ entry.type === 'HOURLY' ? `${entry.hours}h` : 'Progetto' }}
+        </span>
 
-      <p class="ui-entry-date">{{ fmt.date(entry.date) }}</p>
+        <p class="ui-entry-date">{{ fmt.date(entry.date) }}</p>
+      </div>
+
+      <p class="ui-entry-description">{{ entry.description || 'Nessuna descrizione' }}</p>
+      <p class="ui-entry-note">{{ detailText }}</p>
     </div>
 
-    <p class="ui-entry-description">{{ entry.description || 'Nessuna descrizione' }}</p>
-    <p class="num-md ui-entry-amount">{{ fmt.eur(gross) }}</p>
+    <div class="ui-entry-side">
+      <p class="num-md ui-entry-amount">{{ fmt.eur(gross) }}</p>
 
-    <button
-      v-if="deletable"
-      class="ui-entry-delete"
-      @click.stop="$emit('delete', entry.id)"
-    >
-      <UIcon name="lucide:trash-2" class="w-4 h-4" />
-    </button>
+      <button
+        v-if="deletable"
+        class="ui-entry-delete"
+        @click.stop="$emit('delete', entry.id)"
+      >
+        <UIcon name="lucide:trash-2" class="w-4 h-4" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -49,4 +55,12 @@ const gross = computed(() =>
     ? (props.entry.hours || 0) * (props.hourlyRate || 30)
     : (props.entry.amount || 0)
 )
+
+const detailText = computed(() => {
+  if (props.entry.type === 'HOURLY') {
+    return `${fmt.hours(props.entry.hours || 0)} · ${fmt.eur(props.hourlyRate || 30)}/h`
+  }
+
+  return 'Importo fisso per progetto'
+})
 </script>

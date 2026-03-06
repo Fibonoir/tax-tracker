@@ -34,9 +34,9 @@ const chartData = computed(() => ({
       label: 'Gross',
       data: props.months.map(m => m.gross),
       backgroundColor: props.months.map((m, i) =>
-        i === props.highlight ? '#00d09c' : (colorMode.preference === 'dark' ? '#242427' : '#e5e5e5')
+        i === props.highlight ? '#1f8f69' : (colorMode.value === 'dark' ? '#27493f' : '#e6dccb')
       ),
-      borderRadius: 8,
+      borderRadius: 999,
       borderSkipped: false,
     },
   ],
@@ -51,15 +51,15 @@ const chartOptions = computed(() => ({
       callbacks: {
         label: (ctx: any) => eur(ctx.raw),
       },
-      backgroundColor: colorMode.preference === 'dark' ? '#1a1a1d' : '#ffffff',
-      titleColor: colorMode.preference === 'dark' ? '#a0a0a8' : '#666666',
-      bodyColor: colorMode.preference === 'dark' ? '#fafafa' : '#0c0c0e',
-      borderColor: colorMode.preference === 'dark' ? '#2a2a2d' : '#e5e5e5',
+      backgroundColor: colorMode.value === 'dark' ? '#0f1f1a' : '#fffdf8',
+      titleColor: colorMode.value === 'dark' ? '#99aba5' : '#6f7d78',
+      bodyColor: colorMode.value === 'dark' ? '#f7f4eb' : '#1f2e29',
+      borderColor: colorMode.value === 'dark' ? '#27493f' : '#e0d7c5',
       borderWidth: 1,
-      cornerRadius: 8,
+      cornerRadius: 12,
       padding: 12,
-      titleFont: { family: 'JetBrains Mono', size: 10 },
-      bodyFont: { family: 'JetBrains Mono', size: 12, weight: 'bold' },
+      titleFont: { family: 'IBM Plex Mono', size: 10 },
+      bodyFont: { family: 'IBM Plex Mono', size: 12, weight: 'bold' },
     },
   },
   scales: {
@@ -67,8 +67,8 @@ const chartOptions = computed(() => ({
       grid: { display: false },
       border: { display: false },
       ticks: {
-        font: { family: 'JetBrains Mono', size: 10 },
-        color: '#a0a0a8',
+        font: { family: 'IBM Plex Mono', size: 10 },
+        color: colorMode.value === 'dark' ? '#99aba5' : '#6f7d78',
       },
     },
     y: {

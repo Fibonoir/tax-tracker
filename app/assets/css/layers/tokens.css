@@ -1,26 +1,39 @@
 @theme {
-  --color-revolut-black: #0c0c0e;
-  --color-revolut-dark: #1a1a1d;
-  --color-revolut-card: #242427;
-  --color-revolut-border: #2a2a2d;
-  --color-revolut-text: #fafafa;
-  --color-revolut-muted: #666666;
-  --color-revolut-green: #00d09c;
-  --color-revolut-green-dark: #00a37a;
-  --color-revolut-red: #ff6b6b;
-  --color-revolut-red-dark: #e85555;
-  --color-revolut-blue: #4e8cff;
+  --color-revolut-black: #081310;
+  --color-revolut-dark: #0f1f1a;
+  --color-revolut-card: #163029;
+  --color-revolut-border: #27493f;
+  --color-revolut-text: #f7f4eb;
+  --color-revolut-muted: #99aba5;
+  --color-revolut-green: #1f8f69;
+  --color-revolut-green-dark: #166348;
+  --color-revolut-red: #c96948;
+  --color-revolut-red-dark: #a65336;
+  --color-revolut-blue: #5f8696;
+  --color-revolut-amber: #d2a14b;
 
-  --color-revolut-light-bg: #fafafa;
-  --color-revolut-light-card: #ffffff;
-  --color-revolut-light-border: #e5e5e5;
-  --color-revolut-light-text: #0c0c0e;
-  --color-revolut-light-muted: #666666;
+  --color-revolut-light-bg: #f7f2e8;
+  --color-revolut-light-card: #fffdf8;
+  --color-revolut-light-card-strong: #ffffff;
+  --color-revolut-light-border: #e0d7c5;
+  --color-revolut-light-text: #1f2e29;
+  --color-revolut-light-muted: #6f7d78;
+  --color-revolut-light-tint: #efe4d2;
 }
 
 :root {
-  --app-radius-sm: 0.75rem;
-  --app-radius-md: 1rem;
-  --app-radius-lg: 1.5rem;
+  --app-radius-xs: 0.75rem;
+  --app-radius-sm: 1rem;
+  --app-radius-md: 1.5rem;
+  --app-radius-lg: 2rem;
+  --app-radius-xl: 2.5rem;
+  --app-shadow-sm: 0 8px 24px rgb(16 26 22 / 0.06);
+  --app-shadow-md: 0 18px 40px rgb(16 26 22 / 0.1);
+  --app-shadow-lg: 0 30px 70px rgb(16 26 22 / 0.16);
+  --app-gradient-soft: linear-gradient(135deg, rgb(255 255 255 / 0.86), rgb(250 244 232 / 0.9));
+  --app-gradient-hero:
+    radial-gradient(circle at 12% 16%, rgb(255 255 255 / 0.14), transparent 22rem),
+    radial-gradient(circle at 100% 100%, rgb(210 161 75 / 0.24), transparent 18rem),
+    linear-gradient(145deg, #16362f 0%, #1f8f69 58%, #c79d4a 100%);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

@@ -2,7 +2,7 @@
   <component :is="props.tag" :class="sectionClass">
     <div v-if="props.title || props.subtitle || slots['header-right']" class="app-section__header">
       <div class="app-section__heading">
-        <h2 v-if="props.title" class="label-xs">{{ props.title }}</h2>
+        <h2 v-if="props.title" class="app-section__title">{{ props.title }}</h2>
         <p v-if="props.subtitle" class="app-section__subtitle">{{ props.subtitle }}</p>
       </div>
 

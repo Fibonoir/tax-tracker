@@ -1,5 +1,10 @@
 <template>
   <SurfaceCard variant="soft" padding="md" class="ui-projection-summary">
+    <div class="ui-stat-card__head">
+      <p class="label-xs">Traiettoria</p>
+      <span class="ui-stat-card__dot" />
+    </div>
+
     <div class="ui-projection-summary__row">
       <span class="ui-projection-summary__label">Media mensile</span>
       <span class="ui-projection-summary__value">{{ fmt.eur(avgMonthly) }}/mese</span>

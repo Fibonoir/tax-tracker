@@ -1,5 +1,10 @@
 <template>
-  <UModal :open="open" :title="title" @update:open="$emit('update:open', $event)">
+  <UModal
+    :open="open"
+    :title="title"
+    :description="entry?.description || 'Riepilogo importi e dati della registrazione selezionata.'"
+    @update:open="$emit('update:open', $event)"
+  >
     <template #body>
       <div v-if="entry" class="ui-invoice-detail">
         <div class="ui-invoice-detail__row">
@@ -41,7 +46,7 @@
 
     <template #footer>
       <div class="ui-invoice-detail__actions">
-        <UButton color="neutral" variant="soft" @click="$emit('update:open', false)">
+        <UButton color="neutral" variant="soft" class="ui-action-button--ghost" @click="$emit('update:open', false)">
           Chiudi
         </UButton>
 
@@ -49,6 +54,7 @@
           v-if="deletable && entry"
           color="red"
           variant="soft"
+          class="ui-action-button--ghost"
           @click="$emit('request-delete', entry.id)"
         >
           Elimina

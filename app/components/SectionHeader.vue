@@ -1,6 +1,6 @@
 <template>
   <div class="ui-section-header">
-    <h2 class="label-xs">{{ props.title }}</h2>
+    <h2 class="ui-section-header__title">{{ props.title }}</h2>
 
     <p v-if="props.meta && !slots.right" class="label-xs">{{ props.meta }}</p>
 
