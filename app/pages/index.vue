@@ -1,31 +1,33 @@
 <template>
-  <div class="px-4 pt-6 space-y-6 md:px-6">
-    <section v-if="monthData" class="fade-up">
-      <h1 class="font-display text-xl font-semibold text-revolut-text light:text-revolut-light-text mb-1 capitalize">{{ monthLabel }}</h1>
-      <p class="text-sm text-revolut-muted">Registra il tuo lavoro e monitora il reddito</p>
+  <AppPageShell>
+    <AppSection v-if="monthData">
+      <div>
+        <h1 class="font-display text-xl font-semibold text-revolut-text light:text-revolut-light-text mb-1 capitalize">{{ monthLabel }}</h1>
+        <p class="text-sm text-revolut-muted">Registra il tuo lavoro e monitora il reddito</p>
+      </div>
 
-      <div class="mt-6 bg-linear-to-br from-revolut-green to-revolut-green-dark rounded-3xl p-6 shadow-lg shadow-revolut-green/10 fade-up fade-up-1">
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <p class="label-xs text-white/70">Lordo questo mese</p>
+      <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1 app-home-hero">
+        <div class="app-home-hero__layout">
+          <div class="app-home-hero__main">
+            <p class="label-xs text-white-muted">Lordo questo mese</p>
             <p class="num-display text-white mt-2">{{ fmt.eur(monthData.gross) }}</p>
-            <p class="font-mono text-sm text-white/80 mt-3">Netto stimato {{ fmt.eur(monthData.net) }}</p>
+            <p class="font-mono text-sm text-white-soft mt-3">Netto stimato {{ fmt.eur(monthData.net) }}</p>
           </div>
 
-          <div class="space-y-2 shrink-0">
-            <div class="rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-2">
-              <p class="label-xs text-white/70">Registrazioni</p>
+          <div class="app-home-hero__stats">
+            <div class="app-home-hero__chip">
+              <p class="label-xs text-white-muted">Registrazioni</p>
               <p class="font-display text-xl text-white leading-tight mt-1">{{ monthData.entryCount }}</p>
             </div>
-            <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-2">
-              <p class="label-xs text-white/70">Ore</p>
+            <div class="app-home-hero__chip app-home-hero__chip--soft">
+              <p class="label-xs text-white-muted">Ore</p>
               <p class="font-display text-xl text-white leading-tight mt-1">{{ fmt.hours(monthData.totalHours) }}</p>
             </div>
           </div>
         </div>
-      </div>
+      </SurfaceCard>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+      <div class="app-home-stat-grid">
         <StatCard
           label="Ore registrate"
           :value="fmt.hours(monthData.totalHours)"
@@ -39,29 +41,25 @@
         />
       </div>
 
-      <div v-if="monthData.runningAvgMonthly > 0" class="bg-revolut-card light:bg-revolut-light-bg rounded-2xl border border-revolut-border light:border-revolut-light-border px-5 my-4 py-3 fade-up fade-up-2">
-        <p class="font-mono text-xs text-revolut-muted">
-          Media <span class="text-revolut-text light:text-revolut-light-text font-medium">{{ fmt.eur(monthData.runningAvgMonthly) }}/mese</span>
-          &rarr; proiezione <span class="text-revolut-text light:text-revolut-light-text font-medium">{{ fmt.eur(monthData.runningProjectedAnnual) }}/anno</span>
-          &middot; accantona <span class="text-revolut-red font-medium">{{ fmt.eur(annualData?.recommendedMonthlySetAside) }}/mese</span>
-        </p>
-      </div>
-    </section>
+      <IncomeProjectionCard
+        v-if="monthData.runningAvgMonthly > 0"
+        :avg-monthly="monthData.runningAvgMonthly"
+        :projected-annual="monthData.runningProjectedAnnual"
+        :monthly-set-aside="annualData?.recommendedMonthlySetAside"
+        class="fade-up fade-up-2"
+      />
+    </AppSection>
 
-    <section class="fade-up fade-up-2">
-      <h2 class="label-xs mb-3">Nuova registrazione</h2>
-
-      <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border p-5">
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-2">
+    <AppSection title="Nuova registrazione" :delay="2">
+      <SurfaceCard>
+        <div class="ui-form-stack">
+          <div class="ui-form-grid-2 ui-form-grid-2--compact">
             <button
               v-for="t in ['HOURLY', 'PROJECT']"
               :key="t"
               type="button"
-              class="px-4 py-3 rounded-xl border transition-all text-sm font-medium"
-              :class="form.type === t
-                ? 'bg-revolut-card border-revolut-green text-revolut-green'
-                : 'border-revolut-border text-revolut-muted hover:border-[#3a3a3d]'"
+              class="ui-segment-btn"
+              :class="{ 'is-active': form.type === t }"
               @click="form.type = t as 'HOURLY' | 'PROJECT'"
             >
               {{ t === 'HOURLY' ? 'Orario' : 'Progetto' }}
@@ -69,46 +67,46 @@
           </div>
 
           <div>
-            <label class="label-xs block mb-2">Data</label>
-            <UInput type="date" v-model="form.date" />
+            <label class="label-xs ui-field-label">Data</label>
+            <UInput v-model="form.date" type="date" />
           </div>
 
           <div v-if="form.type === 'HOURLY'">
-            <label class="label-xs block mb-2">Ore lavorate</label>
+            <label class="label-xs ui-field-label">Ore lavorate</label>
             <UInput
+              v-model="form.hours"
               type="number"
               step="0.25"
               min="0"
               max="12"
               placeholder="7.5"
-              v-model="form.hours"
             />
-            <p v-if="form.hours && settings" class="text-xs text-revolut-green mt-2 font-mono">
+            <p v-if="form.hours && settings" class="ui-field-help text-revolut-green font-mono">
               Fattura: {{ fmt.eur(parseFloat(form.hours) * settings.hourlyRate) }}
             </p>
           </div>
 
           <div v-else>
-            <label class="label-xs block mb-2">Importo (€)</label>
+            <label class="label-xs ui-field-label">Importo (€)</label>
             <UInput
+              v-model="form.amount"
               type="number"
               step="0.01"
               min="0"
               placeholder="500.00"
-              v-model="form.amount"
             />
           </div>
 
           <div>
-            <label class="label-xs block mb-2">Descrizione</label>
+            <label class="label-xs ui-field-label">Descrizione</label>
             <UInput
+              v-model="form.description"
               type="text"
               placeholder="Progetto cliente, consulenza..."
-              v-model="form.description"
             />
           </div>
         </div>
-      </div>
+      </SurfaceCard>
 
       <UButton
         block
@@ -119,34 +117,59 @@
       >
         Registra
       </UButton>
-    </section>
+    </AppSection>
 
-    <section class="fade-up fade-up-3">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="label-xs">Registrazioni recenti</h2>
-        <p class="label-xs">{{ monthLabel }}</p>
-      </div>
+    <AppSection :delay="3">
+      <SectionHeader title="Registrazioni recenti" :meta="monthLabel" />
 
-      <div v-if="loadingEntries" class="py-12 flex justify-center">
-        <UIcon name="lucide:loader-2" class="w-5 h-5 animate-spin text-revolut-muted" />
-      </div>
+      <StateBlock v-if="loadingEntries" type="loading" />
 
-      <div v-else-if="entries.length === 0" class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border py-12 text-center">
-        <p class="text-sm text-revolut-muted">Nessuna registrazione</p>
-      </div>
+      <SurfaceCard v-else-if="entries.length === 0" padding="md">
+        <StateBlock type="empty" text="Nessuna registrazione" />
+      </SurfaceCard>
 
-      <div v-else class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border px-5">
-        <EntryRow
-          v-for="entry in entries"
-          :key="entry.id"
-          :entry="entry"
-          :hourly-rate="settings?.hourlyRate"
-          deletable
-          @delete="deleteEntry"
-        />
-      </div>
-    </section>
-  </div>
+      <SurfaceCard v-else padding="none">
+        <div class="ui-list-shell">
+          <EntryRow
+            v-for="entry in entries"
+            :key="entry.id"
+            :entry="entry"
+            :hourly-rate="settings?.hourlyRate"
+            deletable
+            @select="openInvoiceDetails"
+            @delete="openDeleteConfirm"
+          />
+        </div>
+      </SurfaceCard>
+    </AppSection>
+
+    <InvoiceDetailsModal
+      :open="detailsOpen"
+      :entry="selectedEntry"
+      :hourly-rate="settings?.hourlyRate"
+      deletable
+      @update:open="detailsOpen = $event"
+      @request-delete="openDeleteConfirm"
+    />
+
+    <UModal
+      :open="deleteConfirmOpen"
+      title="Elimina registrazione"
+      description="Questa azione non può essere annullata."
+      @update:open="deleteConfirmOpen = $event"
+    >
+      <template #footer>
+        <div class="ui-invoice-detail__actions">
+          <UButton color="neutral" variant="soft" @click="deleteConfirmOpen = false">
+            Annulla
+          </UButton>
+          <UButton color="red" variant="soft" :loading="deleting" @click="confirmDelete">
+            Elimina
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+  </AppPageShell>
 </template>
 
 <script setup lang="ts">
@@ -168,6 +191,11 @@ const entries = ref<any[]>([])
 const annualData = ref<any>(null)
 const monthData = ref<any>(null)
 const settings = ref<any>(null)
+const selectedEntry = ref<any | null>(null)
+const detailsOpen = ref(false)
+const deleteConfirmOpen = ref(false)
+const deleting = ref(false)
+const pendingDeleteId = ref<number | null>(null)
 
 const canSubmit = computed(() => {
   if (!form.date) return false
@@ -213,9 +241,35 @@ async function submit() {
   }
 }
 
+function openInvoiceDetails(entry: any) {
+  selectedEntry.value = entry
+  detailsOpen.value = true
+}
+
+function openDeleteConfirm(id: number) {
+  pendingDeleteId.value = id
+  deleteConfirmOpen.value = true
+}
+
 async function deleteEntry(id: number) {
   await $fetch(`/api/entries/${id}`, { method: 'DELETE' })
   await Promise.all([loadEntries(), loadMonthData()])
+}
+
+async function confirmDelete() {
+  if (!pendingDeleteId.value) return
+  deleting.value = true
+  try {
+    await deleteEntry(pendingDeleteId.value)
+    if (selectedEntry.value?.id === pendingDeleteId.value) {
+      detailsOpen.value = false
+      selectedEntry.value = null
+    }
+  } finally {
+    deleting.value = false
+    deleteConfirmOpen.value = false
+    pendingDeleteId.value = null
+  }
 }
 
 onMounted(() => {

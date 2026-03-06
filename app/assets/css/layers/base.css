@@ -1,0 +1,80 @@
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height: 100dvh;
+    background-color: var(--color-revolut-black);
+    color: var(--color-revolut-text);
+  }
+
+  body.light {
+    background-color: var(--color-revolut-light-bg);
+    color: var(--color-revolut-light-text);
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: Inter, sans-serif;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .num-hero {
+    font-family: Inter, sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+  }
+
+  .num-display {
+    font-family: Inter, sans-serif;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .num-lg {
+    font-family: Inter, sans-serif;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .num-md {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .num-sm {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .label-xs {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-revolut-muted);
+  }
+
+  .light .label-xs {
+    color: var(--color-revolut-light-muted);
+  }
+}

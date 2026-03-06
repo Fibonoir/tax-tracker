@@ -1,15 +1,14 @@
 <template>
-  <div class="px-4 pt-6 space-y-6 md:px-6">
-    <div class="flex items-center gap-4 fade-up">
-      <button
-        class="w-10 h-10 rounded-xl flex items-center justify-center border border-revolut-border light:border-revolut-light-border text-revolut-muted hover:text-revolut-text hover:border-[#3a3a3d] transition-all"
-        @click="prevMonth"
-      >
+  <AppPageShell>
+    <div class="app-period-nav fade-up">
+      <button class="app-period-nav__btn" @click="prevMonth">
         <UIcon name="lucide:chevron-left" class="w-5 h-5" />
       </button>
-      <h1 class="flex-1 text-center font-display text-xl font-semibold text-revolut-text light:text-revolut-light-text capitalize">{{ monthLabel }}</h1>
+
+      <h1 class="app-period-nav__title capitalize">{{ monthLabel }}</h1>
+
       <button
-        class="w-10 h-10 rounded-xl flex items-center justify-center border border-revolut-border light:border-revolut-light-border text-revolut-muted hover:text-revolut-text hover:border-[#3a3a3d] transition-all disabled:opacity-40 disabled:hover:border-revolut-border disabled:hover:text-revolut-muted"
+        class="app-period-nav__btn"
         :disabled="isCurrentMonth"
         @click="nextMonth"
       >
@@ -17,20 +16,18 @@
       </button>
     </div>
 
-    <div v-if="loading" class="py-16 flex justify-center">
-      <UIcon name="lucide:loader-2" class="w-6 h-6 animate-spin text-revolut-muted" />
-    </div>
+    <StateBlock v-if="loading" type="loading" />
 
     <template v-else-if="summary">
-      <div class="bg-linear-to-br from-revolut-green to-revolut-green-dark rounded-3xl p-6 shadow-lg shadow-revolut-green/10 fade-up fade-up-1">
-        <p class="label-xs text-white/70">Reddito lordo</p>
+      <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
+        <p class="label-xs text-white-muted">Reddito lordo</p>
         <p class="num-display text-white mt-2">{{ fmt.eur(summary.gross) }}</p>
-        <p class="font-mono text-sm text-white/80 mt-3">
+        <p class="font-mono text-sm text-white-soft mt-3">
           {{ fmt.hours(summary.totalHours) }} · {{ summary.entryCount }} registrazioni
         </p>
-      </div>
+      </SurfaceCard>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 fade-up fade-up-2">
+      <div class="app-month-stat-grid fade-up fade-up-2">
         <StatCard label="Orario" :value="fmt.eur(summary.hourlyGross)" />
         <StatCard label="Progetto" :value="fmt.eur(summary.projectGross)" />
         <StatCard
@@ -45,41 +42,48 @@
         />
       </div>
 
-      <div v-if="summary.runningAvgMonthly > 0" class="bg-revolut-card light:bg-revolut-light-bg rounded-2xl border border-revolut-border light:border-revolut-light-border px-5 py-3 fade-up fade-up-2">
-        <p class="font-mono text-xs text-revolut-muted">
-          Media <span class="text-revolut-text light:text-revolut-light-text font-medium">{{ fmt.eur(summary.runningAvgMonthly) }}/mese</span>
-          &rarr; proiezione <span class="text-revolut-text light:text-revolut-light-text font-medium">{{ fmt.eur(summary.runningProjectedAnnual) }}/anno</span>
-        </p>
-      </div>
+      <IncomeProjectionCard
+        v-if="summary.runningAvgMonthly > 0"
+        :avg-monthly="summary.runningAvgMonthly"
+        :projected-annual="summary.runningProjectedAnnual"
+        class="fade-up fade-up-2"
+      />
 
-      <section class="fade-up fade-up-3">
-        <h2 class="label-xs mb-3">Accantonamenti mensili</h2>
-        <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border">
-          <div v-for="(row, i) in taxRows" :key="row.label" class="flex justify-between items-center px-5 py-4 border-b border-revolut-border light:border-revolut-light-border last:border-0">
-            <span class="font-mono text-xs text-revolut-muted">{{ row.label }}</span>
-            <span class="num-sm" :class="row.class">{{ row.value }}</span>
+      <AppSection title="Accantonamenti mensili" :delay="3">
+        <SurfaceCard padding="none" divided>
+          <div v-for="row in taxRows" :key="row.label" class="ui-kv-row">
+            <span class="ui-kv-row__label">{{ row.label }}</span>
+            <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
           </div>
-        </div>
-      </section>
+        </SurfaceCard>
+      </AppSection>
 
-      <section class="fade-up fade-up-4">
-        <h2 class="label-xs mb-3">Registrazioni</h2>
+      <AppSection title="Registrazioni" :delay="4">
+        <SurfaceCard v-if="entries.length === 0" padding="md">
+          <StateBlock type="empty" text="Nessuna registrazione" />
+        </SurfaceCard>
 
-        <div v-if="entries.length === 0" class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border py-12 text-center">
-          <p class="text-sm text-revolut-muted">Nessuna registrazione</p>
-        </div>
-
-        <div v-else class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border px-5">
-          <EntryRow
-            v-for="entry in entries"
-            :key="entry.id"
-            :entry="entry"
-            :hourly-rate="settings?.hourlyRate"
-          />
-        </div>
-      </section>
+        <SurfaceCard v-else padding="none">
+          <div class="ui-list-shell">
+            <EntryRow
+              v-for="entry in entries"
+              :key="entry.id"
+              :entry="entry"
+              :hourly-rate="settings?.hourlyRate"
+              @select="openInvoiceDetails"
+            />
+          </div>
+        </SurfaceCard>
+      </AppSection>
     </template>
-  </div>
+
+    <InvoiceDetailsModal
+      :open="detailsOpen"
+      :entry="selectedEntry"
+      :hourly-rate="settings?.hourlyRate"
+      @update:open="detailsOpen = $event"
+    />
+  </AppPageShell>
 </template>
 
 <script setup lang="ts">
@@ -91,6 +95,8 @@ const loading = ref(true)
 const entries = ref<any[]>([])
 const annualData = ref<any>(null)
 const settings = ref<any>(null)
+const selectedEntry = ref<any | null>(null)
+const detailsOpen = ref(false)
 
 const summary = computed(() => annualData.value?.months[viewMonth.value])
 
@@ -138,6 +144,11 @@ function nextMonth() {
   if (viewMonth.value === 11) { viewMonth.value = 0; viewYear.value++ }
   else viewMonth.value++
   load()
+}
+
+function openInvoiceDetails(entry: any) {
+  selectedEntry.value = entry
+  detailsOpen.value = true
 }
 
 async function load() {

@@ -1,74 +1,65 @@
 <template>
-  <div class="px-4 pt-6 space-y-6 md:px-6">
-    <div class="flex items-center gap-4 fade-up">
-      <button
-        class="w-10 h-10 rounded-xl flex items-center justify-center border border-revolut-border light:border-revolut-light-border text-revolut-muted hover:text-revolut-text hover:border-[#3a3a3d] transition-all"
-        @click="viewYear--; load()"
-      >
+  <AppPageShell>
+    <div class="app-period-nav fade-up">
+      <button class="app-period-nav__btn" @click="viewYear--; load()">
         <UIcon name="lucide:chevron-left" class="w-5 h-5" />
       </button>
-      <h1 class="flex-1 text-center font-display text-xl font-semibold text-revolut-text light:text-revolut-light-text">{{ viewYear }}</h1>
-      <button
-        class="w-10 h-10 rounded-xl flex items-center justify-center border border-revolut-border light:border-revolut-light-border text-revolut-muted hover:text-revolut-text hover:border-[#3a3a3d] transition-all"
-        @click="viewYear++; load()"
-      >
+      <h1 class="app-period-nav__title">{{ viewYear }}</h1>
+      <button class="app-period-nav__btn" @click="viewYear++; load()">
         <UIcon name="lucide:chevron-right" class="w-5 h-5" />
       </button>
     </div>
 
-    <div v-if="loading" class="py-16 flex justify-center">
-      <UIcon name="lucide:loader-2" class="w-6 h-6 animate-spin text-revolut-muted" />
-    </div>
+    <StateBlock v-if="loading" type="loading" />
 
     <template v-else-if="data">
-      <div class="bg-linear-to-br from-revolut-green to-revolut-green-dark rounded-3xl p-6 shadow-lg shadow-revolut-green/10 fade-up fade-up-1">
-        <div class="grid grid-cols-2 gap-6">
+      <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
+        <div class="app-annual-hero-grid">
           <div>
-            <p class="label-xs text-white/70">Lordo da inizio anno</p>
+            <p class="label-xs text-white-muted">Lordo da inizio anno</p>
             <p class="num-display text-white mt-2">{{ fmt.eur(data.annualGross) }}</p>
           </div>
           <div>
-            <p class="label-xs text-white/70">Proiezione annuale</p>
-            <p class="num-display text-white/90 mt-2">{{ fmt.eur(data.projectedAnnualGross) }}</p>
+            <p class="label-xs text-white-muted">Proiezione annuale</p>
+            <p class="num-display text-white-softer mt-2">{{ fmt.eur(data.projectedAnnualGross) }}</p>
           </div>
         </div>
-        <div class="flex flex-wrap gap-x-6 gap-y-2 mt-4">
+        <div class="app-annual-hero-meta">
           <div>
-            <p class="label-xs text-white/70">Netto effettivo</p>
+            <p class="label-xs text-white-muted">Netto effettivo</p>
             <p class="font-mono text-base font-semibold text-white mt-1">{{ fmt.eur(data.ytdTaxes.annualNet) }}</p>
           </div>
           <div>
-            <p class="label-xs text-white/70">Netto proiettato</p>
-            <p class="font-mono text-base font-semibold text-white/90 mt-1">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
+            <p class="label-xs text-white-muted">Netto proiettato</p>
+            <p class="font-mono text-base font-semibold text-white-softer mt-1">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
           </div>
           <div>
-            <p class="label-xs text-white/70">Aliq. effettiva</p>
+            <p class="label-xs text-white-muted">Aliq. effettiva</p>
             <p class="font-mono text-base font-semibold text-white mt-1">{{ fmt.pct(data.projectedTaxes.effectiveRate) }}</p>
           </div>
           <div>
-            <p class="label-xs text-white/70">Accantona</p>
+            <p class="label-xs text-white-muted">Accantona</p>
             <p class="font-mono text-base font-semibold text-white mt-1">{{ fmt.eur(data.recommendedMonthlySetAside) }}/mese</p>
           </div>
         </div>
-      </div>
+      </SurfaceCard>
 
-      <section class="fade-up fade-up-2">
-        <h2 class="label-xs mb-3">Lordo mensile</h2>
-        <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border p-5">
+      <AppSection title="Lordo mensile" :delay="2">
+        <SurfaceCard>
           <ChartsBarChart
             :months="data.months"
             :highlight="currentMonth"
             :height="180"
           />
-        </div>
-      </section>
+        </SurfaceCard>
+      </AppSection>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <section class="fade-up fade-up-3">
-          <h2 class="label-xs mb-3">Dettaglio tasse (Proiezione)</h2>
-          <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border p-5">
-            <div class="flex items-center gap-6 mb-6">
-              <div class="shrink-0 w-32 h-32">
+      <div class="app-annual-split">
+        <AppSection :delay="3">
+          <SectionHeader title="Dettaglio tasse (Proiezione)" />
+          <SurfaceCard>
+            <div class="app-annual-donut-layout">
+              <div class="app-annual-donut-wrap">
                 <ChartsDonutChart
                   :irpef="activeTaxes.irpef"
                   :inps="activeTaxes.inps"
@@ -77,92 +68,92 @@
                   :height="128"
                 />
               </div>
-              <div class="flex-1 space-y-2">
-                <div v-for="row in donutLegend" :key="row.label" class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full" :style="{ background: row.color }" />
+
+              <div class="app-annual-legend">
+                <div v-for="row in donutLegend" :key="row.label" class="app-annual-legend-row">
+                  <div class="app-annual-legend-label">
+                    <span class="app-annual-legend-dot" :style="{ background: row.color }" />
                     <span class="font-mono text-xs text-revolut-muted">{{ row.label }}</span>
                   </div>
                   <span class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(row.value, true) }}</span>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </SurfaceCard>
+        </AppSection>
 
-        <section class="fade-up fade-up-3">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="label-xs">Dettaglio annuale</h2>
-            <div class="flex bg-revolut-card light:bg-revolut-light-border rounded-lg p-0.5">
-              <button
-                v-for="v in (['projected', 'ytd'] as const)"
-                :key="v"
-                class="px-3 py-1 rounded-md text-xs font-mono transition-all"
-                :class="breakdownView === v
-                  ? 'bg-revolut-dark light:bg-white text-revolut-text light:text-revolut-light-text shadow-sm'
-                  : 'text-revolut-muted hover:text-revolut-text'"
-                @click="breakdownView = v"
-              >
-                {{ v === 'projected' ? 'Proiezione' : 'Effettivo' }}
-              </button>
+        <AppSection :delay="3">
+          <SectionHeader title="Dettaglio annuale">
+            <template #right>
+              <div class="ui-pill-toggle">
+                <button
+                  v-for="v in (['projected', 'ytd'] as const)"
+                  :key="v"
+                  class="ui-pill-toggle__btn"
+                  :class="{ 'is-active': breakdownView === v }"
+                  @click="breakdownView = v"
+                >
+                  {{ v === 'projected' ? 'Proiezione' : 'Effettivo' }}
+                </button>
+              </div>
+            </template>
+          </SectionHeader>
+
+          <SurfaceCard padding="none" divided>
+            <div v-for="row in taxTable" :key="row.label" class="ui-kv-row">
+              <span class="ui-kv-row__label">{{ row.label }}</span>
+              <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
             </div>
-          </div>
-          <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border">
-            <div v-for="row in taxTable" :key="row.label" class="flex justify-between items-center px-5 py-3.5 border-b border-revolut-border light:border-revolut-light-border last:border-0">
-              <span class="font-mono text-xs text-revolut-muted">{{ row.label }}</span>
-              <span class="num-sm" :class="row.class">{{ row.value }}</span>
-            </div>
-          </div>
-        </section>
+          </SurfaceCard>
+        </AppSection>
       </div>
 
-      <section v-if="data.paymentDeadlines?.length" class="fade-up fade-up-4">
-        <h2 class="label-xs mb-3">Scadenze fiscali</h2>
-        <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border">
+      <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" :delay="4">
+        <SurfaceCard padding="none" divided>
           <div
             v-for="(dl, i) in data.paymentDeadlines"
             :key="i"
-            class="flex items-center gap-4 px-5 py-4 border-b border-revolut-border light:border-revolut-light-border last:border-0"
+            class="app-deadline-row"
             :class="{ 'opacity-40': dl.isPast }"
           >
-            <div class="w-2 h-2 rounded-full shrink-0" :class="dl.isPast ? 'bg-revolut-muted' : nextDeadlineDate === dl.date ? 'bg-revolut-green animate-pulse' : 'bg-revolut-border'" />
-            <div class="flex-1 min-w-0">
+            <div
+              class="app-deadline-dot"
+              :class="dl.isPast ? 'bg-revolut-muted' : nextDeadlineDate === dl.date ? 'bg-revolut-green animate-pulse' : 'bg-revolut-border'"
+            />
+            <div class="app-deadline-main">
               <p class="font-mono text-xs text-revolut-text light:text-revolut-light-text">{{ dl.label }}</p>
               <p class="font-mono text-xs text-revolut-muted mt-0.5">{{ formatDeadlineDate(dl.date) }}</p>
             </div>
             <span class="num-sm text-revolut-red shrink-0">{{ fmt.eur(dl.estimatedAmount) }}</span>
           </div>
-        </div>
-        <p class="font-mono text-xs text-revolut-muted mt-2 px-1">Importi stimati in base al reddito proiettato</p>
-      </section>
+        </SurfaceCard>
 
-      <section class="fade-up fade-up-5">
-        <h2 class="label-xs mb-3">Mese per mese</h2>
-        <div class="bg-revolut-dark light:bg-white rounded-2xl border border-revolut-border light:border-revolut-light-border">
+        <p class="font-mono text-xs text-revolut-muted mt-2 px-1">Importi stimati in base al reddito proiettato</p>
+      </AppSection>
+
+      <AppSection title="Mese per mese" :delay="5">
+        <SurfaceCard padding="none" divided>
           <div
             v-for="(month, i) in data.months"
             :key="i"
-            class="flex items-center px-5 py-3.5 border-b border-revolut-border light:border-revolut-light-border last:border-0"
+            class="app-annual-month-row"
             :class="{ 'opacity-30': month.gross === 0 && i < data.startMonth }"
           >
-            <span class="font-mono text-xs text-revolut-muted w-10 shrink-0">{{ MONTHS[i] }}</span>
-            <div class="flex-1 px-4">
-              <div class="h-2 bg-revolut-card light:bg-revolut-light-border rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-revolut-green transition-all"
-                  :style="{ width: barWidth(month.gross) }"
-                />
+            <span class="app-annual-month-label">{{ MONTHS[i] }}</span>
+            <div class="app-annual-month-bar-wrap">
+              <div class="app-annual-month-bar-track">
+                <div class="app-annual-month-bar-fill" :style="{ width: barWidth(month.gross) }" />
               </div>
             </div>
-            <div class="text-right shrink-0 min-w-[100px]">
+            <div class="app-annual-month-values">
               <p class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(month.gross, true) }}</p>
               <p class="font-mono text-xs text-revolut-muted">netto {{ fmt.eur(month.net, true) }}</p>
             </div>
           </div>
-        </div>
-      </section>
+        </SurfaceCard>
+      </AppSection>
     </template>
-  </div>
+  </AppPageShell>
 </template>
 
 <script setup lang="ts">

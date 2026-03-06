@@ -1,32 +1,32 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-revolut-black light:bg-revolut-light-bg px-4">
-    <div class="w-full max-w-md">
-      <div class="text-center mb-12">
-        <div class="inline-flex w-16 h-16 rounded-3xl bg-linear-to-br from-revolut-green to-revolut-green-dark items-center justify-center mb-6 shadow-lg shadow-revolut-green/20">
+  <div class="app-login">
+    <div class="app-login__container">
+      <div class="app-login__header">
+        <div class="app-login__brand">
           <UIcon name="lucide:receipt-euro" class="w-8 h-8 text-white" />
         </div>
-        <h1 class="font-display text-3xl font-bold text-revolut-text light:text-revolut-light-text mb-2">Fattura Tracker</h1>
-        <p class="text-revolut-muted text-sm">Monitora il reddito e le tasse da freelance</p>
+        <h1 class="app-login__title">Fattura Tracker</h1>
+        <p class="app-login__subtitle">Monitora il reddito e le tasse da freelance</p>
       </div>
 
-      <div class="bg-revolut-dark light:bg-white rounded-3xl border border-revolut-border light:border-revolut-light-border p-8">
+      <SurfaceCard variant="default" padding="lg" class="rounded-3xl">
         <UButton
           block
           size="lg"
           variant="solid"
           color="primary"
-          class="rounded-2xl font-semibold"
-          @click="signInWithGoogle"
+          class="app-login__button"
           :loading="loading"
+          @click="signInWithGoogle"
         >
           <UIcon name="logos:google-icon" class="w-5 h-5" />
           <span class="ml-2">Accedi con Google</span>
         </UButton>
 
-        <p class="text-xs text-center text-revolut-muted mt-6">
+        <p class="app-login__note">
           Modalità utente singolo. Solo l'email autorizzata può accedere.
         </p>
-      </div>
+      </SurfaceCard>
     </div>
   </div>
 </template>

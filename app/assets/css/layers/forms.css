@@ -1,0 +1,92 @@
+@layer components {
+  .ui-field-label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .ui-field-help {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--color-revolut-muted);
+  }
+
+  .light .ui-field-help {
+    color: var(--color-revolut-light-muted);
+  }
+
+  .ui-form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .ui-form-grid-2--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ui-form-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ui-segment-btn {
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-revolut-border);
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-revolut-muted);
+  }
+
+  .ui-segment-btn:hover {
+    border-color: #3a3a3d;
+  }
+
+  .ui-segment-btn.is-active {
+    background: var(--color-revolut-card);
+    border-color: var(--color-revolut-green);
+    color: var(--color-revolut-green);
+  }
+
+  .ui-pill-toggle {
+    display: flex;
+    background: var(--color-revolut-card);
+    border-radius: 0.5rem;
+    padding: 0.125rem;
+  }
+
+  .light .ui-pill-toggle {
+    background: var(--color-revolut-light-border);
+  }
+
+  .ui-pill-toggle__btn {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-family: "JetBrains Mono", monospace;
+    transition: all 0.2s ease;
+    color: var(--color-revolut-muted);
+  }
+
+  .ui-pill-toggle__btn:hover {
+    color: var(--color-revolut-text);
+  }
+
+  .ui-pill-toggle__btn.is-active {
+    background: var(--color-revolut-dark);
+    color: var(--color-revolut-text);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
+  }
+
+  .light .ui-pill-toggle__btn.is-active {
+    background: #fff;
+    color: var(--color-revolut-light-text);
+  }
+}
+
+@media (min-width: 768px) {
+  .ui-form-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -23,8 +23,8 @@
               v-for="tab in tabs"
               :key="tab.to"
               :to="tab.to"
-              class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-revolut-muted hover:bg-revolut-card hover:text-revolut-text light:hover:bg-gray-100 light:hover:text-revolut-light-text"
-              :class="{ 'bg-revolut-card text-revolut-text light:bg-gray-100 light:text-revolut-light-text': isActive(tab.to) }"
+              class="app-sidebar-link"
+              :class="{ 'is-active': isActive(tab.to) }"
             >
               <UIcon :name="tab.icon" class="w-5 h-5" />
               <span class="font-mono text-xs uppercase tracking-wider">{{ tab.label }}</span>
@@ -45,7 +45,7 @@
 
         <!-- Main Content -->
         <main class="flex-1 md:overflow-y-auto">
-          <div class="max-w-4xl mx-auto pb-nav md:pb-8 md:pt-6">
+          <div class="app-shell-content pb-nav md:pb-8 md:pt-6">
             <NuxtPage />
           </div>
         </main>
@@ -59,8 +59,8 @@
               v-for="tab in tabs"
               :key="tab.to"
               :to="tab.to"
-              class="flex flex-col items-center justify-center py-2 rounded-lg transition-colors"
-              :class="isActive(tab.to) ? 'text-revolut-green' : 'text-revolut-muted'"
+              class="app-mobile-link"
+              :class="{ 'is-active': isActive(tab.to) }"
             >
               <UIcon :name="tab.icon" class="w-6 h-6" />
               <span class="font-mono text-[9px] tracking-wider uppercase mt-1">{{ tab.label }}</span>

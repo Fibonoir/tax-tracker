@@ -1,0 +1,64 @@
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .fade-up {
+    animation: fadeUp 0.4s var(--app-fade-ease) forwards;
+  }
+
+  .fade-up-1 {
+    animation-delay: 0.05s;
+    opacity: 0;
+  }
+
+  .fade-up-2 {
+    animation-delay: 0.1s;
+    opacity: 0;
+  }
+
+  .fade-up-3 {
+    animation-delay: 0.15s;
+    opacity: 0;
+  }
+
+  .fade-up-4 {
+    animation-delay: 0.2s;
+    opacity: 0;
+  }
+
+  .fade-up-5 {
+    animation-delay: 0.25s;
+    opacity: 0;
+  }
+
+  .pb-nav {
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .text-white-muted {
+    color: rgb(255 255 255 / 70%);
+  }
+
+  .text-white-soft {
+    color: rgb(255 255 255 / 80%);
+  }
+
+  .text-white-softer {
+    color: rgb(255 255 255 / 90%);
+  }
+}
+
+@media (min-width: 768px) {
+  .pb-nav {
+    padding-bottom: 2rem;
+  }
+}
