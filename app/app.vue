@@ -10,20 +10,20 @@
           <div class="app-sidebar__top">
             <div class="app-mobile-brand">
               <div class="app-brand-mark">
-                <UIcon name="lucide:receipt-text" class="w-5 h-5" />
+                <span class="app-brand-mark__letter">C</span>
               </div>
 
               <div class="app-sidebar__meta">
-                <span class="app-sidebar__pill">Forfettario · Italia</span>
+                <span class="app-sidebar__pill">Chiaro · Forfettario</span>
                 <div>
-                  <p class="app-brand-title">Fattura Tracker</p>
-                  <p class="app-brand-copy">Quanto resta davvero, senza sorprese.</p>
+                  <p class="app-brand-title">Chiaro</p>
+                  <p class="app-brand-copy">Controllo mensile del denaro davvero disponibile.</p>
                 </div>
               </div>
             </div>
 
             <p class="app-sidebar__note">
-              Incassi, accantonamenti e scadenze nello stesso spazio operativo.
+              L'app per freelance in forfettario che ti dice quanto mettere da parte, quanto ti resta davvero e cosa arriva alle prossime scadenze.
             </p>
           </div>
 
@@ -49,7 +49,7 @@
             </button>
 
             <p class="app-sidebar__note">
-              Anno fiscale {{ currentYear }}. Ogni vista deve aiutarti a decidere cosa puoi usare, cosa accantonare e cosa arriva dopo.
+              Anno fiscale {{ currentYear }}. Ogni vista deve aiutarti a non spendere soldi che non sono davvero tuoi.
             </p>
           </div>
         </aside>
@@ -58,12 +58,12 @@
           <header class="app-mobile-header md:hidden">
             <div class="app-mobile-brand">
               <div class="app-brand-mark">
-                <UIcon name="lucide:receipt-text" class="w-5 h-5" />
+                <span class="app-brand-mark__letter">C</span>
               </div>
 
               <div>
-                <p class="app-brand-title">Fattura Tracker</p>
-                <p class="app-brand-copy">Disponibile, accantonamenti, scadenze</p>
+                <p class="app-brand-title">Chiaro</p>
+                <p class="app-brand-copy">Incassato, accantonamento, disponibile</p>
               </div>
             </div>
 

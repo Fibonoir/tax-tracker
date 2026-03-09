@@ -1,85 +1,85 @@
 <template>
   <AppPageShell>
-    <div class="app-grid-2 items-start">
-      <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
-        <div class="ui-form-stack">
-          <div class="app-period-nav">
-            <button class="app-period-nav__btn" @click="viewYear--; load()">
-              <UIcon name="lucide:chevron-left" class="w-5 h-5" />
-            </button>
-
-            <h1 class="app-period-nav__title">{{ viewYear }}</h1>
-
-            <button class="app-period-nav__btn" @click="viewYear++; load()">
-              <UIcon name="lucide:chevron-right" class="w-5 h-5" />
-            </button>
-          </div>
-
-          <div class="app-stage">
-            <div class="app-stage__header">
-              <p class="app-stage__eyebrow">Quadro annuale</p>
-              <p class="app-stage__metric-label">Disponibile proiettato</p>
-              <p class="app-stage__metric">{{ fmt.eur(data?.projectedTaxes?.annualNet) }}</p>
-              <p class="app-stage__summary">
-                Disponibile proiettato · lordo previsto {{ fmt.eur(data?.projectedAnnualGross) }} · accantona {{ fmt.eur(data?.recommendedMonthlySetAside) }}/mese
-              </p>
-              <p class="app-stage__lead">
-                Usa questa vista per leggere l'anno come un sistema unico: ritmo dei mesi,
-                impatto fiscale complessivo e prossime uscite che non devono sorprenderti.
-              </p>
-            </div>
-
-            <div class="app-stage__signals">
-              <div class="app-stage__signal app-stage__signal--strong">
-                <p class="app-stage__signal-label">Lordo previsto</p>
-                <p class="app-stage__signal-value">{{ fmt.eur(data?.projectedAnnualGross) }}</p>
-                <p class="app-stage__signal-note">Quanto potresti chiudere entro fine anno.</p>
-              </div>
-
-              <div class="app-stage__signal">
-                <p class="app-stage__signal-label">Aliquota effettiva</p>
-                <p class="app-stage__signal-value">{{ fmt.pct(data?.projectedTaxes?.effectiveRate) }}</p>
-                <p class="app-stage__signal-note">Peso stimato tra imposta, INPS e costi distribuiti.</p>
-              </div>
-
-              <div class="app-stage__signal">
-                <p class="app-stage__signal-label">Scadenza piu vicina</p>
-                <p class="app-stage__signal-value">{{ nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna' }}</p>
-                <p class="app-stage__signal-note">
-                  {{ nextDeadline ? nextDeadline.label : 'Nessuna scadenza futura calcolata per l\'anno.' }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </SurfaceCard>
-
-      <SurfaceCard class="fade-up fade-up-2">
-        <div class="ui-form-stack">
-          <div>
-            <p class="label-xs">Quadro annuale</p>
-            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-              Tre segnali da non perdere.
-            </h2>
-            <p class="app-page-copy mt-3">
-              Qui leggi il livello di attivita dell'anno, il peso dei costi distribuiti e il netto
-              che il modello considera realistico.
-            </p>
-          </div>
-
-          <div class="ui-form-stack">
-            <div v-for="row in headlineRows" :key="row.label" class="ui-kv-row">
-              <span class="ui-kv-row__label">{{ row.label }}</span>
-              <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
-            </div>
-          </div>
-        </div>
-      </SurfaceCard>
-    </div>
-
     <StateBlock v-if="loading" type="loading" text="Sto calcolando il quadro annuale..." />
 
     <template v-else-if="data">
+      <div class="app-grid-2 items-start">
+        <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
+          <div class="ui-form-stack">
+            <div class="app-period-nav">
+              <button class="app-period-nav__btn" @click="viewYear--; load()">
+                <UIcon name="lucide:chevron-left" class="w-5 h-5" />
+              </button>
+
+              <h1 class="app-period-nav__title">{{ viewYear }}</h1>
+
+              <button class="app-period-nav__btn" @click="viewYear++; load()">
+                <UIcon name="lucide:chevron-right" class="w-5 h-5" />
+              </button>
+            </div>
+
+            <div class="app-stage app-stage--annual">
+              <div class="app-stage__header">
+                <p class="app-stage__eyebrow">Quadro annuale</p>
+                <p class="app-stage__metric-label">Disponibile proiettato</p>
+                <p class="app-stage__metric">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
+                <p class="app-stage__summary">
+                  Disponibile proiettato · lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · accantona {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
+                </p>
+                <p class="app-stage__lead">
+                  Usa questa vista per leggere l'anno come un sistema unico: ritmo dei mesi,
+                  impatto fiscale complessivo e prossime uscite che non devono sorprenderti.
+                </p>
+              </div>
+
+              <div class="app-stage__signals">
+                <div class="app-stage__signal app-stage__signal--strong">
+                  <p class="app-stage__signal-label">Lordo previsto</p>
+                  <p class="app-stage__signal-value">{{ fmt.eur(data.projectedAnnualGross) }}</p>
+                  <p class="app-stage__signal-note">Quanto potresti chiudere entro fine anno.</p>
+                </div>
+
+                <div class="app-stage__signal">
+                  <p class="app-stage__signal-label">Aliquota effettiva</p>
+                  <p class="app-stage__signal-value">{{ fmt.pct(data.projectedTaxes.effectiveRate) }}</p>
+                  <p class="app-stage__signal-note">Peso stimato tra imposta, INPS e costi distribuiti.</p>
+                </div>
+
+                <div class="app-stage__signal">
+                  <p class="app-stage__signal-label">Scadenza piu vicina</p>
+                  <p class="app-stage__signal-value">{{ nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna' }}</p>
+                  <p class="app-stage__signal-note">
+                    {{ nextDeadline ? nextDeadline.label : 'Nessuna scadenza futura calcolata per l\'anno.' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </SurfaceCard>
+
+        <SurfaceCard class="fade-up fade-up-2">
+          <div class="ui-form-stack">
+            <div>
+              <p class="label-xs">Tre pilastri</p>
+              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+                Controllo del denaro disponibile.
+              </h2>
+              <p class="app-page-copy mt-3">
+                Questo pannello tiene insieme attivita, peso dei costi distribuiti e netto stimato:
+                tutto il resto viene dopo.
+              </p>
+            </div>
+
+            <div class="ui-form-stack">
+              <div v-for="row in headlineRows" :key="row.label" class="ui-kv-row">
+                <span class="ui-kv-row__label">{{ row.label }}</span>
+                <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
+              </div>
+            </div>
+          </div>
+        </SurfaceCard>
+      </div>
+
       <AppSection title="Traiettoria mensile" subtitle="Il grafico mostra il ritmo del lordo e mette in evidenza il mese attuale." :delay="2">
         <SurfaceCard>
           <ChartsBarChart :months="data.months" :highlight="currentMonth" :height="180" />
@@ -219,7 +219,7 @@ const headlineRows = computed(() => {
     {
       label: 'Costi distribuiti',
       value: fmt.eur(data.value.projectedTaxes.paymentsTotal),
-      class: 'text-revolut-red',
+      class: data.value.projectedTaxes.paymentsTotal > 0 ? 'text-revolut-red' : 'text-revolut-muted light:text-revolut-light-muted',
     },
     {
       label: 'Netto proiettato',
@@ -238,10 +238,10 @@ const donutLegend = computed(() => {
   if (!t) return []
 
   return [
-    { label: 'Reddito netto', value: t.annualNet, color: '#1f8f69' },
-    { label: 'IRPEF', value: t.irpef, color: '#c96948' },
-    { label: 'INPS', value: t.inps, color: '#d2a14b' },
-    { label: 'Commercialista', value: t.accountant, color: '#8b9792' },
+    { label: 'Reddito netto', value: t.annualNet, color: 'var(--color-revolut-green)' },
+    { label: 'IRPEF', value: t.irpef, color: 'var(--color-revolut-red)' },
+    { label: 'INPS', value: t.inps, color: 'var(--color-revolut-amber)' },
+    { label: 'Commercialista', value: t.accountant, color: 'var(--color-revolut-blue)' },
   ]
 })
 

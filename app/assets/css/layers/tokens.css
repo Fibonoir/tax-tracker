@@ -1,24 +1,24 @@
 @theme {
-  --color-revolut-black: #081310;
-  --color-revolut-dark: #0f1f1a;
-  --color-revolut-card: #163029;
-  --color-revolut-border: #27493f;
-  --color-revolut-text: #f7f4eb;
-  --color-revolut-muted: #99aba5;
-  --color-revolut-green: #1f8f69;
-  --color-revolut-green-dark: #166348;
-  --color-revolut-red: #c96948;
-  --color-revolut-red-dark: #a65336;
-  --color-revolut-blue: #5f8696;
-  --color-revolut-amber: #d2a14b;
+  --color-revolut-black: oklch(0.18 0.024 172);
+  --color-revolut-dark: oklch(0.22 0.03 172);
+  --color-revolut-card: oklch(0.27 0.037 170);
+  --color-revolut-border: oklch(0.39 0.043 170);
+  --color-revolut-text: oklch(0.95 0.012 95);
+  --color-revolut-muted: oklch(0.75 0.017 170);
+  --color-revolut-green: oklch(0.66 0.118 164);
+  --color-revolut-green-dark: oklch(0.54 0.097 165);
+  --color-revolut-red: oklch(0.67 0.126 40);
+  --color-revolut-red-dark: oklch(0.58 0.112 38);
+  --color-revolut-blue: oklch(0.62 0.073 227);
+  --color-revolut-amber: oklch(0.79 0.109 84);
 
-  --color-revolut-light-bg: #f7f2e8;
-  --color-revolut-light-card: #fffdf8;
-  --color-revolut-light-card-strong: #ffffff;
-  --color-revolut-light-border: #e0d7c5;
-  --color-revolut-light-text: #1f2e29;
-  --color-revolut-light-muted: #6f7d78;
-  --color-revolut-light-tint: #efe4d2;
+  --color-revolut-light-bg: oklch(0.975 0.01 92);
+  --color-revolut-light-card: oklch(0.992 0.006 92);
+  --color-revolut-light-card-strong: oklch(0.998 0.003 92);
+  --color-revolut-light-border: oklch(0.88 0.018 92);
+  --color-revolut-light-text: oklch(0.3 0.028 170);
+  --color-revolut-light-muted: oklch(0.54 0.018 170);
+  --color-revolut-light-tint: oklch(0.94 0.024 92);
 }
 
 :root {
@@ -27,13 +27,17 @@
   --app-radius-md: 1.5rem;
   --app-radius-lg: 2rem;
   --app-radius-xl: 2.5rem;
-  --app-shadow-sm: 0 8px 24px rgb(16 26 22 / 0.06);
-  --app-shadow-md: 0 18px 40px rgb(16 26 22 / 0.1);
-  --app-shadow-lg: 0 30px 70px rgb(16 26 22 / 0.16);
-  --app-gradient-soft: linear-gradient(135deg, rgb(255 255 255 / 0.86), rgb(250 244 232 / 0.9));
+  --app-shadow-sm: 0 10px 24px rgb(13 28 24 / 0.08);
+  --app-shadow-md: 0 22px 44px rgb(13 28 24 / 0.12);
+  --app-shadow-lg: 0 34px 78px rgb(10 24 20 / 0.2);
+  --app-gradient-soft: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(249 244 235 / 0.9));
   --app-gradient-hero:
-    radial-gradient(circle at 12% 16%, rgb(255 255 255 / 0.14), transparent 22rem),
-    radial-gradient(circle at 100% 100%, rgb(210 161 75 / 0.24), transparent 18rem),
-    linear-gradient(145deg, #16362f 0%, #1f8f69 58%, #c79d4a 100%);
+    radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
+    radial-gradient(circle at 100% 100%, rgb(208 169 90 / 0.18), transparent 18rem),
+    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.098 165) 56%, oklch(0.73 0.093 84) 100%);
+  --app-gradient-hero-light:
+    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.55), transparent 16rem),
+    radial-gradient(circle at 100% 100%, rgb(206 174 101 / 0.22), transparent 18rem),
+    linear-gradient(145deg, oklch(0.54 0.075 168) 0%, oklch(0.68 0.082 164) 58%, oklch(0.81 0.075 88) 100%);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

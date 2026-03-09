@@ -6,22 +6,22 @@
           <div class="app-login__header">
             <div class="app-mobile-brand">
               <div class="app-brand-mark">
-                <UIcon name="lucide:receipt-text" class="w-6 h-6" />
+                <span class="app-brand-mark__letter">C</span>
               </div>
 
               <div>
-                <p class="app-brand-title">Fattura Tracker</p>
+                <p class="app-brand-title">Chiaro</p>
                 <p class="app-brand-copy">Per freelance in forfettario</p>
               </div>
             </div>
           </div>
 
           <h1 class="app-login__title">
-            Capisci quanto ti resta davvero.
+            Non spendere soldi che non sono davvero tuoi.
           </h1>
           <p class="app-login__subtitle">
-            Uno spazio operativo per freelance italiani che vogliono vedere disponibile, quota da
-            accantonare e scadenze future senza dover rincorrere fogli esterni.
+            Chiaro e l'app che ti dice, ogni mese, quanto hai incassato, quanto devi mettere da
+            parte e quanto ti resta davvero.
           </p>
 
           <div class="app-grid-3 app-login__feature-grid mt-8">
@@ -32,7 +32,7 @@
                   <span class="ui-stat-card__dot" />
                 </div>
                 <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
-                  Sessioni orarie e fee progetto nello stesso flusso, con i soli campi necessari.
+                  Sessioni orarie e fee progetto nello stesso flusso, con i soli dati utili.
                 </p>
               </div>
             </SurfaceCard>
@@ -52,11 +52,11 @@
             <SurfaceCard variant="soft" class="app-login__feature-card">
               <div class="ui-stat-card">
                 <div class="ui-stat-card__head app-login__feature-head">
-                  <p class="label-xs">Decidi</p>
+                  <p class="label-xs">Prevedi</p>
                   <span class="ui-stat-card__dot" />
                 </div>
                 <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
-                  Trasforma la proiezione fiscale in scelte mensili piu sicure.
+                  Trasforma la proiezione fiscale in scadenze e decisioni mensili piu sicure.
                 </p>
               </div>
             </SurfaceCard>
@@ -68,7 +68,7 @@
             <div>
               <p class="label-xs">Accesso protetto</p>
               <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-                Entra nello spazio operativo.
+                Entra in Chiaro.
               </h2>
               <p class="app-page-copy mt-3">
                 Accesso riservato all'email autorizzata. Google viene usato solo per semplificare
@@ -84,7 +84,7 @@
                 </div>
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Focus</span>
-                  <span class="ui-kv-row__value text-revolut-green">Disponibile reale</span>
+                  <span class="ui-kv-row__value text-revolut-green">Netto reale</span>
                 </div>
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Modalita</span>

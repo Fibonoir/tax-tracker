@@ -10,17 +10,17 @@
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(circle at 10% 15%, rgb(31 143 105 / 0.16), transparent 20rem),
-      radial-gradient(circle at 90% 10%, rgb(210 161 75 / 0.14), transparent 18rem),
+      radial-gradient(circle at 10% 15%, rgb(44 168 124 / 0.16), transparent 20rem),
+      radial-gradient(circle at 90% 10%, rgb(207 173 99 / 0.14), transparent 18rem),
       linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 28rem);
     opacity: 0.9;
   }
 
   .light .app-shell__ambient {
     background:
-      radial-gradient(circle at 10% 15%, rgb(31 143 105 / 0.1), transparent 20rem),
-      radial-gradient(circle at 90% 10%, rgb(210 161 75 / 0.13), transparent 18rem),
-      linear-gradient(180deg, rgb(255 255 255 / 0.6), transparent 28rem);
+      radial-gradient(circle at 10% 15%, rgb(44 168 124 / 0.08), transparent 18rem),
+      radial-gradient(circle at 90% 10%, rgb(207 173 99 / 0.14), transparent 16rem),
+      linear-gradient(180deg, rgb(255 255 255 / 0.82), transparent 24rem);
   }
 
   .app-shell__frame {
@@ -71,6 +71,28 @@
     color: #fff;
     background: var(--app-gradient-hero);
     box-shadow: var(--app-shadow-md);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0.12rem;
+    border-radius: 0.95rem;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    pointer-events: none;
+  }
+
+  .app-brand-mark__letter {
+    position: relative;
+    z-index: 1;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.08em;
+    transform: translateX(-0.04em);
   }
 
   .app-brand-title {
@@ -96,7 +118,7 @@
   }
 
   .app-shell-content {
-    width: min(100%, 76rem);
+    width: min(100%, 78rem);
     margin: 0 auto;
   }
 
@@ -208,12 +230,12 @@
   .light .app-period-nav__btn {
     border-color: var(--color-revolut-light-border);
     color: var(--color-revolut-light-text);
-    background: rgb(255 255 255 / 0.72);
+    background: color-mix(in srgb, white 82%, var(--color-revolut-light-tint));
     box-shadow: var(--app-shadow-sm);
   }
 
   .light .app-period-nav__btn:hover {
-    border-color: rgb(31 46 41 / 0.12);
+    border-color: rgb(56 88 78 / 0.12);
     background: #fff;
   }
 
@@ -239,8 +261,8 @@
 
   .light .app-sidebar-link:hover,
   .light .app-sidebar-link.is-active {
-    background: rgb(255 255 255 / 0.88);
-    border-color: rgb(31 46 41 / 0.08);
+    background: color-mix(in srgb, white 84%, var(--color-revolut-light-tint));
+    border-color: rgb(56 88 78 / 0.1);
     color: var(--color-revolut-light-text);
   }
 
@@ -260,6 +282,11 @@
   .app-mobile-link.is-active {
     color: var(--color-revolut-text);
     background: rgb(255 255 255 / 0.08);
+  }
+
+  .light .app-mobile-link.is-active {
+    color: var(--color-revolut-light-text);
+    background: color-mix(in srgb, white 82%, var(--color-revolut-light-tint));
   }
 
   .app-mobile-link:not(.is-active):hover {
@@ -300,7 +327,7 @@
     letter-spacing: -0.05em;
     color: var(--color-revolut-text);
     margin: 0;
-    max-width: 10ch;
+    max-width: 12ch;
   }
 
   .light .app-login__title {
@@ -425,6 +452,7 @@
   .app-stage {
     display: grid;
     gap: 1rem;
+    align-items: start;
   }
 
   .app-stage__header {
@@ -482,6 +510,9 @@
     line-height: 0.92;
     letter-spacing: -0.06em;
     color: #fff;
+    max-inline-size: min(100%, 8.75ch);
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 
   .app-stage__summary {
@@ -490,12 +521,14 @@
     font-size: 0.82rem;
     line-height: 1.6;
     color: rgb(255 255 255 / 0.88);
+    overflow-wrap: anywhere;
   }
 
   .app-stage__signals {
     display: grid;
     gap: 0.7rem;
     align-content: start;
+    min-width: 0;
   }
 
   .app-stage__signal {
@@ -539,6 +572,19 @@
     font-size: 0.78rem;
     line-height: 1.55;
     color: rgb(255 255 255 / 0.88);
+    overflow-wrap: anywhere;
+  }
+
+  .app-stage--annual {
+    grid-template-columns: 1fr;
+  }
+
+  .app-stage--annual .app-stage__header {
+    max-width: 46rem;
+  }
+
+  .app-stage--annual .app-stage__signals {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .app-home-hero__layout {
@@ -756,11 +802,18 @@
   .app-grid-2 {
     display: grid;
     gap: 1rem;
+    align-items: start;
   }
 
   .app-grid-3 {
     display: grid;
     gap: 1rem;
+    align-items: start;
+  }
+
+  .app-grid-2 > *,
+  .app-grid-3 > * {
+    min-width: 0;
   }
 
   .app-toolbar-button {
@@ -787,13 +840,13 @@
   .light .app-toolbar-button {
     border-color: var(--color-revolut-light-border);
     color: var(--color-revolut-light-text);
-    background: rgb(255 255 255 / 0.75);
+    background: color-mix(in srgb, white 84%, var(--color-revolut-light-tint));
     box-shadow: var(--app-shadow-sm);
   }
 
   .light .app-toolbar-button:hover {
     background: #fff;
-    border-color: rgb(31 46 41 / 0.1);
+    border-color: rgb(56 88 78 / 0.12);
   }
 
   .app-toggle-copy {
@@ -818,8 +871,8 @@
   }
 
   .light .app-mobile-dock {
-    border-color: rgb(31 46 41 / 0.08);
-    background: rgb(255 253 248 / 0.88);
+    border-color: rgb(56 88 78 / 0.1);
+    background: color-mix(in srgb, white 88%, var(--color-revolut-light-bg));
   }
 
   .app-mobile-dock__grid {
@@ -884,8 +937,10 @@
   }
 
   .light .app-sidebar {
-    border-color: rgb(31 46 41 / 0.08);
-    background: linear-gradient(180deg, rgb(255 253 248 / 0.92), rgb(247 241 230 / 0.84));
+    border-color: rgb(56 88 78 / 0.1);
+    background:
+      radial-gradient(circle at top right, rgb(207 173 99 / 0.08), transparent 14rem),
+      linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(247 241 232 / 0.9));
     box-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.6);
   }
 
@@ -920,7 +975,7 @@
 
   .light .app-sidebar__pill {
     color: var(--color-revolut-light-text);
-    background: var(--color-revolut-light-tint);
+    background: color-mix(in srgb, var(--color-revolut-light-tint) 72%, white);
   }
 
   .app-sidebar__nav {
@@ -942,7 +997,7 @@
   }
 
   .app-sidebar__note {
-    max-width: 22ch;
+    max-width: 26ch;
     font-size: 0.82rem;
     line-height: 1.55;
     color: var(--color-revolut-muted);
@@ -978,6 +1033,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(16.75rem, 18.75rem);
     align-items: stretch;
     gap: clamp(1.2rem, 2vw, 2rem);
+  }
+
+  .app-stage--annual {
+    grid-template-columns: 1fr;
   }
 
   .app-home-hero__layout {
@@ -1029,6 +1088,12 @@
   }
 }
 
+@media (max-width: 1100px) {
+  .app-stage--annual .app-stage__signals {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 360px) {
   .app-page-shell {
     padding-top: 0.25rem;
@@ -1047,6 +1112,27 @@
 @media (max-width: 520px) {
   .app-stage {
     grid-template-columns: 1fr;
+  }
+
+  .app-stage--annual .app-stage__signals {
+    grid-template-columns: 1fr;
+  }
+
+  .app-annual-legend-row,
+  .app-deadline-row,
+  .app-annual-month-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .app-annual-month-bar-wrap {
+    width: 100%;
+    padding: 0;
+  }
+
+  .app-annual-month-values {
+    min-width: 0;
   }
 
   .app-home-hero__stats {

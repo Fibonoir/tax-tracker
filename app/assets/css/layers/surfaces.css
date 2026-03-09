@@ -2,7 +2,7 @@
   .ui-surface {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.04), rgb(255 255 255 / 0.02));
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02));
     border: 1px solid var(--color-revolut-border);
     border-radius: var(--app-radius-md);
     min-width: 0;
@@ -11,8 +11,8 @@
   }
 
   .light .ui-surface {
-    background: var(--app-gradient-soft);
-    border-color: rgb(31 46 41 / 0.08);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.95), rgb(249 244 236 / 0.92));
+    border-color: var(--color-revolut-light-border);
   }
 
   .ui-surface--default {
@@ -28,7 +28,7 @@
   }
 
   .light .ui-surface--soft {
-    background: linear-gradient(180deg, #fffaf0, #f5ebda);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(245 238 228 / 0.94));
   }
 
   .ui-surface--gradient {
@@ -48,7 +48,7 @@
   }
 
   .light .ui-surface--gradient {
-    background: var(--app-gradient-hero);
+    background: var(--app-gradient-hero-light);
     border-color: transparent;
   }
 
@@ -139,8 +139,8 @@
   }
 
   .light .ui-state-block {
-    background: rgb(255 255 255 / 0.5);
-    border-color: rgb(31 46 41 / 0.08);
+    background: color-mix(in srgb, white 74%, var(--color-revolut-light-tint));
+    border-color: var(--color-revolut-light-border);
   }
 
   .ui-state-block__text {
@@ -159,8 +159,8 @@
   }
 
   .ui-kv-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
@@ -180,6 +180,8 @@
     color: var(--color-revolut-muted);
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .ui-kv-row__value {
@@ -187,12 +189,14 @@
     font-size: 0.9rem;
     font-weight: 600;
     text-align: right;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .ui-payment-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
     gap: 1rem;
     padding: 1rem 1.25rem;
   }
@@ -212,6 +216,7 @@
     font-size: 0.78rem;
     line-height: 1.55;
     color: var(--color-revolut-muted);
+    overflow-wrap: anywhere;
   }
 
   .light .ui-payment-row__meta {
@@ -513,6 +518,22 @@
     text-align: left;
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 520px) {
+  .ui-kv-row,
+  .ui-payment-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ui-kv-row__value,
+  .ui-payment-row {
+    text-align: left;
+  }
+
+  .ui-payment-row {
+    justify-items: start;
   }
 }
 

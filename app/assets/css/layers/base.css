@@ -15,18 +15,18 @@
     background-color: var(--color-revolut-black);
     color: var(--color-revolut-text);
     background-image:
-      radial-gradient(circle at top left, rgb(31 143 105 / 0.16), transparent 28rem),
-      radial-gradient(circle at top right, rgb(210 161 75 / 0.14), transparent 24rem),
-      linear-gradient(180deg, rgb(255 255 255 / 0.02), transparent 30%);
+      radial-gradient(circle at top left, rgb(44 168 124 / 0.18), transparent 28rem),
+      radial-gradient(circle at top right, rgb(207 173 99 / 0.14), transparent 24rem),
+      linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 30%);
   }
 
   body.light {
     background-color: var(--color-revolut-light-bg);
     color: var(--color-revolut-light-text);
     background-image:
-      radial-gradient(circle at top left, rgb(31 143 105 / 0.12), transparent 26rem),
-      radial-gradient(circle at top right, rgb(210 161 75 / 0.16), transparent 22rem),
-      linear-gradient(180deg, #fffdf8, var(--color-revolut-light-bg) 28rem);
+      radial-gradient(circle at top left, rgb(44 168 124 / 0.12), transparent 26rem),
+      radial-gradient(circle at top right, rgb(207 173 99 / 0.16), transparent 22rem),
+      linear-gradient(180deg, color-mix(in srgb, white 92%, var(--color-revolut-light-bg)) 0%, var(--color-revolut-light-bg) 28rem);
   }
 
   a {
@@ -52,7 +52,7 @@
   }
 
   ::selection {
-    background: rgb(31 143 105 / 0.18);
+    background: rgb(44 168 124 / 0.2);
   }
 }
 

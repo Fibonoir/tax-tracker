@@ -22,6 +22,13 @@ export default defineNuxtConfig({
   
   app: {
     head: {
+      title: 'Chiaro',
+      meta: [
+        {
+          name: 'description',
+          content: 'Chiaro e l\'app per freelance in forfettario che ti dice quanto mettere da parte, quanto ti resta davvero e cosa pagherai alle prossime scadenze.',
+        },
+      ],
       link: [
         {
           rel: 'preconnect',
