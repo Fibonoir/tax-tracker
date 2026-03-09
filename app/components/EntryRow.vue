@@ -14,7 +14,7 @@
         <p class="ui-entry-date">{{ fmt.date(entry.date) }}</p>
       </div>
 
-      <p class="ui-entry-description">{{ entry.description || 'Nessuna descrizione' }}</p>
+      <p class="ui-entry-description">{{ entry.description || 'Voce senza nota' }}</p>
       <p class="ui-entry-note">{{ detailText }}</p>
     </div>
 
@@ -61,6 +61,6 @@ const detailText = computed(() => {
     return `${fmt.hours(props.entry.hours || 0)} · ${fmt.eur(props.hourlyRate || 30)}/h`
   }
 
-  return 'Importo fisso per progetto'
+  return 'Fee progetto concordata'
 })
 </script>

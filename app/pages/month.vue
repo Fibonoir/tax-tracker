@@ -17,30 +17,37 @@
             </button>
           </div>
 
-          <div class="app-home-hero__layout">
-            <div class="app-home-hero__main">
-              <p class="label-xs text-white-muted">Riepilogo operativo</p>
-              <p class="num-display text-white mt-3">{{ fmt.eur(summary.gross) }}</p>
-              <p class="text-sm leading-7 text-white-soft app-measure mt-4">
-                Vista compatta del mese per capire in pochi secondi ritmo, margine e distribuzione
-                tra lavoro orario e fee progetto.
+          <div class="app-stage">
+            <div class="app-stage__header">
+              <p class="app-stage__eyebrow">Quadro del mese</p>
+              <p class="app-stage__metric-label">Disponibile stimato</p>
+              <p class="app-stage__metric">{{ fmt.eur(summary.net) }}</p>
+              <p class="app-stage__summary">
+                Disponibile stimato · incassato {{ fmt.eur(summary.gross) }} · accantona {{ fmt.eur(summary.provision) }}
+              </p>
+              <p class="app-stage__lead">
+                Questa vista comprime il mese in una lettura sola: quanto entra, quanto esce dal
+                spendibile e come si distribuisce il lavoro tra ore e fee progetto.
               </p>
             </div>
 
-            <div class="app-home-hero__stats">
-              <div class="app-home-hero__chip">
-                <p class="label-xs text-white-muted">Netto stimato</p>
-                <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ fmt.eur(summary.net) }}</p>
+            <div class="app-stage__signals">
+              <div class="app-stage__signal app-stage__signal--strong">
+                <p class="app-stage__signal-label">Incassato</p>
+                <p class="app-stage__signal-value">{{ fmt.eur(summary.gross) }}</p>
+                <p class="app-stage__signal-note">Lordo del mese osservato.</p>
               </div>
 
-              <div class="app-home-hero__chip app-home-hero__chip--soft">
-                <p class="label-xs text-white-muted">Ore</p>
-                <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ fmt.hours(summary.totalHours) }}</p>
+              <div class="app-stage__signal">
+                <p class="app-stage__signal-label">Da accantonare</p>
+                <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
+                <p class="app-stage__signal-note">Quota fiscale distribuita sul mese.</p>
               </div>
 
-              <div class="app-home-hero__chip app-home-hero__chip--soft">
-                <p class="label-xs text-white-muted">Registrazioni</p>
-                <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ summary.entryCount }}</p>
+              <div class="app-stage__signal">
+                <p class="app-stage__signal-label">Registrazioni</p>
+                <p class="app-stage__signal-value">{{ summary.entryCount }}</p>
+                <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} di lavoro gia caricato.</p>
               </div>
             </div>
           </div>
@@ -48,8 +55,9 @@
       </SurfaceCard>
 
       <div class="app-month-stat-grid fade-up fade-up-2">
-        <StatCard label="Orario" :value="fmt.eur(summary.hourlyGross)" sub="Fatturato a tempo" />
-        <StatCard label="Progetto" :value="fmt.eur(summary.projectGross)" sub="Fee concordate" />
+        <StatCard label="Lordo totale" :value="fmt.eur(summary.gross)" sub="Somma di tutte le registrazioni del mese" />
+        <StatCard label="A ore" :value="fmt.eur(summary.hourlyGross)" sub="Fatturato derivato da sessioni orarie" />
+        <StatCard label="A progetto" :value="fmt.eur(summary.projectGross)" sub="Fee concordate nel mese" />
         <StatCard
           label="Accantonamento"
           :value="fmt.eur(summary.provision)"
@@ -77,7 +85,7 @@
             <div>
               <p class="label-xs">Mix del mese</p>
               <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-                Capire da dove arriva il margine.
+                Da dove arriva l'incasso.
               </h2>
             </div>
 
@@ -91,7 +99,7 @@
         </SurfaceCard>
       </div>
 
-      <AppSection title="Accantonamenti mensili" subtitle="Ripartizione media delle voci fiscali sul mese osservato." :delay="3">
+      <AppSection title="Composizione accantonamento" subtitle="Come si distribuisce la quota fiscale e previdenziale del mese." :delay="3">
         <SurfaceCard padding="none" divided>
           <div v-for="row in taxRows" :key="row.label" class="ui-kv-row">
             <span class="ui-kv-row__label">{{ row.label }}</span>
@@ -100,9 +108,9 @@
         </SurfaceCard>
       </AppSection>
 
-      <AppSection title="Registrazioni del mese" subtitle="Apri una voce per vedere il dettaglio completo." :delay="4">
+      <AppSection title="Registrazioni del mese" subtitle="Apri una voce per controllare origine, importo e dettaglio del lavoro." :delay="4">
         <SurfaceCard v-if="entries.length === 0" padding="md">
-          <StateBlock type="empty" text="Nessuna registrazione per questo mese. Torna alla dashboard per aggiungere nuove voci." />
+          <StateBlock type="empty" text="Questo mese e ancora vuoto. Torna in Home per registrare il primo incasso." />
         </SurfaceCard>
 
         <SurfaceCard v-else padding="none">

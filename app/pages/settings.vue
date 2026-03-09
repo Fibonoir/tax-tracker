@@ -2,32 +2,33 @@
   <AppPageShell>
     <div class="app-grid-2 items-start">
       <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
-        <div class="ui-form-stack">
-          <div>
-            <p class="label-xs text-white-muted">Configurazione</p>
-            <h1 class="font-display text-[clamp(2.35rem,5vw,4rem)] leading-[0.92] tracking-[-0.06em] text-white mt-3">
-              Imposta il modello fiscale una volta, usa il prodotto ogni giorno.
-            </h1>
-            <p class="text-sm leading-7 text-white-soft app-measure mt-4">
-              Tariffe, coefficienti, INPS e costi ricorrenti sono qui per alimentare le stime su
-              tutta l'app senza rincorrere formule esterne.
+        <div class="app-stage">
+          <div class="app-stage__header">
+            <p class="app-stage__eyebrow">Modello fiscale</p>
+            <h1 class="app-stage__title">Questo modello governa tutte le stime.</h1>
+            <p class="app-stage__lead">
+              Tariffe, coefficiente, aliquota e contributi non sono impostazioni secondarie:
+              determinano disponibile, accantonamenti e scadenze in tutta l'app.
             </p>
           </div>
 
-          <div class="app-home-hero__stats">
-            <div class="app-home-hero__chip">
-              <p class="label-xs text-white-muted">Tariffa oraria</p>
-              <p class="font-display text-2xl font-bold text-white mt-2">{{ fmt.eur(form.hourlyRate) }}</p>
+          <div class="app-stage__signals">
+            <div class="app-stage__signal app-stage__signal--strong">
+              <p class="app-stage__signal-label">Tariffa oraria</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(form.hourlyRate) }}</p>
+              <p class="app-stage__signal-note">Base di calcolo per sessioni, call e giornate a ore.</p>
             </div>
 
-            <div class="app-home-hero__chip app-home-hero__chip--soft">
-              <p class="label-xs text-white-muted">Aliquota imposta</p>
-              <p class="font-display text-2xl font-bold text-white mt-2">{{ fmt.num(form.irpefRate) }}%</p>
+            <div class="app-stage__signal">
+              <p class="app-stage__signal-label">Imposta sostitutiva</p>
+              <p class="app-stage__signal-value">{{ fmt.num(form.irpefRate) }}%</p>
+              <p class="app-stage__signal-note">Di solito 5% o 15% a seconda del regime applicato.</p>
             </div>
 
-            <div class="app-home-hero__chip app-home-hero__chip--soft">
-              <p class="label-xs text-white-muted">INPS</p>
-              <p class="font-display text-xl font-bold text-white mt-2">{{ inpsTypeLabel }}</p>
+            <div class="app-stage__signal">
+              <p class="app-stage__signal-label">Regime INPS</p>
+              <p class="app-stage__signal-value">{{ inpsTypeLabel }}</p>
+              <p class="app-stage__signal-note">Definisce se il carico e solo percentuale o include quote fisse.</p>
             </div>
           </div>
         </div>
@@ -36,10 +37,14 @@
       <SurfaceCard class="fade-up fade-up-2">
         <div class="ui-form-stack">
           <div>
-            <p class="label-xs">Account</p>
+            <p class="label-xs">Profilo operativo</p>
             <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-              Area personale e presidio operativo.
+              Chi usa questo modello.
             </h2>
+            <p class="app-page-copy mt-3">
+              Accesso personale, anno fiscale attivo e conteggio delle uscite che entrano nelle
+              stime annuali.
+            </p>
           </div>
 
           <div class="app-settings-account">
@@ -66,7 +71,7 @@
     <StateBlock v-if="loading" type="loading" text="Sto caricando impostazioni e pagamenti..." />
 
     <template v-else>
-      <AppSection title="Modello fiscale" subtitle="Parametri che alimentano le stime del dashboard, del mese e dell'anno." :delay="2">
+      <AppSection title="Parametri base" subtitle="Leva principale per dashboard, mese, anno e quota da accantonare." :delay="2">
         <SurfaceCard>
           <div class="app-settings-stack">
             <div class="ui-form-grid-2">
@@ -76,9 +81,9 @@
               </div>
 
               <div>
-                <label class="label-xs ui-field-label">Coefficiente di redditività</label>
+                <label class="label-xs ui-field-label">Coefficiente di redditivita</label>
                 <UInput v-model="form.coefficiente" type="number" step="0.01" min="0" max="1" :ui="fieldUi" />
-                <p class="ui-field-help">0.67 per ATECO 62 in regime forfettario.</p>
+                <p class="ui-field-help">Usa il valore previsto per il tuo codice ATECO, ad esempio 0.67 per molte attivita digitali.</p>
               </div>
 
               <div>
@@ -94,6 +99,13 @@
             </div>
 
             <div class="app-settings-divider">
+              <div>
+                <p class="label-xs">Contributi</p>
+                <p class="app-page-copy mt-3">
+                  Seleziona il tipo di INPS corretto e completa solo i campi che influenzano il tuo caso.
+                </p>
+              </div>
+
               <label class="label-xs ui-field-label">Tipo INPS</label>
 
               <div class="ui-form-grid-2 ui-form-grid-2--compact app-settings-mb">
@@ -104,7 +116,7 @@
                   @click="form.inpsType = 'GESTIONE_SEPARATA'"
                 >
                   <span>Gestione separata</span>
-                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi percentuali sul reddito imponibile.</span>
+                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi percentuali calcolati sul reddito imponibile.</span>
                 </button>
 
                 <button
@@ -114,7 +126,7 @@
                   @click="form.inpsType = 'ARTIGIANI'"
                 >
                   <span>Artigiani</span>
-                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi fissi più eventuale eccedenza.</span>
+                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi fissi piu eventuale quota in eccedenza.</span>
                 </button>
               </div>
 
@@ -148,17 +160,17 @@
             </div>
 
             <UButton block color="primary" class="ui-action-button" :loading="saving" @click="saveSettings">
-              Salva configurazione
+              Salva modello fiscale
             </UButton>
           </div>
         </SurfaceCard>
       </AppSection>
 
-      <div class="app-grid-2">
-        <AppSection title="Pagamenti ricorrenti" subtitle="Spese distribuite automaticamente nelle stime annuali." :delay="3">
+      <div class="app-grid-2 items-start">
+        <AppSection title="Pagamenti ricorrenti" subtitle="Costi che il prodotto spalma automaticamente sulle stime annuali." :delay="3">
           <template #header-right>
             <button type="button" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]" @click="showRecurringForm = !showRecurringForm">
-              {{ showRecurringForm ? 'Chiudi' : 'Nuovo' }}
+              {{ showRecurringForm ? 'Chiudi' : 'Nuovo costo' }}
             </button>
           </template>
 
@@ -192,20 +204,20 @@
                 :disabled="!recurringForm.name || !recurringForm.amount"
                 @click="addRecurringPayment"
               >
-                Aggiungi pagamento ricorrente
+                Aggiungi costo ricorrente
               </UButton>
             </div>
           </SurfaceCard>
 
           <SurfaceCard v-if="recurringPayments.length === 0" padding="md">
-            <StateBlock type="empty" text="Nessun pagamento ricorrente. Aggiungi qui software, tools o costi fissi annuali." />
+            <StateBlock type="empty" text="Nessun costo ricorrente. Inserisci software, abbonamenti o altre uscite che si ripetono." />
           </SurfaceCard>
 
           <SurfaceCard v-else padding="none" divided>
             <div v-for="payment in recurringPayments" :key="payment.id" class="ui-payment-row">
               <div class="flex-1">
                 <p class="ui-payment-row__name">{{ payment.name }}</p>
-                <p class="ui-payment-row__meta">{{ payment.frequency }} · {{ fmt.eur(payment.amount) }}</p>
+                <p class="ui-payment-row__meta">{{ formatFrequency(payment.frequency) }} · {{ fmt.eur(payment.amount) }}</p>
               </div>
               <UButton size="sm" variant="ghost" color="red" class="ui-action-button--ghost" @click="deleteRecurringPayment(payment.id)">
                 <UIcon name="lucide:trash-2" class="w-4 h-4" />
@@ -214,10 +226,10 @@
           </SurfaceCard>
         </AppSection>
 
-        <AppSection :title="`Pagamenti una tantum (${currentYear})`" subtitle="Uscite straordinarie considerate solo nell'anno selezionato." :delay="4">
+        <AppSection :title="`Pagamenti una tantum (${currentYear})`" subtitle="Uscite straordinarie che pesano solo sull'anno selezionato." :delay="4">
           <template #header-right>
             <button type="button" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]" @click="showOnetimeForm = !showOnetimeForm">
-              {{ showOnetimeForm ? 'Chiudi' : 'Nuovo' }}
+              {{ showOnetimeForm ? 'Chiudi' : 'Nuova uscita' }}
             </button>
           </template>
 
@@ -247,13 +259,13 @@
                 :disabled="!onetimeForm.name || !onetimeForm.amount || !onetimeForm.date"
                 @click="addOnetimePayment"
               >
-                Aggiungi pagamento
+                Aggiungi uscita
               </UButton>
             </div>
           </SurfaceCard>
 
           <SurfaceCard v-if="onetimePayments.length === 0" padding="md">
-            <StateBlock type="empty" text="Nessun pagamento una tantum registrato per quest'anno." />
+            <StateBlock type="empty" text="Nessuna uscita straordinaria registrata per quest'anno." />
           </SurfaceCard>
 
           <SurfaceCard v-else padding="none" divided>
@@ -318,21 +330,28 @@ const inpsTypeLabel = computed(() =>
 
 const profileRows = computed(() => [
   {
-    label: 'Costo commercialista',
-    value: fmt.eur(form.accountantAnnual),
+    label: 'Anno fiscale',
+    value: String(currentYear),
     class: 'text-revolut-text light:text-revolut-light-text',
   },
   {
-    label: 'Pagamenti ricorrenti',
+    label: 'Costi ricorrenti',
     value: String(recurringPayments.value.length),
     class: 'text-revolut-blue',
   },
   {
-    label: 'Uscite one-shot',
+    label: 'Uscite straordinarie',
     value: String(onetimePayments.value.length),
     class: 'text-revolut-green',
   },
 ])
+
+function formatFrequency(frequency: string) {
+  if (frequency === 'MONTHLY') return 'Mensile'
+  if (frequency === 'QUARTERLY') return 'Trimestrale'
+  if (frequency === 'ANNUAL') return 'Annuale'
+  return frequency
+}
 
 async function loadData() {
   loading.value = true
@@ -377,9 +396,9 @@ async function saveSettings() {
         accountantAnnual: parseFloat(form.accountantAnnual as any),
       },
     })
-    toast.add({ title: 'Impostazioni salvate', color: 'success' })
+    toast.add({ title: 'Modello fiscale salvato', color: 'success' })
   } catch {
-    toast.add({ title: 'Errore nel salvataggio', color: 'error' })
+    toast.add({ title: 'Non sono riuscito a salvare il modello', color: 'error' })
   } finally {
     saving.value = false
   }

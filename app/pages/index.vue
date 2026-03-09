@@ -2,43 +2,41 @@
   <AppPageShell>
     <div class="app-grid-2 items-start">
       <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="order-2 fade-up fade-up-1 md:order-1">
-        <div class="app-home-hero__layout">
-          <div class="app-home-hero__main">
-            <p class="label-xs text-white-muted">Cabina di controllo</p>
-            <h1 class="font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.92] tracking-[-0.06em] text-white mt-3">
-              {{ monthLabel }}
-            </h1>
-            <p class="text-sm leading-7 text-white-soft app-measure mt-4">
-              Registra il lavoro appena finito, controlla il margine netto e tieni il carico fiscale
-              sempre visibile senza uscire dal flusso.
+        <div class="app-stage">
+          <div class="app-stage__header">
+            <p class="app-stage__eyebrow">Decisione del mese</p>
+            <h1 class="app-stage__title">{{ monthLabel }}</h1>
+            <p class="app-stage__lead">
+              Registra il lavoro appena chiuso e controlla subito quanto puoi considerare disponibile,
+              quanto va accantonato e quale ritmo stai tenendo.
             </p>
 
-            <div class="mt-6">
-              <p class="label-xs text-white-muted">Lordo del mese</p>
-              <p class="num-hero text-white mt-2">{{ fmt.eur(monthData.gross) }}</p>
-              <p class="font-mono text-sm text-white-soft mt-3">
-                Netto stimato {{ fmt.eur(monthData.net) }} · accantona {{ fmt.eur(monthData.provision) }}
+            <div class="app-stage__metric-block">
+              <p class="app-stage__metric-label">Disponibile stimato</p>
+              <p class="app-stage__metric">{{ fmt.eur(monthData.net) }}</p>
+              <p class="app-stage__summary">
+                Incassato {{ fmt.eur(monthData.gross) }} · accantona {{ fmt.eur(monthData.provision) }}
               </p>
             </div>
           </div>
 
-          <div class="app-home-hero__stats">
-            <div class="app-home-hero__chip">
-              <p class="label-xs text-white-muted">Registrazioni</p>
-              <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ monthData.entryCount }}</p>
-              <p class="text-xs text-white-soft mt-1">Movimenti già contabilizzati nel mese</p>
+          <div class="app-stage__signals">
+            <div class="app-stage__signal app-stage__signal--strong">
+              <p class="app-stage__signal-label">Incassato nel mese</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(monthData.gross) }}</p>
+              <p class="app-stage__signal-note">Il lordo già registrato nelle voci correnti.</p>
             </div>
 
-            <div class="app-home-hero__chip app-home-hero__chip--soft">
-              <p class="label-xs text-white-muted">Ore lavorate</p>
-              <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ fmt.hours(monthData.totalHours) }}</p>
-              <p class="text-xs text-white-soft mt-1">Tempo trasformato in fatturato</p>
+            <div class="app-stage__signal">
+              <p class="app-stage__signal-label">Da accantonare</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(monthData.provision) }}</p>
+              <p class="app-stage__signal-note">Quota stimata tra imposte, contributi e costi distribuiti.</p>
             </div>
 
-            <div class="app-home-hero__chip app-home-hero__chip--soft">
-              <p class="label-xs text-white-muted">Ritmo medio</p>
-              <p class="font-display text-2xl font-bold text-white leading-tight mt-2">{{ fmt.eur(monthData.runningAvgMonthly) }}</p>
-              <p class="text-xs text-white-soft mt-1">Media mese da inizio operatività</p>
+            <div class="app-stage__signal">
+              <p class="app-stage__signal-label">Ritmo medio</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(monthData.runningAvgMonthly) }}</p>
+              <p class="app-stage__signal-note">Media mensile da inizio operativita.</p>
             </div>
           </div>
         </div>
@@ -47,13 +45,13 @@
       <SurfaceCard padding="lg" class="order-1 fade-up fade-up-2 md:order-2">
         <div class="ui-form-stack">
           <div>
-            <p class="label-xs">Nuova registrazione</p>
+            <p class="label-xs">Nuovo incasso</p>
             <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-              Aggiungi un incasso senza attrito.
+              Registra solo cio che serve.
             </h2>
             <p class="app-page-copy mt-3">
-              Scegli il tipo di lavoro, inserisci i dati minimi e verifica subito quanto entra
-              davvero nel quadro del mese.
+              Tipo di lavoro, data e importo. Appena salvi, il quadro del mese si aggiorna con
+              disponibile, accantonamento e proiezione.
             </p>
           </div>
 
@@ -114,17 +112,23 @@
           </div>
 
           <SurfaceCard variant="soft" padding="md">
-            <div class="app-grid-2">
+            <div class="app-grid-3">
               <div>
-                <p class="label-xs">Anteprima lordo</p>
+                <p class="label-xs">Lordo</p>
                 <p class="num-lg text-revolut-text light:text-revolut-light-text mt-3">{{ fmt.eur(previewGross) }}</p>
                 <p class="ui-field-help">Calcolato con la tariffa attuale o l'importo progetto inserito.</p>
               </div>
 
               <div>
-                <p class="label-xs">Netto stimato</p>
+                <p class="label-xs">Disponibile</p>
                 <p class="num-lg text-revolut-green mt-3">{{ fmt.eur(previewNet) }}</p>
                 <p class="ui-field-help">Stima rapida basata sull'aliquota effettiva annuale in corso.</p>
+              </div>
+
+              <div>
+                <p class="label-xs">Accantonamento</p>
+                <p class="num-lg text-revolut-red mt-3">{{ fmt.eur(previewProvision) }}</p>
+                <p class="ui-field-help">Quota da tenere fuori dal denaro spendibile del mese.</p>
               </div>
             </div>
           </SurfaceCard>
@@ -137,7 +141,7 @@
             :loading="saving"
             @click="submit"
           >
-            Registra ora
+            Salva incasso
           </UButton>
         </div>
       </SurfaceCard>
@@ -169,7 +173,7 @@
           <div>
             <p class="label-xs">Focus del momento</p>
             <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-              Cosa tenere d'occhio adesso.
+              Le tre cose da guardare subito.
             </h2>
           </div>
 
@@ -185,7 +189,7 @@
 
     <AppSection
       title="Attività recente"
-      subtitle="Apri una registrazione per controllare i dettagli o rimuoverla dal mese corrente."
+      subtitle="Apri una registrazione per controllare il dettaglio o correggere il mese corrente."
       :delay="3"
     >
       <template #header-right>
@@ -304,6 +308,8 @@ const previewNet = computed(() => {
   return previewGross.value * (1 - effectiveRate.value / 100)
 })
 
+const previewProvision = computed(() => Math.max(previewGross.value - previewNet.value, 0))
+
 const averageEntryGross = computed(() => {
   if (!monthData.value?.entryCount) return 0
   return monthData.value.gross / monthData.value.entryCount
@@ -319,15 +325,14 @@ const homeStats = computed(() => {
       sub: `${monthData.value.entryCount} voci nel mese`,
     },
     {
-      label: 'Media per registrazione',
+      label: 'Media per voce',
       value: fmt.eur(averageEntryGross.value),
-      sub: 'Valore medio delle voci già inserite',
+      sub: 'Quanto vale in media ogni registrazione salvata',
     },
     {
-      label: 'Accantonamento tasse',
-      value: fmt.eur(monthData.value.provision),
-      sub: `Aliquota stimata ${fmt.pct(effectiveRate.value)}`,
-      valueClass: 'text-revolut-red',
+      label: 'Aliquota stimata',
+      value: fmt.pct(effectiveRate.value),
+      sub: 'Quota effettiva tra imposte, contributi e costi distribuiti',
     },
   ]
 })
@@ -337,19 +342,19 @@ const focusRows = computed(() => {
 
   return [
     {
-      label: 'Aliquota effettiva',
-      value: fmt.pct(effectiveRate.value),
-      class: 'text-revolut-text light:text-revolut-light-text',
+      label: 'Puoi considerare disponibile',
+      value: fmt.eur(monthData.value.net),
+      class: 'text-revolut-green',
     },
     {
-      label: 'Spese distribuite / mese',
-      value: fmt.eur(annualData.value.monthlyPayments),
+      label: 'Da spostare per tasse',
+      value: fmt.eur(monthData.value.provision),
       class: 'text-revolut-red',
     },
     {
-      label: 'Proiezione annuale corrente',
+      label: 'Proiezione fine anno',
       value: fmt.eur(monthData.value.runningProjectedAnnual),
-      class: 'text-revolut-green',
+      class: 'text-revolut-text light:text-revolut-light-text',
     },
   ]
 })

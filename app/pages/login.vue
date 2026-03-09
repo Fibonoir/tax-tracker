@@ -1,7 +1,7 @@
 <template>
   <div class="app-login">
     <div class="app-login__container">
-      <div class="app-grid-2 items-start">
+      <div class="app-grid-2 app-login__layout">
         <div class="fade-up fade-up-1">
           <div class="app-login__header">
             <div class="app-mobile-brand">
@@ -11,84 +11,84 @@
 
               <div>
                 <p class="app-brand-title">Fattura Tracker</p>
-                <p class="app-brand-copy">Freelance finance cockpit</p>
+                <p class="app-brand-copy">Per freelance in forfettario</p>
               </div>
             </div>
           </div>
 
           <h1 class="app-login__title">
-            Entrate, imposte e decisioni nello stesso spazio.
+            Capisci quanto ti resta davvero.
           </h1>
           <p class="app-login__subtitle">
-            Progettato per freelance italiani che vogliono una vista pulita sul lavoro registrato,
-            sul netto reale e sulle scadenze fiscali che arrivano dopo.
+            Uno spazio operativo per freelance italiani che vogliono vedere disponibile, quota da
+            accantonare e scadenze future senza dover rincorrere fogli esterni.
           </p>
 
-          <div class="app-grid-3 mt-8">
-            <SurfaceCard variant="soft">
+          <div class="app-grid-3 app-login__feature-grid mt-8">
+            <SurfaceCard variant="soft" class="app-login__feature-card">
               <div class="ui-stat-card">
-                <div class="ui-stat-card__head">
-                  <p class="label-xs">Riduci attrito</p>
+                <div class="ui-stat-card__head app-login__feature-head">
+                  <p class="label-xs">Registra</p>
                   <span class="ui-stat-card__dot" />
                 </div>
                 <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
-                  Registra sessioni orarie e fee progetto in un solo composer.
+                  Sessioni orarie e fee progetto nello stesso flusso, con i soli campi necessari.
                 </p>
               </div>
             </SurfaceCard>
 
-            <SurfaceCard variant="soft">
+            <SurfaceCard variant="soft" class="app-login__feature-card">
               <div class="ui-stat-card">
-                <div class="ui-stat-card__head">
-                  <p class="label-xs">Vedi il netto</p>
+                <div class="ui-stat-card__head app-login__feature-head">
+                  <p class="label-xs">Accantona</p>
                   <span class="ui-stat-card__dot" />
                 </div>
                 <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
-                  Mantieni sempre visibile la distanza tra lordo, imposte e tasca.
+                  Tieni visibile la distanza tra incassato, disponibile e quota da spostare.
                 </p>
               </div>
             </SurfaceCard>
 
-            <SurfaceCard variant="soft">
+            <SurfaceCard variant="soft" class="app-login__feature-card">
               <div class="ui-stat-card">
-                <div class="ui-stat-card__head">
-                  <p class="label-xs">Pianifica l'anno</p>
+                <div class="ui-stat-card__head app-login__feature-head">
+                  <p class="label-xs">Decidi</p>
                   <span class="ui-stat-card__dot" />
                 </div>
                 <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
-                  Trasforma la proiezione fiscale in un calendario di decisioni.
+                  Trasforma la proiezione fiscale in scelte mensili piu sicure.
                 </p>
               </div>
             </SurfaceCard>
           </div>
         </div>
 
-        <SurfaceCard padding="lg" class="rounded-[2rem] fade-up fade-up-2">
-          <div class="ui-form-stack">
+        <SurfaceCard padding="lg" class="app-login__panel rounded-[2rem] fade-up fade-up-2">
+          <div class="ui-form-stack app-login__panel-stack">
             <div>
               <p class="label-xs">Accesso protetto</p>
               <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-                Entra nel tuo cockpit fiscale.
+                Entra nello spazio operativo.
               </h2>
               <p class="app-page-copy mt-3">
-                Accesso riservato all'email autorizzata. La sessione usa Google per semplificare
-                l'ingresso e mantenere il prodotto a uso singolo.
+                Accesso riservato all'email autorizzata. Google viene usato solo per semplificare
+                l'ingresso e mantenere il prodotto in un perimetro personale.
               </p>
             </div>
 
             <SurfaceCard variant="soft" padding="md">
               <div class="ui-form-stack">
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Ambito</span>
-                  <span class="ui-kv-row__value text-revolut-text light:text-revolut-light-text">Freelance IT</span>
+                  <span class="ui-kv-row__label">Target</span>
+                  <span class="ui-kv-row__value text-revolut-text light:text-revolut-light-text">Freelance in forfettario</span>
                 </div>
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Focus</span>
-                  <span class="ui-kv-row__value text-revolut-green">Reddito netto</span>
+                  <span class="ui-kv-row__value text-revolut-green">Disponibile reale</span>
                 </div>
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Modalità</span>
-                  <span class="ui-kv-row__value text-revolut-blue">Single user</span>
+                  <span class="ui-kv-row__label">Modalita</span>
+                  <span class="ui-kv-row__value text-revolut-blue">Uso personale</span>
                 </div>
               </div>
             </SurfaceCard>
@@ -96,18 +96,20 @@
             <UButton
               block
               size="lg"
-              color="primary"
-              class="app-login__button ui-action-button"
+              color="neutral"
+              variant="soft"
+              class="app-login__button app-login__button--google ui-action-button"
               :loading="loading"
               @click="signInWithGoogle"
             >
-              <UIcon name="logos:google-icon" class="w-5 h-5" />
+              <span class="app-login__button-icon">
+                <UIcon name="logos:google-icon" class="w-5 h-5" />
+              </span>
               <span class="ml-2">Accedi con Google</span>
             </UButton>
 
             <p class="app-login__note">
-              Il primo accesso carica dashboard, configurazione fiscale e pagamenti d'appoggio nello
-              stesso ambiente.
+              Dopo l'accesso trovi dashboard, modello fiscale e costi d'appoggio nello stesso ambiente.
             </p>
           </div>
         </SurfaceCard>

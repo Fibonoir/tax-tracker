@@ -15,35 +15,39 @@
             </button>
           </div>
 
-          <div class="app-annual-hero-grid">
-            <div>
-              <p class="label-xs text-white-muted">Reddito consolidato</p>
-              <p class="num-display text-white mt-3">{{ fmt.eur(data?.annualGross) }}</p>
-              <p class="text-sm leading-7 text-white-soft app-measure mt-4">
-                Una vista unica per bilanciare incassi reali, proiezione fiscale e scadenze future
-                dell'anno selezionato.
+          <div class="app-stage">
+            <div class="app-stage__header">
+              <p class="app-stage__eyebrow">Quadro annuale</p>
+              <p class="app-stage__metric-label">Disponibile proiettato</p>
+              <p class="app-stage__metric">{{ fmt.eur(data?.projectedTaxes?.annualNet) }}</p>
+              <p class="app-stage__summary">
+                Disponibile proiettato · lordo previsto {{ fmt.eur(data?.projectedAnnualGross) }} · accantona {{ fmt.eur(data?.recommendedMonthlySetAside) }}/mese
+              </p>
+              <p class="app-stage__lead">
+                Usa questa vista per leggere l'anno come un sistema unico: ritmo dei mesi,
+                impatto fiscale complessivo e prossime uscite che non devono sorprenderti.
               </p>
             </div>
 
-            <div>
-              <p class="label-xs text-white-muted">Proiezione fine anno</p>
-              <p class="num-display text-white-softer mt-3">{{ fmt.eur(data?.projectedAnnualGross) }}</p>
+            <div class="app-stage__signals">
+              <div class="app-stage__signal app-stage__signal--strong">
+                <p class="app-stage__signal-label">Lordo previsto</p>
+                <p class="app-stage__signal-value">{{ fmt.eur(data?.projectedAnnualGross) }}</p>
+                <p class="app-stage__signal-note">Quanto potresti chiudere entro fine anno.</p>
+              </div>
 
-              <div class="app-annual-hero-meta">
-                <div class="app-home-hero__chip">
-                  <p class="label-xs text-white-muted">Netto effettivo</p>
-                  <p class="font-display text-xl font-bold text-white mt-2">{{ fmt.eur(data?.ytdTaxes?.annualNet) }}</p>
-                </div>
+              <div class="app-stage__signal">
+                <p class="app-stage__signal-label">Aliquota effettiva</p>
+                <p class="app-stage__signal-value">{{ fmt.pct(data?.projectedTaxes?.effectiveRate) }}</p>
+                <p class="app-stage__signal-note">Peso stimato tra imposta, INPS e costi distribuiti.</p>
+              </div>
 
-                <div class="app-home-hero__chip app-home-hero__chip--soft">
-                  <p class="label-xs text-white-muted">Aliquota effettiva</p>
-                  <p class="font-display text-xl font-bold text-white mt-2">{{ fmt.pct(data?.projectedTaxes?.effectiveRate) }}</p>
-                </div>
-
-                <div class="app-home-hero__chip app-home-hero__chip--soft">
-                  <p class="label-xs text-white-muted">Accantona</p>
-                  <p class="font-display text-xl font-bold text-white mt-2">{{ fmt.eur(data?.recommendedMonthlySetAside) }}/mese</p>
-                </div>
+              <div class="app-stage__signal">
+                <p class="app-stage__signal-label">Scadenza piu vicina</p>
+                <p class="app-stage__signal-value">{{ nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna' }}</p>
+                <p class="app-stage__signal-note">
+                  {{ nextDeadline ? nextDeadline.label : 'Nessuna scadenza futura calcolata per l\'anno.' }}
+                </p>
               </div>
             </div>
           </div>
@@ -55,11 +59,11 @@
           <div>
             <p class="label-xs">Quadro annuale</p>
             <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
-              Scopri il vero equilibrio dell'anno.
+              Tre segnali da non perdere.
             </h2>
             <p class="app-page-copy mt-3">
-              Dai mesi attivi alle imposte proiettate, questa vista serve per pianificare con anticipo
-              e decidere come distribuire cassa e prelievi.
+              Qui leggi il livello di attivita dell'anno, il peso dei costi distribuiti e il netto
+              che il modello considera realistico.
             </p>
           </div>
 
@@ -76,14 +80,14 @@
     <StateBlock v-if="loading" type="loading" text="Sto calcolando il quadro annuale..." />
 
     <template v-else-if="data">
-      <AppSection title="Traiettoria mensile" subtitle="Il grafico evidenzia il ritmo di fatturato e il mese attuale." :delay="2">
+      <AppSection title="Traiettoria mensile" subtitle="Il grafico mostra il ritmo del lordo e mette in evidenza il mese attuale." :delay="2">
         <SurfaceCard>
           <ChartsBarChart :months="data.months" :highlight="currentMonth" :height="180" />
         </SurfaceCard>
       </AppSection>
 
       <div class="app-annual-split">
-        <AppSection title="Ripartizione netto e imposte" subtitle="Lettura immediata della composizione annuale." :delay="3">
+        <AppSection title="Ripartizione netto e imposte" subtitle="Quanto del lordo resta disponibile e quanto viene assorbito dal carico fiscale." :delay="3">
           <SurfaceCard>
             <div class="app-annual-donut-layout">
               <div class="app-annual-donut-wrap">
@@ -135,7 +139,7 @@
         </AppSection>
       </div>
 
-      <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" subtitle="Ordine cronologico delle uscite previste in base alla proiezione." :delay="4">
+      <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" subtitle="Ordine cronologico delle uscite previste secondo il modello salvato." :delay="4">
         <SurfaceCard padding="none" divided>
           <div
             v-for="(dl, i) in data.paymentDeadlines"
@@ -155,10 +159,10 @@
           </div>
         </SurfaceCard>
 
-        <p class="font-mono text-xs text-revolut-muted mt-2 px-1">Importi stimati in base al reddito proiettato e ai parametri salvati.</p>
+        <p class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted mt-2 px-1">Importi stimati in base al reddito proiettato e ai parametri salvati.</p>
       </AppSection>
 
-      <AppSection title="Mese per mese" subtitle="Confronto rapido tra lordo e netto distribuito durante l'anno." :delay="5">
+      <AppSection title="Mese per mese" subtitle="Confronto rapido tra incassato lordo e netto distribuito durante l'anno." :delay="5">
         <SurfaceCard padding="none" divided>
           <div
             v-for="(month, i) in data.months"
@@ -213,7 +217,7 @@ const headlineRows = computed(() => {
       class: 'text-revolut-text light:text-revolut-light-text',
     },
     {
-      label: 'Costi totali distribuiti',
+      label: 'Costi distribuiti',
       value: fmt.eur(data.value.projectedTaxes.paymentsTotal),
       class: 'text-revolut-red',
     },
@@ -282,6 +286,11 @@ const nextDeadlineDate = computed(() => {
   if (!data.value?.paymentDeadlines) return null
   const upcoming = data.value.paymentDeadlines.find((d: any) => !d.isPast)
   return upcoming?.date ?? null
+})
+
+const nextDeadline = computed(() => {
+  if (!data.value?.paymentDeadlines) return null
+  return data.value.paymentDeadlines.find((d: any) => !d.isPast) ?? null
 })
 
 function formatDeadlineDate(dateStr: string) {

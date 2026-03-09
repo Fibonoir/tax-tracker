@@ -14,16 +14,16 @@
               </div>
 
               <div class="app-sidebar__meta">
-                <span class="app-sidebar__pill">Fisco freelance · Italia</span>
+                <span class="app-sidebar__pill">Forfettario · Italia</span>
                 <div>
                   <p class="app-brand-title">Fattura Tracker</p>
-                  <p class="app-brand-copy">Entrate, tasse e decisioni nello stesso flusso.</p>
+                  <p class="app-brand-copy">Quanto resta davvero, senza sorprese.</p>
                 </div>
               </div>
             </div>
 
             <p class="app-sidebar__note">
-              Un cockpit compatto per lavorare, registrare e capire subito quanto resta davvero.
+              Incassi, accantonamenti e scadenze nello stesso spazio operativo.
             </p>
           </div>
 
@@ -49,7 +49,7 @@
             </button>
 
             <p class="app-sidebar__note">
-              Anno fiscale {{ currentYear }}. Layout pensato per ridurre attrito, distrazioni e sorprese.
+              Anno fiscale {{ currentYear }}. Ogni vista deve aiutarti a decidere cosa puoi usare, cosa accantonare e cosa arriva dopo.
             </p>
           </div>
         </aside>
@@ -63,7 +63,7 @@
 
               <div>
                 <p class="app-brand-title">Fattura Tracker</p>
-                <p class="app-brand-copy">Cockpit fiscale</p>
+                <p class="app-brand-copy">Disponibile, accantonamenti, scadenze</p>
               </div>
             </div>
 
@@ -109,10 +109,10 @@ const currentYear = new Date().getFullYear()
 const isLoginPage = computed(() => route.path === '/login')
 
 const tabs = [
-  { to: '/', label: 'Oggi', icon: 'lucide:square-pen' },
+  { to: '/', label: 'Home', icon: 'lucide:square-pen' },
   { to: '/month', label: 'Mese', icon: 'lucide:calendar-range' },
   { to: '/annual', label: 'Anno', icon: 'lucide:chart-column-big' },
-  { to: '/settings', label: 'Setup', icon: 'lucide:sliders-horizontal' },
+  { to: '/settings', label: 'Modello', icon: 'lucide:sliders-horizontal' },
 ]
 
 function isActive(path: string) {

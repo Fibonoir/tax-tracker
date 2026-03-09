@@ -2,7 +2,7 @@
   <UModal
     :open="open"
     :title="title"
-    :description="entry?.description || 'Riepilogo importi e dati della registrazione selezionata.'"
+    :description="entry?.description || 'Verifica importi, tipo di lavoro e origine della registrazione selezionata.'"
     @update:open="$emit('update:open', $event)"
   >
     <template #body>
