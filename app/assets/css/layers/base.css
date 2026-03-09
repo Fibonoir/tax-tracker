@@ -24,9 +24,9 @@
     background-color: var(--color-revolut-light-bg);
     color: var(--color-revolut-light-text);
     background-image:
-      radial-gradient(circle at top left, rgb(44 168 124 / 0.12), transparent 26rem),
-      radial-gradient(circle at top right, rgb(207 173 99 / 0.16), transparent 22rem),
-      linear-gradient(180deg, color-mix(in srgb, white 92%, var(--color-revolut-light-bg)) 0%, var(--color-revolut-light-bg) 28rem);
+      radial-gradient(circle at top left, rgb(44 168 124 / 0.07), transparent 26rem),
+      radial-gradient(circle at top right, rgb(149 164 121 / 0.08), transparent 22rem),
+      linear-gradient(180deg, color-mix(in srgb, white 95%, var(--color-revolut-light-bg)) 0%, var(--color-revolut-light-bg) 28rem);
   }
 
   a {
@@ -110,7 +110,7 @@
   }
 
   .light .label-xs {
-    color: var(--color-revolut-light-muted);
+    color: color-mix(in srgb, var(--color-revolut-light-text) 58%, var(--color-revolut-light-muted));
   }
 
   .app-page-title {
@@ -136,7 +136,7 @@
   }
 
   .light .app-page-copy {
-    color: var(--color-revolut-light-muted);
+    color: color-mix(in srgb, var(--color-revolut-light-text) 74%, var(--color-revolut-light-muted));
   }
 
   .app-measure {

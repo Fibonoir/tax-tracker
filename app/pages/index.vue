@@ -1,6 +1,6 @@
 <template>
   <AppPageShell>
-    <div class="app-grid-2 items-start">
+    <div class="app-main-stack">
       <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="order-2 fade-up fade-up-1 md:order-1">
         <div class="app-stage">
           <div class="app-stage__header">
@@ -159,7 +159,7 @@
       />
     </div>
 
-    <div v-if="monthData" class="app-grid-2">
+    <div v-if="monthData" class="app-main-stack">
       <IncomeProjectionCard
         v-if="monthData.runningAvgMonthly > 0"
         :avg-monthly="monthData.runningAvgMonthly"
@@ -223,8 +223,11 @@
       :open="detailsOpen"
       :entry="selectedEntry"
       :hourly-rate="settings?.hourlyRate"
+      editable
       deletable
+      :saving="savingEntry"
       @update:open="detailsOpen = $event"
+      @request-save="updateEntry"
       @request-delete="openDeleteConfirm"
     />
 
@@ -283,6 +286,7 @@ const monthData = ref<any>(null)
 const settings = ref<any>(null)
 const selectedEntry = ref<any | null>(null)
 const detailsOpen = ref(false)
+const savingEntry = ref(false)
 const deleteConfirmOpen = ref(false)
 const deleting = ref(false)
 const pendingDeleteId = ref<number | null>(null)
@@ -344,12 +348,12 @@ const focusRows = computed(() => {
     {
       label: 'Puoi considerare disponibile',
       value: fmt.eur(monthData.value.net),
-      class: 'text-revolut-green',
+      class: 'text-revolut-green light:text-revolut-green-dark',
     },
     {
       label: 'Da spostare per tasse',
       value: fmt.eur(monthData.value.provision),
-      class: 'text-revolut-red',
+      class: 'text-revolut-red light:text-revolut-red-dark',
     },
     {
       label: 'Proiezione fine anno',
@@ -410,6 +414,24 @@ function openDeleteConfirm(id: number) {
 async function deleteEntry(id: number) {
   await $fetch(`/api/entries/${id}`, { method: 'DELETE' })
   await Promise.all([loadEntries(), loadMonthData()])
+}
+
+async function updateEntry(payload: any) {
+  if (!selectedEntry.value) return
+
+  savingEntry.value = true
+  try {
+    await $fetch(`/api/entries/${selectedEntry.value.id}`, {
+      method: 'PATCH',
+      body: payload,
+    })
+
+    detailsOpen.value = false
+    selectedEntry.value = null
+    await Promise.all([loadEntries(), loadMonthData()])
+  } finally {
+    savingEntry.value = false
+  }
 }
 
 async function confirmDelete() {

@@ -29,7 +29,7 @@ const chartData = computed(() => ({
   labels: ['Net', 'IRPEF', 'INPS', 'Commercialista'],
   datasets: [{
     data: [props.net, props.irpef, props.inps, props.accountant],
-    backgroundColor: ['#1f8f69', '#c96948', '#d2a14b', '#8b9792'],
+    backgroundColor: ['#2f6b57', '#c96948', '#c59a4e', '#5f7d93'],
     borderWidth: 0,
     hoverOffset: 6,
   }],
@@ -45,10 +45,10 @@ const chartOptions = computed(() => ({
       callbacks: {
         label: (ctx: any) => `${ctx.label}: ${eur(ctx.raw)}`,
       },
-      backgroundColor: colorMode.value === 'dark' ? '#0f1f1a' : '#fffdf8',
-      titleColor: colorMode.value === 'dark' ? '#99aba5' : '#6f7d78',
-      bodyColor: colorMode.value === 'dark' ? '#f7f4eb' : '#1f2e29',
-      borderColor: colorMode.value === 'dark' ? '#27493f' : '#e0d7c5',
+      backgroundColor: colorMode.value === 'dark' ? '#0f1f1a' : '#fbfcfa',
+      titleColor: colorMode.value === 'dark' ? '#99aba5' : '#5f6e67',
+      bodyColor: colorMode.value === 'dark' ? '#f7f4eb' : '#1c2823',
+      borderColor: colorMode.value === 'dark' ? '#27493f' : '#d5ddd7',
       borderWidth: 1,
       cornerRadius: 12,
       padding: 12,

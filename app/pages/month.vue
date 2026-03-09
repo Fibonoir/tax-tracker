@@ -72,7 +72,7 @@
         />
       </div>
 
-      <div class="app-grid-2">
+      <div class="app-main-stack">
         <IncomeProjectionCard
           v-if="summary.runningAvgMonthly > 0"
           :avg-monthly="summary.runningAvgMonthly"
@@ -108,7 +108,7 @@
         </SurfaceCard>
       </AppSection>
 
-      <AppSection title="Registrazioni del mese" subtitle="Apri una voce per controllare origine, importo e dettaglio del lavoro." :delay="4">
+      <AppSection title="Registrazioni del mese" subtitle="Apri una voce per correggere importo, data o descrizione ed eliminarla anche nei mesi passati." :delay="4">
         <SurfaceCard v-if="entries.length === 0" padding="md">
           <StateBlock type="empty" text="Questo mese e ancora vuoto. Torna in Home per registrare il primo incasso." />
         </SurfaceCard>
@@ -120,7 +120,9 @@
               :key="entry.id"
               :entry="entry"
               :hourly-rate="settings?.hourlyRate"
+              deletable
               @select="openInvoiceDetails"
+              @delete="openDeleteConfirm"
             />
           </div>
         </SurfaceCard>
@@ -131,8 +133,31 @@
       :open="detailsOpen"
       :entry="selectedEntry"
       :hourly-rate="settings?.hourlyRate"
+      editable
+      deletable
+      :saving="savingEntry"
       @update:open="detailsOpen = $event"
+      @request-save="updateEntry"
+      @request-delete="openDeleteConfirm"
     />
+
+    <UModal
+      :open="deleteConfirmOpen"
+      title="Elimina registrazione"
+      description="Questa azione rimuove la registrazione dal mese selezionato e aggiorna il quadro storico."
+      @update:open="deleteConfirmOpen = $event"
+    >
+      <template #footer>
+        <div class="ui-invoice-detail__actions">
+          <UButton color="neutral" variant="soft" class="ui-action-button--ghost" @click="deleteConfirmOpen = false">
+            Annulla
+          </UButton>
+          <UButton color="red" variant="soft" class="ui-action-button--ghost" :loading="deleting" @click="confirmDelete">
+            Elimina
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </AppPageShell>
 </template>
 
@@ -147,6 +172,10 @@ const annualData = ref<any>(null)
 const settings = ref<any>(null)
 const selectedEntry = ref<any | null>(null)
 const detailsOpen = ref(false)
+const savingEntry = ref(false)
+const deleteConfirmOpen = ref(false)
+const deleting = ref(false)
+const pendingDeleteId = ref<number | null>(null)
 
 const summary = computed(() => annualData.value?.months[viewMonth.value])
 
@@ -178,12 +207,12 @@ const mixRows = computed(() => {
     {
       label: 'Fatturato a progetto',
       value: fmt.eur(summary.value.projectGross),
-      class: 'text-revolut-blue',
+      class: 'text-revolut-blue light:text-revolut-blue-dark',
     },
     {
       label: 'Media per registrazione',
       value: fmt.eur(averageEntryGross.value),
-      class: 'text-revolut-green',
+      class: 'text-revolut-green light:text-revolut-green-dark',
     },
   ]
 })
@@ -193,21 +222,21 @@ const taxRows = computed(() => {
   const t = summary.value.projectedTaxes
   const n = activeMonths.value
   const rows: { label: string; value: string; class: string }[] = [
-    { label: 'IRPEF (imposta sostitutiva)', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-revolut-red' },
+    { label: 'IRPEF (imposta sostitutiva)', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, class: 'text-revolut-red' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, class: 'text-revolut-red' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps / n)}`, class: 'text-revolut-red' })
+    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' })
   }
 
   rows.push(
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-revolut-red' },
-    { label: 'Netto in tasca', value: fmt.eur(summary.value.net), class: 'text-revolut-green font-semibold' },
+    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+    { label: 'Netto in tasca', value: fmt.eur(summary.value.net), class: 'text-revolut-green light:text-revolut-green-dark font-semibold' },
   )
 
   return rows
@@ -240,6 +269,51 @@ function nextMonth() {
 function openInvoiceDetails(entry: any) {
   selectedEntry.value = entry
   detailsOpen.value = true
+}
+
+function openDeleteConfirm(id: number) {
+  pendingDeleteId.value = id
+  deleteConfirmOpen.value = true
+}
+
+async function deleteEntry(id: number) {
+  await $fetch(`/api/entries/${id}`, { method: 'DELETE' })
+  await load()
+}
+
+async function updateEntry(payload: any) {
+  if (!selectedEntry.value) return
+
+  savingEntry.value = true
+  try {
+    await $fetch(`/api/entries/${selectedEntry.value.id}`, {
+      method: 'PATCH',
+      body: payload,
+    })
+
+    detailsOpen.value = false
+    selectedEntry.value = null
+    await load()
+  } finally {
+    savingEntry.value = false
+  }
+}
+
+async function confirmDelete() {
+  if (!pendingDeleteId.value) return
+
+  deleting.value = true
+  try {
+    await deleteEntry(pendingDeleteId.value)
+    if (selectedEntry.value?.id === pendingDeleteId.value) {
+      detailsOpen.value = false
+      selectedEntry.value = null
+    }
+  } finally {
+    deleting.value = false
+    deleteConfirmOpen.value = false
+    pendingDeleteId.value = null
+  }
 }
 
 async function load() {

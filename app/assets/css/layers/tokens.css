@@ -10,15 +10,16 @@
   --color-revolut-red: oklch(0.67 0.126 40);
   --color-revolut-red-dark: oklch(0.58 0.112 38);
   --color-revolut-blue: oklch(0.62 0.073 227);
+  --color-revolut-blue-dark: oklch(0.5 0.061 227);
   --color-revolut-amber: oklch(0.79 0.109 84);
 
-  --color-revolut-light-bg: oklch(0.975 0.01 92);
-  --color-revolut-light-card: oklch(0.992 0.006 92);
-  --color-revolut-light-card-strong: oklch(0.998 0.003 92);
-  --color-revolut-light-border: oklch(0.88 0.018 92);
-  --color-revolut-light-text: oklch(0.3 0.028 170);
-  --color-revolut-light-muted: oklch(0.54 0.018 170);
-  --color-revolut-light-tint: oklch(0.94 0.024 92);
+  --color-revolut-light-bg: oklch(0.973 0.008 158);
+  --color-revolut-light-card: oklch(0.989 0.004 158);
+  --color-revolut-light-card-strong: oklch(0.996 0.003 158);
+  --color-revolut-light-border: oklch(0.86 0.012 160);
+  --color-revolut-light-text: oklch(0.27 0.024 170);
+  --color-revolut-light-muted: oklch(0.42 0.018 168);
+  --color-revolut-light-tint: oklch(0.935 0.014 156);
 }
 
 :root {
@@ -30,14 +31,19 @@
   --app-shadow-sm: 0 10px 24px rgb(13 28 24 / 0.08);
   --app-shadow-md: 0 22px 44px rgb(13 28 24 / 0.12);
   --app-shadow-lg: 0 34px 78px rgb(10 24 20 / 0.2);
-  --app-gradient-soft: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(249 244 235 / 0.9));
+  --app-gradient-soft:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 96%, rgb(193 214 204 / 0.24)),
+      color-mix(in srgb, white 88%, rgb(217 228 221 / 0.56))
+    );
   --app-gradient-hero:
     radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
-    radial-gradient(circle at 100% 100%, rgb(208 169 90 / 0.18), transparent 18rem),
-    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.098 165) 56%, oklch(0.73 0.093 84) 100%);
+    radial-gradient(circle at 100% 100%, rgb(163 165 112 / 0.16), transparent 18rem),
+    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.088 165) 56%, oklch(0.67 0.056 104) 100%);
   --app-gradient-hero-light:
-    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.55), transparent 16rem),
-    radial-gradient(circle at 100% 100%, rgb(206 174 101 / 0.22), transparent 18rem),
-    linear-gradient(145deg, oklch(0.54 0.075 168) 0%, oklch(0.68 0.082 164) 58%, oklch(0.81 0.075 88) 100%);
+    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.48), transparent 16rem),
+    radial-gradient(circle at 100% 100%, rgb(181 186 136 / 0.16), transparent 18rem),
+    linear-gradient(145deg, oklch(0.56 0.058 168) 0%, oklch(0.7 0.055 163) 58%, oklch(0.84 0.041 108) 100%);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }

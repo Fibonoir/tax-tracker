@@ -3,7 +3,7 @@
     <StateBlock v-if="loading" type="loading" text="Sto calcolando il quadro annuale..." />
 
     <template v-else-if="data">
-      <div class="app-grid-2 items-start">
+      <div class="app-main-stack">
         <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
           <div class="ui-form-stack">
             <div class="app-period-nav">
@@ -104,7 +104,7 @@
                 <div v-for="row in donutLegend" :key="row.label" class="app-annual-legend-row">
                   <div class="app-annual-legend-label">
                     <span class="app-annual-legend-dot" :style="{ background: row.color }" />
-                    <span class="font-mono text-xs text-revolut-muted">{{ row.label }}</span>
+                    <span class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted">{{ row.label }}</span>
                   </div>
                   <span class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(row.value, true) }}</span>
                 </div>
@@ -178,7 +178,7 @@
             </div>
             <div class="app-annual-month-values">
               <p class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(month.gross, true) }}</p>
-              <p class="font-mono text-xs text-revolut-muted">netto {{ fmt.eur(month.net, true) }}</p>
+              <p class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted">netto {{ fmt.eur(month.net, true) }}</p>
             </div>
           </div>
         </SurfaceCard>
@@ -219,12 +219,14 @@ const headlineRows = computed(() => {
     {
       label: 'Costi distribuiti',
       value: fmt.eur(data.value.projectedTaxes.paymentsTotal),
-      class: data.value.projectedTaxes.paymentsTotal > 0 ? 'text-revolut-red' : 'text-revolut-muted light:text-revolut-light-muted',
+      class: data.value.projectedTaxes.paymentsTotal > 0
+        ? 'text-revolut-red light:text-revolut-red-dark'
+        : 'text-revolut-muted light:text-revolut-light-muted',
     },
     {
       label: 'Netto proiettato',
       value: fmt.eur(data.value.projectedTaxes.annualNet),
-      class: 'text-revolut-green',
+      class: 'text-revolut-green light:text-revolut-green-dark',
     },
   ]
 })
@@ -255,27 +257,27 @@ const taxTable = computed(() => {
 
   const rows = [
     { label: grossLabel, value: fmt.eur(grossValue), class: 'text-revolut-text light:text-revolut-light-text' },
-    { label: 'Base imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-revolut-muted' },
+    { label: 'Base imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-revolut-muted light:text-revolut-light-muted' },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, class: 'text-revolut-red' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, class: 'text-revolut-red' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps)}`, class: 'text-revolut-red' })
+    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps)}`, class: 'text-revolut-red light:text-revolut-red-dark' })
   }
 
   rows.push(
-    { label: 'Base imponibile netta', value: fmt.eur(t.adjustedTaxableBase), class: 'text-revolut-muted' },
-    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-revolut-red' },
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-revolut-red' },
-    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-revolut-muted' },
+    { label: 'Base imponibile netta', value: fmt.eur(t.adjustedTaxableBase), class: 'text-revolut-muted light:text-revolut-light-muted' },
+    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+    { label: 'Commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-revolut-muted light:text-revolut-light-muted' },
     {
       label: isProj ? 'Netto annuale proiettato' : 'Netto da inizio anno',
       value: fmt.eur(t.annualNet),
-      class: 'text-revolut-green font-semibold',
+      class: 'text-revolut-green light:text-revolut-green-dark font-semibold',
     },
   )
 

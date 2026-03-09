@@ -58,18 +58,18 @@
 
   .light .ui-segment-btn {
     border-color: var(--color-revolut-light-border);
-    color: var(--color-revolut-light-muted);
-    background: color-mix(in srgb, white 82%, var(--color-revolut-light-tint));
+    color: color-mix(in srgb, var(--color-revolut-light-text) 82%, white);
+    background: color-mix(in srgb, white 90%, var(--color-revolut-light-tint));
   }
 
   .light .ui-segment-btn:hover {
-    border-color: rgb(56 88 78 / 0.12);
-    background: color-mix(in srgb, white 92%, var(--color-revolut-light-tint));
+    border-color: rgb(56 88 78 / 0.16);
+    background: #fff;
   }
 
   .light .ui-segment-btn.is-active {
-    background: linear-gradient(180deg, rgb(44 168 124 / 0.16), rgb(44 168 124 / 0.06));
-    border-color: rgb(44 168 124 / 0.24);
+    background: linear-gradient(180deg, rgb(44 168 124 / 0.14), rgb(44 168 124 / 0.08));
+    border-color: rgb(44 168 124 / 0.3);
     color: var(--color-revolut-light-text);
   }
 
@@ -82,7 +82,7 @@
   }
 
   .light .ui-pill-toggle {
-    background: color-mix(in srgb, white 84%, var(--color-revolut-light-tint));
+    background: color-mix(in srgb, white 90%, var(--color-revolut-light-tint));
     border-color: var(--color-revolut-light-border);
   }
 
@@ -106,7 +106,7 @@
   }
 
   .light .ui-pill-toggle__btn.is-active {
-    background: #fff;
+    background: color-mix(in srgb, white 96%, var(--color-revolut-light-tint));
     color: var(--color-revolut-light-text);
     box-shadow: var(--app-shadow-sm);
   }

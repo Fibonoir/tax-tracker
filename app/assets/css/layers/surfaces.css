@@ -11,7 +11,12 @@
   }
 
   .light .ui-surface {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.95), rgb(249 244 236 / 0.92));
+    background:
+      linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.98),
+        color-mix(in srgb, white 86%, var(--color-revolut-light-tint))
+      );
     border-color: var(--color-revolut-light-border);
   }
 
@@ -28,7 +33,12 @@
   }
 
   .light .ui-surface--soft {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(245 238 228 / 0.94));
+    background:
+      linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.99),
+        color-mix(in srgb, white 90%, var(--color-revolut-light-tint))
+      );
   }
 
   .ui-surface--gradient {
@@ -184,6 +194,10 @@
     overflow-wrap: anywhere;
   }
 
+  .light .ui-kv-row__label {
+    color: color-mix(in srgb, var(--color-revolut-light-text) 54%, var(--color-revolut-light-muted));
+  }
+
   .ui-kv-row__value {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.9rem;
@@ -191,6 +205,10 @@
     text-align: right;
     min-width: 0;
     overflow-wrap: anywhere;
+  }
+
+  .light .ui-kv-row__value {
+    color: var(--color-revolut-light-text);
   }
 
   .ui-payment-row {
@@ -298,6 +316,10 @@
     white-space: nowrap;
   }
 
+  .light .ui-entry-date {
+    color: var(--color-revolut-light-muted);
+  }
+
   .ui-entry-description {
     font-size: 0.96rem;
     font-weight: 700;
@@ -336,6 +358,12 @@
 
   .light .ui-entry-amount {
     color: var(--color-revolut-light-text);
+  }
+
+  .ui-entry-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   .ui-entry-delete {
@@ -455,7 +483,7 @@
   }
 
   .light .ui-invoice-detail__label {
-    color: var(--color-revolut-light-muted);
+    color: color-mix(in srgb, var(--color-revolut-light-text) 56%, var(--color-revolut-light-muted));
   }
 
   .ui-invoice-detail__value {

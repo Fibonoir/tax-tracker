@@ -34,7 +34,7 @@ const chartData = computed(() => ({
       label: 'Gross',
       data: props.months.map(m => m.gross),
       backgroundColor: props.months.map((m, i) =>
-        i === props.highlight ? '#1f8f69' : (colorMode.value === 'dark' ? '#27493f' : '#e6dccb')
+        i === props.highlight ? '#2f6b57' : (colorMode.value === 'dark' ? '#27493f' : '#d7ddd8')
       ),
       borderRadius: 999,
       borderSkipped: false,
@@ -51,10 +51,10 @@ const chartOptions = computed(() => ({
       callbacks: {
         label: (ctx: any) => eur(ctx.raw),
       },
-      backgroundColor: colorMode.value === 'dark' ? '#0f1f1a' : '#fffdf8',
-      titleColor: colorMode.value === 'dark' ? '#99aba5' : '#6f7d78',
-      bodyColor: colorMode.value === 'dark' ? '#f7f4eb' : '#1f2e29',
-      borderColor: colorMode.value === 'dark' ? '#27493f' : '#e0d7c5',
+      backgroundColor: colorMode.value === 'dark' ? '#0f1f1a' : '#fbfcfa',
+      titleColor: colorMode.value === 'dark' ? '#99aba5' : '#5f6e67',
+      bodyColor: colorMode.value === 'dark' ? '#f7f4eb' : '#1c2823',
+      borderColor: colorMode.value === 'dark' ? '#27493f' : '#d5ddd7',
       borderWidth: 1,
       cornerRadius: 12,
       padding: 12,
@@ -68,7 +68,7 @@ const chartOptions = computed(() => ({
       border: { display: false },
       ticks: {
         font: { family: 'IBM Plex Mono', size: 10 },
-        color: colorMode.value === 'dark' ? '#99aba5' : '#6f7d78',
+        color: colorMode.value === 'dark' ? '#99aba5' : '#5f6e67',
       },
     },
     y: {
