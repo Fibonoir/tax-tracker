@@ -1,5 +1,8 @@
 <template>
-  <UPopover :content="{ side: 'bottom', align: 'start', sideOffset: 10 }">
+  <UPopover
+    :content="{ side: 'bottom', align: 'start', sideOffset: 10, collisionPadding: 16 }"
+    :ui="{ content: 'ui-date-popover' }"
+  >
     <button type="button" class="ui-date-trigger" :class="{ 'is-empty': !modelValue }">
       <span>{{ displayValue }}</span>
       <UIcon name="lucide:calendar-days" class="w-4 h-4" />

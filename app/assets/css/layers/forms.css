@@ -230,11 +230,22 @@
     border: 1px solid var(--color-revolut-border);
     background: rgb(8 19 16 / 0.96);
     box-shadow: var(--app-shadow-lg);
+    overflow: hidden;
+    isolation: isolate;
   }
 
   .light .ui-date-panel {
     border-color: var(--color-revolut-light-border);
-    background: color-mix(in srgb, white 92%, var(--color-revolut-light-bg));
+    background: color-mix(in srgb, white 96%, var(--color-revolut-light-bg));
+  }
+
+  .ui-date-popover {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 1.3rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
   }
 
   .ui-date-panel__footer {
@@ -313,7 +324,7 @@
 
   .light .ui-date-calendar [data-slot="header"] > button {
     border-color: var(--color-revolut-light-border);
-    background: color-mix(in srgb, white 88%, var(--color-revolut-light-tint));
+    background: color-mix(in srgb, white 94%, var(--color-revolut-light-tint));
     color: var(--color-revolut-light-text);
   }
 
@@ -387,7 +398,11 @@
   }
 
   .light .ui-date-calendar [data-slot="cellTrigger"]:hover {
-    background: rgb(31 46 41 / 0.06);
+    background: rgb(31 46 41 / 0.05);
+  }
+
+  .light .ui-date-calendar [data-slot="cellTrigger"][data-outside-view] {
+    color: rgb(104 120 112 / 0.48);
   }
 
   .ui-action-button {

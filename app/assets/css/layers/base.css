@@ -24,9 +24,14 @@
     background-color: var(--color-revolut-light-bg);
     color: var(--color-revolut-light-text);
     background-image:
-      radial-gradient(circle at top left, rgb(44 168 124 / 0.07), transparent 26rem),
-      radial-gradient(circle at top right, rgb(149 164 121 / 0.08), transparent 22rem),
-      linear-gradient(180deg, color-mix(in srgb, white 95%, var(--color-revolut-light-bg)) 0%, var(--color-revolut-light-bg) 28rem);
+      radial-gradient(circle at top left, rgb(79 126 110 / 0.06), transparent 25rem),
+      radial-gradient(circle at 85% 0%, rgb(164 173 137 / 0.05), transparent 20rem),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, white 97%, var(--color-revolut-light-bg)) 0%,
+        color-mix(in srgb, white 92%, var(--color-revolut-light-bg)) 20rem,
+        var(--color-revolut-light-bg) 100%
+      );
   }
 
   a {

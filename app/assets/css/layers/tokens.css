@@ -13,13 +13,13 @@
   --color-revolut-blue-dark: oklch(0.5 0.061 227);
   --color-revolut-amber: oklch(0.79 0.109 84);
 
-  --color-revolut-light-bg: oklch(0.973 0.008 158);
-  --color-revolut-light-card: oklch(0.989 0.004 158);
-  --color-revolut-light-card-strong: oklch(0.996 0.003 158);
-  --color-revolut-light-border: oklch(0.86 0.012 160);
+  --color-revolut-light-bg: oklch(0.978 0.005 150);
+  --color-revolut-light-card: oklch(0.992 0.003 150);
+  --color-revolut-light-card-strong: oklch(0.997 0.002 150);
+  --color-revolut-light-border: oklch(0.84 0.01 160);
   --color-revolut-light-text: oklch(0.27 0.024 170);
   --color-revolut-light-muted: oklch(0.42 0.018 168);
-  --color-revolut-light-tint: oklch(0.935 0.014 156);
+  --color-revolut-light-tint: oklch(0.944 0.01 154);
 }
 
 :root {
@@ -34,16 +34,16 @@
   --app-gradient-soft:
     linear-gradient(
       180deg,
-      color-mix(in srgb, white 96%, rgb(193 214 204 / 0.24)),
-      color-mix(in srgb, white 88%, rgb(217 228 221 / 0.56))
+      color-mix(in srgb, white 97%, rgb(190 209 201 / 0.16)),
+      color-mix(in srgb, white 92%, rgb(214 223 218 / 0.38))
     );
   --app-gradient-hero:
     radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
     radial-gradient(circle at 100% 100%, rgb(163 165 112 / 0.16), transparent 18rem),
     linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.088 165) 56%, oklch(0.67 0.056 104) 100%);
   --app-gradient-hero-light:
-    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.48), transparent 16rem),
-    radial-gradient(circle at 100% 100%, rgb(181 186 136 / 0.16), transparent 18rem),
-    linear-gradient(145deg, oklch(0.56 0.058 168) 0%, oklch(0.7 0.055 163) 58%, oklch(0.84 0.041 108) 100%);
+    radial-gradient(circle at 10% 12%, rgb(255 255 255 / 0.82), transparent 17rem),
+    radial-gradient(circle at 100% 100%, rgb(176 183 146 / 0.12), transparent 20rem),
+    linear-gradient(145deg, oklch(0.9 0.019 165) 0%, oklch(0.86 0.026 162) 58%, oklch(0.9 0.018 104) 100%);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
