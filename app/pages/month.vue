@@ -62,13 +62,13 @@
           label="Accantonamento"
           :value="fmt.eur(summary.provision)"
           sub="Quota fiscale del mese"
-          value-class="text-revolut-red"
+          value-class="text-[var(--danger-text)]"
         />
         <StatCard
           label="Netto stimato"
           :value="fmt.eur(summary.net)"
           sub="Residuo dopo imposte e costi distribuiti"
-          value-class="text-revolut-green"
+          value-class="text-[var(--accent-text)]"
         />
       </div>
 
@@ -84,7 +84,7 @@
           <div class="ui-form-stack">
             <div>
               <p class="label-xs">Mix del mese</p>
-              <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+              <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
                 Da dove arriva l'incasso.
               </h2>
             </div>
@@ -202,17 +202,17 @@ const mixRows = computed(() => {
     {
       label: 'Fatturato orario',
       value: fmt.eur(summary.value.hourlyGross),
-      class: 'text-revolut-text light:text-revolut-light-text',
+      class: 'text-[var(--text-primary)]',
     },
     {
       label: 'Fatturato a progetto',
       value: fmt.eur(summary.value.projectGross),
-      class: 'text-revolut-blue light:text-revolut-blue-dark',
+      class: 'text-[var(--info)]',
     },
     {
       label: 'Media per registrazione',
       value: fmt.eur(averageEntryGross.value),
-      class: 'text-revolut-green light:text-revolut-green-dark',
+      class: 'text-[var(--accent-text)]',
     },
   ]
 })
@@ -222,21 +222,21 @@ const taxRows = computed(() => {
   const t = summary.value.projectedTaxes
   const n = activeMonths.value
   const rows: { label: string; value: string; class: string }[] = [
-    { label: 'IRPEF (imposta sostitutiva)', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+    { label: 'IRPEF (imposta sostitutiva)', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-[var(--danger-text)]' },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, class: 'text-[var(--danger-text)]' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, class: 'text-[var(--danger-text)]' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' })
+    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps / n)}`, class: 'text-[var(--danger-text)]' })
   }
 
   rows.push(
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
-    { label: 'Netto in tasca', value: fmt.eur(summary.value.net), class: 'text-revolut-green light:text-revolut-green-dark font-semibold' },
+    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-[var(--danger-text)]' },
+    { label: 'Netto in tasca', value: fmt.eur(summary.value.net), class: 'text-[var(--accent-text)] font-semibold' },
   )
 
   return rows

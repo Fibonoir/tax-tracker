@@ -17,7 +17,7 @@
 
     <div v-if="monthlySetAside !== undefined && monthlySetAside !== null" class="ui-projection-summary__row">
       <span class="ui-projection-summary__label">Accantona</span>
-      <span class="ui-projection-summary__value text-revolut-red">{{ fmt.eur(monthlySetAside) }}/mese</span>
+      <span class="ui-projection-summary__value text-[var(--danger-text)]">{{ fmt.eur(monthlySetAside) }}/mese</span>
     </div>
   </SurfaceCard>
 </template>

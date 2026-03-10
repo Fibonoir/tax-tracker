@@ -15,16 +15,9 @@
 
               <div class="app-sidebar__meta">
                 <span class="app-sidebar__pill">Chiaro · Forfettario</span>
-                <div>
-                  <p class="app-brand-title">Chiaro</p>
-                  <p class="app-brand-copy">Controllo mensile del denaro davvero disponibile.</p>
-                </div>
+                <p class="app-brand-title">Chiaro</p>
               </div>
             </div>
-
-            <p class="app-sidebar__note">
-              L'app per freelance in forfettario che ti dice quanto mettere da parte, quanto ti resta davvero e cosa arriva alle prossime scadenze.
-            </p>
           </div>
 
           <nav class="app-sidebar__nav">
@@ -49,7 +42,7 @@
             </button>
 
             <p class="app-sidebar__note">
-              Anno fiscale {{ currentYear }}. Ogni vista deve aiutarti a non spendere soldi che non sono davvero tuoi.
+              Anno fiscale {{ currentYear }}
             </p>
           </div>
         </aside>
@@ -63,7 +56,7 @@
 
               <div>
                 <p class="app-brand-title">Chiaro</p>
-                <p class="app-brand-copy">Incassato, accantonamento, disponibile</p>
+                <p class="app-brand-copy">Forfettario · {{ currentYear }}</p>
               </div>
             </div>
 

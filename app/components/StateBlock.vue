@@ -1,12 +1,12 @@
 <template>
   <div :class="stateClass">
     <template v-if="props.type === 'loading'">
-      <UIcon name="lucide:loader-2" class="w-7 h-7 animate-spin text-revolut-muted" />
+      <UIcon name="lucide:loader-2" class="w-7 h-7 animate-spin text-[var(--text-secondary)]" />
       <p v-if="props.text" class="ui-state-block__text">{{ props.text }}</p>
     </template>
 
     <template v-else>
-      <UIcon name="lucide:inbox" class="w-7 h-7 text-revolut-muted" />
+      <UIcon name="lucide:inbox" class="w-7 h-7 text-[var(--text-secondary)]" />
       <p class="ui-state-block__text">{{ props.text || 'Nessun risultato' }}</p>
     </template>
   </div>

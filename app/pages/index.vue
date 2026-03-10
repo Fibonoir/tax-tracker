@@ -46,7 +46,7 @@
         <div class="ui-form-stack">
           <div>
             <p class="label-xs">Nuovo incasso</p>
-            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
               Registra solo cio che serve.
             </h2>
             <p class="app-page-copy mt-3">
@@ -65,7 +65,7 @@
               @click="form.type = option.value"
             >
               <span>{{ option.label }}</span>
-              <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">{{ option.copy }}</span>
+              <span class="text-xs leading-6 text-[var(--text-secondary)]">{{ option.copy }}</span>
             </button>
           </div>
 
@@ -115,19 +115,19 @@
             <div class="app-grid-3">
               <div>
                 <p class="label-xs">Lordo</p>
-                <p class="num-lg text-revolut-text light:text-revolut-light-text mt-3">{{ fmt.eur(previewGross) }}</p>
+                <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(previewGross) }}</p>
                 <p class="ui-field-help">Calcolato con la tariffa attuale o l'importo progetto inserito.</p>
               </div>
 
               <div>
                 <p class="label-xs">Disponibile</p>
-                <p class="num-lg text-revolut-green mt-3">{{ fmt.eur(previewNet) }}</p>
+                <p class="num-lg text-[var(--accent-text)] mt-3">{{ fmt.eur(previewNet) }}</p>
                 <p class="ui-field-help">Stima rapida basata sull'aliquota effettiva annuale in corso.</p>
               </div>
 
               <div>
                 <p class="label-xs">Accantonamento</p>
-                <p class="num-lg text-revolut-red mt-3">{{ fmt.eur(previewProvision) }}</p>
+                <p class="num-lg text-[var(--danger-text)] mt-3">{{ fmt.eur(previewProvision) }}</p>
                 <p class="ui-field-help">Quota da tenere fuori dal denaro spendibile del mese.</p>
               </div>
             </div>
@@ -172,7 +172,7 @@
         <div class="ui-form-stack">
           <div>
             <p class="label-xs">Focus del momento</p>
-            <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+            <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
               Le tre cose da guardare subito.
             </h2>
           </div>
@@ -348,17 +348,17 @@ const focusRows = computed(() => {
     {
       label: 'Puoi considerare disponibile',
       value: fmt.eur(monthData.value.net),
-      class: 'text-revolut-green light:text-revolut-green-dark',
+      class: 'text-[var(--accent-text)]',
     },
     {
       label: 'Da spostare per tasse',
       value: fmt.eur(monthData.value.provision),
-      class: 'text-revolut-red light:text-revolut-red-dark',
+      class: 'text-[var(--danger-text)]',
     },
     {
       label: 'Proiezione fine anno',
       value: fmt.eur(monthData.value.runningProjectedAnnual),
-      class: 'text-revolut-text light:text-revolut-light-text',
+      class: 'text-[var(--text-primary)]',
     },
   ]
 })

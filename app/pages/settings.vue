@@ -1,6 +1,6 @@
 <template>
   <AppPageShell>
-    <div class="app-grid-2 items-start">
+    <div class="app-main-stack">
       <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
         <div class="app-stage">
           <div class="app-stage__header">
@@ -38,7 +38,7 @@
         <div class="ui-form-stack">
           <div>
             <p class="label-xs">Profilo operativo</p>
-            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
               Chi usa questo modello.
             </h2>
             <p class="app-page-copy mt-3">
@@ -49,8 +49,8 @@
 
           <div class="app-settings-account">
             <div>
-              <p class="text-base font-semibold text-revolut-text light:text-revolut-light-text">{{ session?.user?.email }}</p>
-              <p class="text-sm text-revolut-muted mt-2">{{ session?.user?.name || 'Utente autorizzato' }}</p>
+              <p class="text-base font-semibold text-[var(--text-primary)]">{{ session?.user?.email }}</p>
+              <p class="text-sm text-[var(--text-secondary)] mt-2">{{ session?.user?.name || 'Utente autorizzato' }}</p>
             </div>
 
             <UButton variant="soft" color="neutral" class="ui-action-button--ghost" @click="logout">
@@ -116,7 +116,7 @@
                   @click="form.inpsType = 'GESTIONE_SEPARATA'"
                 >
                   <span>Gestione separata</span>
-                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi percentuali calcolati sul reddito imponibile.</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Contributi percentuali calcolati sul reddito imponibile.</span>
                 </button>
 
                 <button
@@ -126,7 +126,7 @@
                   @click="form.inpsType = 'ARTIGIANI'"
                 >
                   <span>Artigiani</span>
-                  <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">Contributi fissi piu eventuale quota in eccedenza.</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Contributi fissi piu eventuale quota in eccedenza.</span>
                 </button>
               </div>
 
@@ -166,7 +166,7 @@
         </SurfaceCard>
       </AppSection>
 
-      <div class="app-grid-2 items-start">
+      <div class="app-main-stack">
         <AppSection title="Pagamenti ricorrenti" subtitle="Costi che il prodotto spalma automaticamente sulle stime annuali." :delay="3">
           <template #header-right>
             <button type="button" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]" @click="showRecurringForm = !showRecurringForm">
@@ -332,17 +332,17 @@ const profileRows = computed(() => [
   {
     label: 'Anno fiscale',
     value: String(currentYear),
-    class: 'text-revolut-text light:text-revolut-light-text',
+    class: 'text-[var(--text-primary)]',
   },
   {
     label: 'Costi ricorrenti',
     value: String(recurringPayments.value.length),
-    class: 'text-revolut-blue',
+    class: 'text-[var(--info)]',
   },
   {
     label: 'Uscite straordinarie',
     value: String(onetimePayments.value.length),
-    class: 'text-revolut-green',
+    class: 'text-[var(--accent-text)]',
   },
 ])
 

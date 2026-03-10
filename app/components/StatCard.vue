@@ -7,7 +7,7 @@
       </div>
 
       <p class="num-lg ui-stat-value" :class="valueClass">{{ value }}</p>
-      <p v-if="sub" class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted">{{ sub }}</p>
+      <p v-if="sub" class="font-mono text-xs text-[var(--text-secondary)]">{{ sub }}</p>
     </div>
   </SurfaceCard>
 </template>

@@ -1,46 +1,22 @@
 @layer components {
+  /* ─── Card surfaces ─── */
   .ui-surface {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02));
-    border: 1px solid var(--color-revolut-border);
+    background: var(--surface-card-gradient);
+    border: 1px solid var(--border-default);
     border-radius: var(--app-radius-md);
     min-width: 0;
     box-shadow: var(--app-shadow-sm);
     backdrop-filter: blur(18px);
   }
 
-  .light .ui-surface {
-    background:
-      linear-gradient(
-        180deg,
-        rgb(255 255 255 / 0.99),
-        color-mix(in srgb, white 92%, var(--color-revolut-light-tint))
-      );
-    border-color: var(--color-revolut-light-border);
-    box-shadow: 0 14px 32px rgb(36 53 46 / 0.08);
-  }
-
   .ui-surface--default {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.04), rgb(255 255 255 / 0.02));
-  }
-
-  .light .ui-surface--default {
-    background: var(--app-gradient-soft);
+    background: var(--surface-card-gradient);
   }
 
   .ui-surface--soft {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.03));
-  }
-
-  .light .ui-surface--soft {
-    background:
-      linear-gradient(
-        180deg,
-        rgb(255 255 255 / 0.99),
-        color-mix(in srgb, white 94%, var(--color-revolut-light-tint))
-      );
-    box-shadow: 0 12px 28px rgb(36 53 46 / 0.06);
+    background: var(--surface-soft);
   }
 
   .ui-surface--gradient {
@@ -62,7 +38,6 @@
   .light .ui-surface--gradient {
     background: var(--app-gradient-hero-light);
     border-color: transparent;
-    box-shadow: 0 22px 44px rgb(36 53 46 / 0.12);
   }
 
   .light .ui-surface--gradient::after {
@@ -96,13 +71,10 @@
   }
 
   .ui-surface--divided > * + * {
-    border-top: 1px solid var(--color-revolut-border);
+    border-top: 1px solid var(--border-default);
   }
 
-  .light .ui-surface--divided > * + * {
-    border-top-color: var(--color-revolut-light-border);
-  }
-
+  /* ─── Section headers ─── */
   .ui-section-header {
     display: flex;
     align-items: flex-end;
@@ -117,11 +89,7 @@
     font-size: clamp(1.05rem, 2vw, 1.35rem);
     line-height: 1.15;
     letter-spacing: -0.03em;
-    color: var(--color-revolut-text);
-  }
-
-  .light .ui-section-header__title {
-    color: var(--color-revolut-light-text);
+    color: var(--text-primary);
   }
 
   .ui-section-header__right {
@@ -136,6 +104,7 @@
     align-items: flex-start;
   }
 
+  /* ─── State blocks (loading / empty) ─── */
   .ui-state-block {
     display: grid;
     place-items: center;
@@ -143,8 +112,8 @@
     text-align: center;
     padding: 2rem 1.25rem;
     border-radius: var(--app-radius-md);
-    background: rgb(255 255 255 / 0.02);
-    border: 1px dashed rgb(255 255 255 / 0.08);
+    background: var(--glow-subtle);
+    border: 1px dashed var(--border-subtle);
   }
 
   .ui-state-block.is-loading {
@@ -155,26 +124,19 @@
     min-height: 9rem;
   }
 
-  .light .ui-state-block {
-    background: color-mix(in srgb, white 74%, var(--color-revolut-light-tint));
-    border-color: var(--color-revolut-light-border);
-  }
-
   .ui-state-block__text {
     font-size: 0.92rem;
     line-height: 1.6;
     max-width: 30ch;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
   }
 
-  .light .ui-state-block__text {
-    color: var(--color-revolut-light-muted);
-  }
-
+  /* ─── List shells ─── */
   .ui-list-shell {
     padding: 0 1.1rem;
   }
 
+  /* ─── Key-value rows ─── */
   .ui-kv-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -184,25 +146,17 @@
   }
 
   .ui-kv-row + .ui-kv-row {
-    border-top: 1px solid var(--color-revolut-border);
-  }
-
-  .light .ui-kv-row + .ui-kv-row {
-    border-top-color: var(--color-revolut-light-border);
+    border-top: 1px solid var(--border-default);
   }
 
   .ui-kv-row__label {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.76rem;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     min-width: 0;
     overflow-wrap: anywhere;
-  }
-
-  .light .ui-kv-row__label {
-    color: color-mix(in srgb, var(--color-revolut-light-text) 54%, var(--color-revolut-light-muted));
   }
 
   .ui-kv-row__value {
@@ -212,12 +166,10 @@
     text-align: right;
     min-width: 0;
     overflow-wrap: anywhere;
+    color: var(--text-primary);
   }
 
-  .light .ui-kv-row__value {
-    color: var(--color-revolut-light-text);
-  }
-
+  /* ─── Payment rows ─── */
   .ui-payment-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -229,36 +181,25 @@
   .ui-payment-row__name {
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--color-revolut-text);
-  }
-
-  .light .ui-payment-row__name {
-    color: var(--color-revolut-light-text);
+    color: var(--text-primary);
   }
 
   .ui-payment-row__meta {
     margin-top: 0.3rem;
     font-size: 0.78rem;
     line-height: 1.55;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     overflow-wrap: anywhere;
   }
 
-  .light .ui-payment-row__meta {
-    color: var(--color-revolut-light-muted);
-  }
-
+  /* ─── Entry rows ─── */
   .ui-entry-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.9rem;
     align-items: start;
     padding: 1rem 0.15rem;
-    border-bottom: 1px solid var(--color-revolut-border);
-  }
-
-  .light .ui-entry-row {
-    border-bottom-color: var(--color-revolut-light-border);
+    border-bottom: 1px solid var(--border-default);
   }
 
   .ui-entry-row:last-child {
@@ -270,11 +211,7 @@
   }
 
   .ui-entry-row--interactive:hover .ui-entry-description {
-    color: var(--color-revolut-green);
-  }
-
-  .light .ui-entry-row--interactive:hover .ui-entry-description {
-    color: var(--color-revolut-green-dark);
+    color: var(--accent-text);
   }
 
   .ui-entry-main {
@@ -303,52 +240,36 @@
 
   .ui-entry-badge.is-hourly {
     background: rgb(31 143 105 / 0.1);
-    color: var(--color-revolut-green);
-  }
-
-  .light .ui-entry-badge.is-hourly {
-    color: var(--color-revolut-green-dark);
+    color: var(--accent-text);
   }
 
   .ui-entry-badge.is-project {
     background: rgb(95 134 150 / 0.12);
-    color: var(--color-revolut-blue);
+    color: var(--info);
   }
 
   .ui-entry-date {
     font-family: "IBM Plex Mono", monospace;
     font-size: 11px;
     letter-spacing: 0.08em;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     white-space: nowrap;
-  }
-
-  .light .ui-entry-date {
-    color: var(--color-revolut-light-muted);
   }
 
   .ui-entry-description {
     font-size: 0.96rem;
     font-weight: 700;
     line-height: 1.35;
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     min-width: 0;
   }
 
-  .light .ui-entry-description {
-    color: var(--color-revolut-light-text);
-  }
-
   .ui-entry-note {
     font-size: 0.82rem;
     line-height: 1.55;
-    color: var(--color-revolut-muted);
-  }
-
-  .light .ui-entry-note {
-    color: var(--color-revolut-light-muted);
+    color: var(--text-secondary);
   }
 
   .ui-entry-side {
@@ -358,13 +279,9 @@
   }
 
   .ui-entry-amount {
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     text-align: right;
     white-space: nowrap;
-  }
-
-  .light .ui-entry-amount {
-    color: var(--color-revolut-light-text);
   }
 
   .ui-entry-actions {
@@ -374,7 +291,7 @@
   }
 
   .ui-entry-delete {
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     transition: color 0.2s ease, background 0.2s ease;
     width: 2.35rem;
     height: 2.35rem;
@@ -386,15 +303,12 @@
   }
 
   .ui-entry-delete:hover {
-    color: var(--color-revolut-red);
+    color: var(--danger);
     background: rgb(201 105 72 / 0.08);
     border-color: rgb(201 105 72 / 0.18);
   }
 
-  .light .ui-entry-delete:hover {
-    background: rgb(201 105 72 / 0.12);
-  }
-
+  /* ─── Stat cards ─── */
   .ui-stat-card {
     display: grid;
     gap: 0.75rem;
@@ -411,21 +325,18 @@
     width: 0.6rem;
     height: 0.6rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--color-revolut-green), var(--color-revolut-amber));
+    background: linear-gradient(135deg, var(--c-green), var(--c-amber));
     box-shadow: 0 0 0 6px rgb(31 143 105 / 0.08);
   }
 
   .ui-stat-value {
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     font-size: clamp(1.15rem, 4.8vw, 1.8rem);
     overflow-wrap: anywhere;
     line-height: 1.15;
   }
 
-  .light .ui-stat-value {
-    color: var(--color-revolut-light-text);
-  }
-
+  /* ─── Projection summary ─── */
   .ui-projection-summary {
     display: grid;
     gap: 0.75rem;
@@ -443,7 +354,7 @@
 
   .ui-projection-summary__label {
     font-size: 0.72rem;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     white-space: normal;
@@ -451,23 +362,16 @@
     min-width: 0;
   }
 
-  .light .ui-projection-summary__label {
-    color: var(--color-revolut-light-muted);
-  }
-
   .ui-projection-summary__value {
     font-size: clamp(0.95rem, 3.8vw, 1.08rem);
     font-weight: 700;
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     text-align: right;
     white-space: nowrap;
     min-width: 0;
   }
 
-  .light .ui-projection-summary__value {
-    color: var(--color-revolut-light-text);
-  }
-
+  /* ─── Invoice detail modal ─── */
   .ui-invoice-detail {
     display: grid;
     gap: 0.85rem;
@@ -484,24 +388,16 @@
   .ui-invoice-detail__label {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.72rem;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-  }
-
-  .light .ui-invoice-detail__label {
-    color: color-mix(in srgb, var(--color-revolut-light-text) 56%, var(--color-revolut-light-muted));
   }
 
   .ui-invoice-detail__value {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.96rem;
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     text-align: right;
-  }
-
-  .light .ui-invoice-detail__value {
-    color: var(--color-revolut-light-text);
   }
 
   .ui-invoice-detail__value--strong {
@@ -511,23 +407,15 @@
   .ui-invoice-detail__block {
     margin-top: 0.15rem;
     padding-top: 0.85rem;
-    border-top: 1px solid var(--color-revolut-border);
-  }
-
-  .light .ui-invoice-detail__block {
-    border-top-color: var(--color-revolut-light-border);
+    border-top: 1px solid var(--border-default);
   }
 
   .ui-invoice-detail__text {
     margin-top: 0.45rem;
     font-size: 0.95rem;
     line-height: 1.65;
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     overflow-wrap: anywhere;
-  }
-
-  .light .ui-invoice-detail__text {
-    color: var(--color-revolut-light-text);
   }
 
   .ui-invoice-detail__actions {
@@ -537,6 +425,7 @@
     gap: 0.5rem;
   }
 
+  /* ─── Chart ─── */
   .chart-wrap {
     width: 100%;
     position: relative;

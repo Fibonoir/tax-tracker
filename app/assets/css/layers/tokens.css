@@ -1,28 +1,60 @@
+/* ─── Brand palette (raw values, never used directly in components) ─── */
 @theme {
-  --color-revolut-black: oklch(0.18 0.024 172);
-  --color-revolut-dark: oklch(0.22 0.03 172);
-  --color-revolut-card: oklch(0.27 0.037 170);
-  --color-revolut-border: oklch(0.39 0.043 170);
-  --color-revolut-text: oklch(0.95 0.012 95);
-  --color-revolut-muted: oklch(0.75 0.017 170);
-  --color-revolut-green: oklch(0.66 0.118 164);
-  --color-revolut-green-dark: oklch(0.54 0.097 165);
-  --color-revolut-red: oklch(0.67 0.126 40);
-  --color-revolut-red-dark: oklch(0.58 0.112 38);
-  --color-revolut-blue: oklch(0.62 0.073 227);
-  --color-revolut-blue-dark: oklch(0.5 0.061 227);
-  --color-revolut-amber: oklch(0.79 0.109 84);
+  --c-black: oklch(0.18 0.024 172);
+  --c-dark: oklch(0.22 0.03 172);
+  --c-card: oklch(0.27 0.037 170);
+  --c-border: oklch(0.39 0.043 170);
+  --c-text: oklch(0.95 0.012 95);
+  --c-muted: oklch(0.75 0.017 170);
+  --c-green: oklch(0.66 0.118 164);
+  --c-green-dark: oklch(0.54 0.097 165);
+  --c-red: oklch(0.67 0.126 40);
+  --c-red-dark: oklch(0.58 0.112 38);
+  --c-blue: oklch(0.62 0.073 227);
+  --c-blue-dark: oklch(0.5 0.061 227);
+  --c-amber: oklch(0.79 0.109 84);
 
-  --color-revolut-light-bg: oklch(0.978 0.005 150);
-  --color-revolut-light-card: oklch(0.992 0.003 150);
-  --color-revolut-light-card-strong: oklch(0.997 0.002 150);
-  --color-revolut-light-border: oklch(0.84 0.01 160);
-  --color-revolut-light-text: oklch(0.27 0.024 170);
-  --color-revolut-light-muted: oklch(0.42 0.018 168);
-  --color-revolut-light-tint: oklch(0.944 0.01 154);
+  --c-light-bg: oklch(0.965 0.006 155);
+  --c-light-card: oklch(0.99 0.003 155);
+  --c-light-elevated: oklch(1 0 0);
+  --c-light-inset: oklch(0.935 0.01 155);
+  --c-light-border: oklch(0.82 0.012 160);
+  --c-light-border-subtle: oklch(0.88 0.008 160);
+  --c-light-text: oklch(0.22 0.024 170);
+  --c-light-muted: oklch(0.44 0.02 168);
 }
 
+/* ─── Semantic tokens: the ONLY layer components reference ─── */
 :root {
+  --surface-page: var(--c-black);
+  --surface-card: var(--c-card);
+  --surface-card-gradient: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02));
+  --surface-soft: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.03));
+  --surface-elevated: oklch(0.32 0.04 170);
+  --surface-inset: oklch(0.14 0.02 172);
+  --surface-input: rgb(255 255 255 / 0.03);
+
+  --text-primary: var(--c-text);
+  --text-secondary: var(--c-muted);
+
+  --border-default: var(--c-border);
+  --border-subtle: rgb(255 255 255 / 0.08);
+  --border-hover: rgb(255 255 255 / 0.22);
+  --border-active: rgb(31 143 105 / 0.36);
+
+  --accent: var(--c-green);
+  --accent-text: var(--c-green);
+  --accent-hover: rgb(31 143 105 / 0.18);
+  --danger: var(--c-red);
+  --danger-text: var(--c-red);
+  --warning: var(--c-amber);
+  --info: var(--c-blue);
+
+  --glow-subtle: rgb(255 255 255 / 0.05);
+  --glow-hover: rgb(255 255 255 / 0.08);
+  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --focus-ring: 0 0 0 4px rgb(31 143 105 / 0.12);
+
   --app-radius-xs: 0.75rem;
   --app-radius-sm: 1rem;
   --app-radius-md: 1.5rem;
@@ -31,19 +63,52 @@
   --app-shadow-sm: 0 10px 24px rgb(13 28 24 / 0.08);
   --app-shadow-md: 0 22px 44px rgb(13 28 24 / 0.12);
   --app-shadow-lg: 0 34px 78px rgb(10 24 20 / 0.2);
+
+  --app-gradient-hero:
+    radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
+    radial-gradient(circle at 100% 100%, rgb(163 165 112 / 0.16), transparent 18rem),
+    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.088 165) 56%, oklch(0.67 0.056 104) 100%);
+  --app-gradient-hero-light:
+    radial-gradient(circle at 10% 12%, rgb(255 255 255 / 0.9), transparent 17rem),
+    radial-gradient(circle at 100% 100%, rgb(140 160 120 / 0.14), transparent 20rem),
+    linear-gradient(145deg, oklch(0.88 0.028 165) 0%, oklch(0.83 0.04 162) 58%, oklch(0.88 0.028 104) 100%);
   --app-gradient-soft:
     linear-gradient(
       180deg,
       color-mix(in srgb, white 97%, rgb(190 209 201 / 0.16)),
       color-mix(in srgb, white 92%, rgb(214 223 218 / 0.38))
     );
-  --app-gradient-hero:
-    radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
-    radial-gradient(circle at 100% 100%, rgb(163 165 112 / 0.16), transparent 18rem),
-    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.088 165) 56%, oklch(0.67 0.056 104) 100%);
-  --app-gradient-hero-light:
-    radial-gradient(circle at 10% 12%, rgb(255 255 255 / 0.82), transparent 17rem),
-    radial-gradient(circle at 100% 100%, rgb(176 183 146 / 0.12), transparent 20rem),
-    linear-gradient(145deg, oklch(0.9 0.019 165) 0%, oklch(0.86 0.026 162) 58%, oklch(0.9 0.018 104) 100%);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Light theme overrides (SINGLE source of truth) ─── */
+.light {
+  --surface-page: var(--c-light-bg);
+  --surface-card: var(--c-light-card);
+  --surface-card-gradient: linear-gradient(180deg, rgb(255 255 255 / 0.99), var(--c-light-inset));
+  --surface-soft: linear-gradient(180deg, rgb(255 255 255 / 0.99), oklch(0.97 0.005 155));
+  --surface-elevated: var(--c-light-elevated);
+  --surface-inset: var(--c-light-inset);
+  --surface-input: oklch(0.96 0.005 155);
+
+  --text-primary: var(--c-light-text);
+  --text-secondary: var(--c-light-muted);
+
+  --border-default: var(--c-light-border);
+  --border-subtle: var(--c-light-border-subtle);
+  --border-hover: rgb(56 88 78 / 0.16);
+  --border-active: rgb(44 168 124 / 0.3);
+
+  --accent-text: var(--c-green-dark);
+  --accent-hover: rgb(44 168 124 / 0.14);
+  --danger-text: var(--c-red-dark);
+
+  --glow-subtle: rgb(255 255 255 / 0.84);
+  --glow-hover: #fff;
+  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --focus-ring: 0 0 0 4px rgb(44 168 124 / 0.08);
+
+  --app-shadow-sm: 0 8px 20px rgb(36 53 46 / 0.06);
+  --app-shadow-md: 0 14px 32px rgb(36 53 46 / 0.08);
+  --app-shadow-lg: 0 22px 44px rgb(36 53 46 / 0.12);
 }

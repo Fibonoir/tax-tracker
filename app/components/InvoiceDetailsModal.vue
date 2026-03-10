@@ -18,7 +18,7 @@
               @click="draft.type = option.value"
             >
               <span>{{ option.label }}</span>
-              <span class="text-xs leading-6 text-revolut-muted light:text-revolut-light-muted">{{ option.copy }}</span>
+              <span class="text-xs leading-6 text-[var(--text-secondary)]">{{ option.copy }}</span>
             </button>
           </div>
 
@@ -68,12 +68,12 @@
             <div class="ui-form-grid-2">
               <div>
                 <p class="label-xs">Lordo stimato</p>
-                <p class="num-lg text-revolut-text light:text-revolut-light-text mt-3">{{ fmt.eur(draftGross) }}</p>
+                <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(draftGross) }}</p>
               </div>
 
               <div>
                 <p class="label-xs">Tipo registrazione</p>
-                <p class="num-md text-revolut-text light:text-revolut-light-text mt-3">{{ draftTypeLabel }}</p>
+                <p class="num-md text-[var(--text-primary)] mt-3">{{ draftTypeLabel }}</p>
               </div>
             </div>
           </SurfaceCard>

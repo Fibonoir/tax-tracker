@@ -12,8 +12,8 @@
     margin: 0;
     font-family: "Manrope", sans-serif;
     min-height: 100dvh;
-    background-color: var(--color-revolut-black);
-    color: var(--color-revolut-text);
+    background-color: var(--surface-page);
+    color: var(--text-primary);
     background-image:
       radial-gradient(circle at top left, rgb(44 168 124 / 0.18), transparent 28rem),
       radial-gradient(circle at top right, rgb(207 173 99 / 0.14), transparent 24rem),
@@ -21,17 +21,10 @@
   }
 
   body.light {
-    background-color: var(--color-revolut-light-bg);
-    color: var(--color-revolut-light-text);
     background-image:
       radial-gradient(circle at top left, rgb(79 126 110 / 0.06), transparent 25rem),
       radial-gradient(circle at 85% 0%, rgb(164 173 137 / 0.05), transparent 20rem),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, white 97%, var(--color-revolut-light-bg)) 0%,
-        color-mix(in srgb, white 92%, var(--color-revolut-light-bg)) 20rem,
-        var(--color-revolut-light-bg) 100%
-      );
+      linear-gradient(180deg, oklch(0.98 0.004 155) 0%, oklch(0.975 0.005 155) 20rem, var(--surface-page) 100%);
   }
 
   a {
@@ -111,11 +104,7 @@
     font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-revolut-muted);
-  }
-
-  .light .label-xs {
-    color: color-mix(in srgb, var(--color-revolut-light-text) 58%, var(--color-revolut-light-muted));
+    color: var(--text-secondary);
   }
 
   .app-page-title {
@@ -123,25 +112,17 @@
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 0.98;
     letter-spacing: -0.045em;
-    color: var(--color-revolut-text);
+    color: var(--text-primary);
     max-width: 14ch;
     margin: 0;
-  }
-
-  .light .app-page-title {
-    color: var(--color-revolut-light-text);
   }
 
   .app-page-copy {
     max-width: 56ch;
     font-size: 0.95rem;
     line-height: 1.65;
-    color: var(--color-revolut-muted);
+    color: var(--text-secondary);
     margin: 0;
-  }
-
-  .light .app-page-copy {
-    color: color-mix(in srgb, var(--color-revolut-light-text) 74%, var(--color-revolut-light-muted));
   }
 
   .app-measure {

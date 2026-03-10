@@ -61,7 +61,7 @@
           <div class="ui-form-stack">
             <div>
               <p class="label-xs">Tre pilastri</p>
-              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
                 Controllo del denaro disponibile.
               </h2>
               <p class="app-page-copy mt-3">
@@ -104,9 +104,9 @@
                 <div v-for="row in donutLegend" :key="row.label" class="app-annual-legend-row">
                   <div class="app-annual-legend-label">
                     <span class="app-annual-legend-dot" :style="{ background: row.color }" />
-                    <span class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted">{{ row.label }}</span>
+                    <span class="font-mono text-xs text-[var(--text-secondary)]">{{ row.label }}</span>
                   </div>
-                  <span class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(row.value, true) }}</span>
+                  <span class="num-sm text-[var(--text-primary)]">{{ fmt.eur(row.value, true) }}</span>
                 </div>
               </div>
             </div>
@@ -149,17 +149,17 @@
           >
             <div
               class="app-deadline-dot"
-              :class="dl.isPast ? 'bg-revolut-muted' : nextDeadlineDate === dl.date ? 'bg-revolut-green animate-pulse' : 'bg-revolut-border'"
+              :class="dl.isPast ? 'bg-[var(--text-secondary)]' : nextDeadlineDate === dl.date ? 'bg-[var(--accent)] animate-pulse' : 'bg-[var(--border-default)]'"
             />
             <div class="app-deadline-main">
-              <p class="font-mono text-xs text-revolut-text light:text-revolut-light-text">{{ dl.label }}</p>
-              <p class="font-mono text-xs text-revolut-muted mt-0.5">{{ formatDeadlineDate(dl.date) }}</p>
+              <p class="font-mono text-xs text-[var(--text-primary)]">{{ dl.label }}</p>
+              <p class="font-mono text-xs text-[var(--text-secondary)] mt-0.5">{{ formatDeadlineDate(dl.date) }}</p>
             </div>
-            <span class="num-sm text-revolut-red shrink-0">{{ fmt.eur(dl.estimatedAmount) }}</span>
+            <span class="num-sm text-[var(--danger-text)] shrink-0">{{ fmt.eur(dl.estimatedAmount) }}</span>
           </div>
         </SurfaceCard>
 
-        <p class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted mt-2 px-1">Importi stimati in base al reddito proiettato e ai parametri salvati.</p>
+        <p class="font-mono text-xs text-[var(--text-secondary)] mt-2 px-1">Importi stimati in base al reddito proiettato e ai parametri salvati.</p>
       </AppSection>
 
       <AppSection title="Mese per mese" subtitle="Confronto rapido tra incassato lordo e netto distribuito durante l'anno." :delay="5">
@@ -177,8 +177,8 @@
               </div>
             </div>
             <div class="app-annual-month-values">
-              <p class="num-sm text-revolut-text light:text-revolut-light-text">{{ fmt.eur(month.gross, true) }}</p>
-              <p class="font-mono text-xs text-revolut-muted light:text-revolut-light-muted">netto {{ fmt.eur(month.net, true) }}</p>
+              <p class="num-sm text-[var(--text-primary)]">{{ fmt.eur(month.gross, true) }}</p>
+              <p class="font-mono text-xs text-[var(--text-secondary)]">netto {{ fmt.eur(month.net, true) }}</p>
             </div>
           </div>
         </SurfaceCard>
@@ -214,19 +214,19 @@ const headlineRows = computed(() => {
     {
       label: 'Mesi attivi',
       value: String(data.value.activeMonths),
-      class: 'text-revolut-text light:text-revolut-light-text',
+      class: 'text-[var(--text-primary)]',
     },
     {
       label: 'Costi distribuiti',
       value: fmt.eur(data.value.projectedTaxes.paymentsTotal),
       class: data.value.projectedTaxes.paymentsTotal > 0
-        ? 'text-revolut-red light:text-revolut-red-dark'
-        : 'text-revolut-muted light:text-revolut-light-muted',
+        ? 'text-[var(--danger-text)]'
+        : 'text-[var(--text-secondary)]',
     },
     {
       label: 'Netto proiettato',
       value: fmt.eur(data.value.projectedTaxes.annualNet),
-      class: 'text-revolut-green light:text-revolut-green-dark',
+      class: 'text-[var(--accent-text)]',
     },
   ]
 })
@@ -240,10 +240,10 @@ const donutLegend = computed(() => {
   if (!t) return []
 
   return [
-    { label: 'Reddito netto', value: t.annualNet, color: 'var(--color-revolut-green)' },
-    { label: 'IRPEF', value: t.irpef, color: 'var(--color-revolut-red)' },
-    { label: 'INPS', value: t.inps, color: 'var(--color-revolut-amber)' },
-    { label: 'Commercialista', value: t.accountant, color: 'var(--color-revolut-blue)' },
+    { label: 'Reddito netto', value: t.annualNet, color: 'var(--accent)' },
+    { label: 'IRPEF', value: t.irpef, color: 'var(--danger)' },
+    { label: 'INPS', value: t.inps, color: 'var(--warning)' },
+    { label: 'Commercialista', value: t.accountant, color: 'var(--info)' },
   ]
 })
 
@@ -256,28 +256,28 @@ const taxTable = computed(() => {
   const grossValue = isProj ? data.value.projectedAnnualGross : data.value.annualGross
 
   const rows = [
-    { label: grossLabel, value: fmt.eur(grossValue), class: 'text-revolut-text light:text-revolut-light-text' },
-    { label: 'Base imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-revolut-muted light:text-revolut-light-muted' },
+    { label: grossLabel, value: fmt.eur(grossValue), class: 'text-[var(--text-primary)]' },
+    { label: 'Base imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-[var(--text-secondary)]' },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, class: 'text-[var(--danger-text)]' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, class: 'text-[var(--danger-text)]' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps)}`, class: 'text-revolut-red light:text-revolut-red-dark' })
+    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps)}`, class: 'text-[var(--danger-text)]' })
   }
 
   rows.push(
-    { label: 'Base imponibile netta', value: fmt.eur(t.adjustedTaxableBase), class: 'text-revolut-muted light:text-revolut-light-muted' },
-    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-revolut-red light:text-revolut-red-dark' },
-    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-revolut-muted light:text-revolut-light-muted' },
+    { label: 'Base imponibile netta', value: fmt.eur(t.adjustedTaxableBase), class: 'text-[var(--text-secondary)]' },
+    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-[var(--danger-text)]' },
+    { label: 'Commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-[var(--danger-text)]' },
+    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-[var(--text-secondary)]' },
     {
       label: isProj ? 'Netto annuale proiettato' : 'Netto da inizio anno',
       value: fmt.eur(t.annualNet),
-      class: 'text-revolut-green light:text-revolut-green-dark font-semibold',
+      class: 'text-[var(--accent-text)] font-semibold',
     },
   )
 

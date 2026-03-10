@@ -31,7 +31,7 @@
                   <p class="label-xs">Registra</p>
                   <span class="ui-stat-card__dot" />
                 </div>
-                <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
+                <p class="text-sm leading-7 text-[var(--text-primary)]">
                   Sessioni orarie e fee progetto nello stesso flusso, con i soli dati utili.
                 </p>
               </div>
@@ -43,7 +43,7 @@
                   <p class="label-xs">Accantona</p>
                   <span class="ui-stat-card__dot" />
                 </div>
-                <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
+                <p class="text-sm leading-7 text-[var(--text-primary)]">
                   Tieni visibile la distanza tra incassato, disponibile e quota da spostare.
                 </p>
               </div>
@@ -55,7 +55,7 @@
                   <p class="label-xs">Prevedi</p>
                   <span class="ui-stat-card__dot" />
                 </div>
-                <p class="text-sm leading-7 text-revolut-text light:text-revolut-light-text">
+                <p class="text-sm leading-7 text-[var(--text-primary)]">
                   Trasforma la proiezione fiscale in scadenze e decisioni mensili piu sicure.
                 </p>
               </div>
@@ -67,7 +67,7 @@
           <div class="ui-form-stack app-login__panel-stack">
             <div>
               <p class="label-xs">Accesso protetto</p>
-              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-revolut-text light:text-revolut-light-text mt-3">
+              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
                 Entra in Chiaro.
               </h2>
               <p class="app-page-copy mt-3">
@@ -80,15 +80,15 @@
               <div class="ui-form-stack">
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Target</span>
-                  <span class="ui-kv-row__value text-revolut-text light:text-revolut-light-text">Freelance in forfettario</span>
+                  <span class="ui-kv-row__value text-[var(--text-primary)]">Freelance in forfettario</span>
                 </div>
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Focus</span>
-                  <span class="ui-kv-row__value text-revolut-green">Netto reale</span>
+                  <span class="ui-kv-row__value text-[var(--accent-text)]">Netto reale</span>
                 </div>
                 <div class="ui-kv-row">
                   <span class="ui-kv-row__label">Modalita</span>
-                  <span class="ui-kv-row__value text-revolut-blue">Uso personale</span>
+                  <span class="ui-kv-row__value text-[var(--info)]">Uso personale</span>
                 </div>
               </div>
             </SurfaceCard>
