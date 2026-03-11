@@ -1,6 +1,6 @@
 <template>
   <AppPageShell class="app-page app-page--month">
-    <StateBlock v-if="loading" type="loading" text="Sto preparando il riepilogo del mese selezionato..." />
+    <StateBlock v-if="loading" type="loading" text="Sto preparando i numeri del mese..." />
 
     <template v-else-if="summary">
       <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
@@ -19,15 +19,15 @@
 
           <div class="app-stage">
             <div class="app-stage__header">
-              <p class="app-stage__eyebrow">Quadro del mese</p>
-              <p class="app-stage__metric-label">Disponibile stimato</p>
+              <p class="app-stage__eyebrow">Mese selezionato</p>
+              <p class="app-stage__metric-label">Disponibile del mese</p>
               <p class="app-stage__metric">{{ fmt.eur(summary.net) }}</p>
               <p class="app-stage__summary">
-                Disponibile stimato · incassato {{ fmt.eur(summary.gross) }} · accantona {{ fmt.eur(summary.provision) }}
+                Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
               </p>
               <p class="app-stage__lead">
-                Questa vista comprime il mese in una lettura sola: quanto entra, quanto esce dal
-                spendibile e come si distribuisce il lavoro tra ore e fee progetto.
+                Qui vedi il mese in una schermata: quanto hai incassato, quanto va accantonato e da
+                dove arriva il lavoro.
               </p>
             </div>
 
@@ -35,19 +35,19 @@
               <div class="app-stage__signal app-stage__signal--strong">
                 <p class="app-stage__signal-label">Incassato</p>
                 <p class="app-stage__signal-value">{{ fmt.eur(summary.gross) }}</p>
-                <p class="app-stage__signal-note">Lordo del mese osservato.</p>
+                <p class="app-stage__signal-note">Totale lordo registrato nel mese.</p>
               </div>
 
               <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Da accantonare</p>
                 <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
-                <p class="app-stage__signal-note">Quota fiscale distribuita sul mese.</p>
+                <p class="app-stage__signal-note">Parte stimata da mettere da parte nel mese.</p>
               </div>
 
               <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Registrazioni</p>
                 <p class="app-stage__signal-value">{{ summary.entryCount }}</p>
-                <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} di lavoro gia caricato.</p>
+                <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} di lavoro gia registrato nel mese.</p>
               </div>
             </div>
           </div>
@@ -55,19 +55,19 @@
       </SurfaceCard>
 
       <div class="app-month-stat-grid fade-up fade-up-2">
-        <StatCard label="Lordo totale" :value="fmt.eur(summary.gross)" sub="Somma di tutte le registrazioni del mese" />
-        <StatCard label="A ore" :value="fmt.eur(summary.hourlyGross)" sub="Fatturato derivato da sessioni orarie" />
-        <StatCard label="A progetto" :value="fmt.eur(summary.projectGross)" sub="Fee concordate nel mese" />
+        <StatCard label="Incassato totale" :value="fmt.eur(summary.gross)" sub="Somma di tutte le registrazioni del mese" />
+        <StatCard label="Attivita a ore" :value="fmt.eur(summary.hourlyGross)" sub="Incassi da sessioni e consulenze a ore" />
+        <StatCard label="Progetti" :value="fmt.eur(summary.projectGross)" sub="Incassi da fee e consegne concordate" />
         <StatCard
-          label="Accantonamento"
+          label="Da accantonare"
           :value="fmt.eur(summary.provision)"
-          sub="Quota fiscale del mese"
+          sub="Quota stimata per imposte, INPS e costi"
           value-class="text-[var(--danger-text)]"
         />
         <StatCard
-          label="Netto stimato"
+          label="Disponibile stimato"
           :value="fmt.eur(summary.net)"
-          sub="Residuo dopo imposte e costi distribuiti"
+          sub="Quello che resta spendibile dopo gli accantonamenti"
           value-class="text-[var(--accent-text)]"
         />
       </div>
@@ -99,7 +99,7 @@
         </SurfaceCard>
       </div>
 
-      <AppSection title="Composizione accantonamento" subtitle="Come si distribuisce la quota fiscale e previdenziale del mese." :delay="3">
+      <AppSection title="Cosa compone l'accantonamento" subtitle="La quota del mese divisa tra imposta, INPS e costi distribuiti." :delay="3">
         <SurfaceCard padding="none" divided>
           <div v-for="row in taxRows" :key="row.label" class="ui-kv-row">
             <span class="ui-kv-row__label">{{ row.label }}</span>
@@ -108,9 +108,9 @@
         </SurfaceCard>
       </AppSection>
 
-      <AppSection title="Registrazioni del mese" subtitle="Apri una voce per correggere importo, data o descrizione ed eliminarla anche nei mesi passati." :delay="4">
+      <AppSection title="Registrazioni del mese" subtitle="Apri una registrazione per correggere data, importo o nota, anche nei mesi passati." :delay="4">
         <SurfaceCard v-if="entries.length === 0" padding="md">
-          <StateBlock type="empty" text="Questo mese e ancora vuoto. Torna in Home per registrare il primo incasso." />
+          <StateBlock type="empty" text="Nessuna registrazione in questo mese. Torna in Home e registra il primo incasso." />
         </SurfaceCard>
 
         <SurfaceCard v-else padding="none">
@@ -144,7 +144,7 @@
     <UModal
       :open="deleteConfirmOpen"
       title="Elimina registrazione"
-      description="Questa azione rimuove la registrazione dal mese selezionato e aggiorna il quadro storico."
+      description="La registrazione verra rimossa da questo mese e il riepilogo si aggiornera."
       @update:open="deleteConfirmOpen = $event"
     >
       <template #footer>
@@ -200,12 +200,12 @@ const mixRows = computed(() => {
 
   return [
     {
-      label: 'Fatturato orario',
+      label: 'Attivita a ore',
       value: fmt.eur(summary.value.hourlyGross),
       class: 'text-[var(--text-primary)]',
     },
     {
-      label: 'Fatturato a progetto',
+      label: 'Progetti',
       value: fmt.eur(summary.value.projectGross),
       class: 'text-[var(--info)]',
     },
@@ -222,7 +222,7 @@ const taxRows = computed(() => {
   const t = summary.value.projectedTaxes
   const n = activeMonths.value
   const rows: { label: string; value: string; class: string }[] = [
-    { label: 'IRPEF (imposta sostitutiva)', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-[var(--danger-text)]' },
+    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-[var(--danger-text)]' },
   ]
 
   if (t.inpsExcess > 0) {
@@ -236,7 +236,7 @@ const taxRows = computed(() => {
 
   rows.push(
     { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-[var(--danger-text)]' },
-    { label: 'Netto in tasca', value: fmt.eur(summary.value.net), class: 'text-[var(--accent-text)] font-semibold' },
+    { label: 'Disponibile del mese', value: fmt.eur(summary.value.net), class: 'text-[var(--accent-text)] font-semibold' },
   )
 
   return rows

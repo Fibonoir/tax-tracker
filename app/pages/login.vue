@@ -20,29 +20,29 @@
             Non spendere soldi che non sono davvero tuoi.
           </h1>
           <p class="app-login__subtitle">
-            Chiaro e l'app che ti dice, ogni mese, quanto hai incassato, quanto devi mettere da
-            parte e quanto ti resta davvero.
+            Chiaro ti mostra ogni mese tre numeri: quanto hai incassato, quanto devi accantonare e
+            quanto puoi davvero spendere.
           </p>
 
           <div class="app-grid-3 app-login__feature-grid mt-8">
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
               <p class="label-xs">Registra</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Sessioni orarie e fee progetto nello stesso flusso, con i soli dati utili.
+                Registra ore e progetti con data, importo e una nota.
               </p>
             </SurfaceCard>
 
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
               <p class="label-xs">Accantona</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Tieni visibile la distanza tra incassato, disponibile e quota da spostare.
+                Vedi subito la differenza tra incassato, da accantonare e disponibile.
               </p>
             </SurfaceCard>
 
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
               <p class="label-xs">Prevedi</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Trasforma la proiezione fiscale in scadenze e decisioni mensili piu sicure.
+                Anticipa imposte, contributi e scadenze senza fare conti a mano.
               </p>
             </SurfaceCard>
           </div>
@@ -53,27 +53,27 @@
             <div>
               <p class="label-xs">Accesso protetto</p>
               <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Entra in Chiaro.
+                Accedi al tuo spazio.
               </h2>
               <p class="app-page-copy mt-3">
-                Accesso riservato all'email autorizzata. Google viene usato solo per semplificare
-                l'ingresso e mantenere il prodotto in un perimetro personale.
+                Solo l'email autorizzata puo entrare. Usiamo Google per rendere l'accesso rapido e
+                tenere Chiaro in uno spazio personale.
               </p>
             </div>
 
             <SurfaceCard variant="soft" padding="md">
               <div class="ui-form-stack">
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Target</span>
+                  <span class="ui-kv-row__label">Per chi</span>
                   <span class="ui-kv-row__value text-[var(--text-primary)]">Freelance in forfettario</span>
                 </div>
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Focus</span>
-                  <span class="ui-kv-row__value text-[var(--accent-text)]">Netto reale</span>
+                  <span class="ui-kv-row__label">Ti mostra</span>
+                  <span class="ui-kv-row__value text-[var(--accent-text)]">Quanto puoi spendere davvero</span>
                 </div>
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Modalita</span>
-                  <span class="ui-kv-row__value text-[var(--info)]">Uso personale</span>
+                  <span class="ui-kv-row__label">Accesso</span>
+                  <span class="ui-kv-row__value text-[var(--info)]">Solo email autorizzata</span>
                 </div>
               </div>
             </SurfaceCard>
@@ -90,11 +90,11 @@
               <span class="app-login__button-icon">
                 <UIcon name="logos:google-icon" class="w-5 h-5" />
               </span>
-              <span class="ml-2">Accedi con Google</span>
+              <span class="ml-2">Continua con Google</span>
             </UButton>
 
             <p class="app-login__note">
-              Dopo l'accesso trovi dashboard, modello fiscale e costi d'appoggio nello stesso ambiente.
+              Dopo l'accesso trovi incassi, stime fiscali e costi nello stesso posto.
             </p>
           </div>
         </SurfaceCard>

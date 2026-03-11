@@ -1,6 +1,6 @@
 <template>
   <AppPageShell class="app-page app-page--annual">
-    <StateBlock v-if="loading" type="loading" text="Sto calcolando il quadro annuale..." />
+    <StateBlock v-if="loading" type="loading" text="Sto aggiornando il quadro annuale..." />
 
     <template v-else-if="data">
       <div class="app-main-stack app-annual-intro">
@@ -20,15 +20,14 @@
 
             <div class="app-stage app-stage--annual">
               <div class="app-stage__header">
-                <p class="app-stage__eyebrow">Quadro annuale</p>
-                <p class="app-stage__metric-label">Disponibile proiettato</p>
+                <p class="app-stage__eyebrow">Anno selezionato</p>
+                <p class="app-stage__metric-label">Disponibile a fine anno</p>
                 <p class="app-stage__metric">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
                 <p class="app-stage__summary">
-                  Disponibile proiettato · lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · accantona {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
+                  Lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · da accantonare {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
                 </p>
                 <p class="app-stage__lead">
-                  Usa questa vista per leggere l'anno come un sistema unico: ritmo dei mesi,
-                  impatto fiscale complessivo e prossime uscite che non devono sorprenderti.
+                  Qui vedi l'anno intero: ritmo dei mesi, peso fiscale e prossime scadenze.
                 </p>
               </div>
 
@@ -36,7 +35,7 @@
                 <div class="app-stage__signal app-stage__signal--strong">
                   <p class="app-stage__signal-label">Lordo previsto</p>
                   <p class="app-stage__signal-value">{{ fmt.eur(data.projectedAnnualGross) }}</p>
-                  <p class="app-stage__signal-note">Quanto potresti chiudere entro fine anno.</p>
+                  <p class="app-stage__signal-note">Se mantieni il ritmo attuale, potresti chiudere qui.</p>
                 </div>
 
                 <div class="app-stage__signal">
@@ -46,10 +45,10 @@
                 </div>
 
                 <div class="app-stage__signal">
-                  <p class="app-stage__signal-label">Scadenza piu vicina</p>
+                  <p class="app-stage__signal-label">Prossima scadenza</p>
                   <p class="app-stage__signal-value">{{ nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna' }}</p>
                   <p class="app-stage__signal-note">
-                    {{ nextDeadline ? nextDeadline.label : 'Nessuna scadenza futura calcolata per l\'anno.' }}
+                    {{ nextDeadline ? nextDeadline.label : 'Nessuna scadenza calcolata per il resto dell\'anno.' }}
                   </p>
                 </div>
               </div>
@@ -60,13 +59,12 @@
         <SurfaceCard class="fade-up fade-up-2">
           <div class="ui-form-stack">
             <div>
-              <p class="label-xs">Tre pilastri</p>
+              <p class="label-xs">In breve</p>
               <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Controllo del denaro disponibile.
+                Cosa sta guidando l'anno.
               </h2>
               <p class="app-page-copy mt-3">
-                Questo pannello tiene insieme attivita, peso dei costi distribuiti e netto stimato:
-                tutto il resto viene dopo.
+                Mesi attivi, costi distribuiti e netto stimato: il resto si legge a partire da qui.
               </p>
             </div>
 
@@ -80,14 +78,14 @@
         </SurfaceCard>
       </div>
 
-      <AppSection title="Traiettoria mensile" subtitle="Il grafico mostra il ritmo del lordo e mette in evidenza il mese attuale." :delay="2">
+      <AppSection title="Andamento dei mesi" subtitle="Il grafico mostra l'incassato mese per mese e mette in evidenza il mese attuale." :delay="2">
         <SurfaceCard>
           <ChartsBarChart :months="data.months" :highlight="currentMonth" :height="180" />
         </SurfaceCard>
       </AppSection>
 
       <div class="app-annual-split">
-        <AppSection title="Ripartizione netto e imposte" subtitle="Quanto del lordo resta disponibile e quanto viene assorbito dal carico fiscale." :delay="3">
+        <AppSection title="Dove finisce il lordo" subtitle="Quanto resta disponibile e quanto assorbono imposta, INPS e commercialista." :delay="3">
           <SurfaceCard>
             <div class="app-annual-donut-layout">
               <div class="app-annual-donut-wrap">
@@ -114,7 +112,7 @@
         </AppSection>
 
         <AppSection :delay="3">
-          <SectionHeader title="Dettaglio annuale">
+          <SectionHeader title="Come si forma il netto">
             <template #right>
               <div class="ui-pill-toggle">
                 <button
@@ -124,7 +122,7 @@
                   :class="{ 'is-active': breakdownView === v }"
                   @click="breakdownView = v"
                 >
-                  {{ v === 'projected' ? 'Proiezione' : 'Effettivo' }}
+                  {{ v === 'projected' ? 'Proiezione' : 'Da inizio anno' }}
                 </button>
               </div>
             </template>
@@ -139,7 +137,7 @@
         </AppSection>
       </div>
 
-      <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" subtitle="Ordine cronologico delle uscite previste secondo il modello salvato." :delay="4">
+      <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" subtitle="Date e importi previsti secondo il modello fiscale salvato." :delay="4">
         <SurfaceCard padding="none" divided>
           <div
             v-for="(dl, i) in data.paymentDeadlines"
@@ -159,10 +157,10 @@
           </div>
         </SurfaceCard>
 
-        <p class="font-mono text-xs text-[var(--text-secondary)] mt-2 px-1">Importi stimati in base al reddito proiettato e ai parametri salvati.</p>
+        <p class="font-mono text-xs text-[var(--text-secondary)] mt-2 px-1">Importi stimati sul reddito proiettato e sui parametri salvati.</p>
       </AppSection>
 
-      <AppSection title="Mese per mese" subtitle="Confronto rapido tra incassato lordo e netto distribuito durante l'anno." :delay="5">
+      <AppSection title="Mese per mese" subtitle="Confronta incassato e disponibile distribuito lungo l'anno." :delay="5">
         <SurfaceCard padding="none" divided>
           <div
             v-for="(month, i) in data.months"
@@ -212,7 +210,7 @@ const headlineRows = computed(() => {
 
   return [
     {
-      label: 'Mesi attivi',
+      label: 'Mesi con attivita',
       value: String(data.value.activeMonths),
       class: 'text-[var(--text-primary)]',
     },
@@ -224,7 +222,7 @@ const headlineRows = computed(() => {
         : 'text-[var(--text-secondary)]',
     },
     {
-      label: 'Netto proiettato',
+      label: 'Disponibile a fine anno',
       value: fmt.eur(data.value.projectedTaxes.annualNet),
       class: 'text-[var(--accent-text)]',
     },
@@ -240,8 +238,8 @@ const donutLegend = computed(() => {
   if (!t) return []
 
   return [
-    { label: 'Reddito netto', value: t.annualNet, color: 'var(--accent)' },
-    { label: 'IRPEF', value: t.irpef, color: 'var(--danger)' },
+    { label: 'Netto disponibile', value: t.annualNet, color: 'var(--accent)' },
+    { label: 'Imposta sostitutiva', value: t.irpef, color: 'var(--danger)' },
     { label: 'INPS', value: t.inps, color: 'var(--warning)' },
     { label: 'Commercialista', value: t.accountant, color: 'var(--info)' },
   ]
@@ -252,12 +250,12 @@ const taxTable = computed(() => {
   if (!t) return []
 
   const isProj = breakdownView.value === 'projected'
-  const grossLabel = isProj ? 'Lordo annuale proiettato' : 'Lordo da inizio anno'
+  const grossLabel = isProj ? 'Lordo previsto a fine anno' : 'Lordo da inizio anno'
   const grossValue = isProj ? data.value.projectedAnnualGross : data.value.annualGross
 
   const rows = [
     { label: grossLabel, value: fmt.eur(grossValue), class: 'text-[var(--text-primary)]' },
-    { label: 'Base imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-[var(--text-secondary)]' },
+    { label: 'Reddito imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-[var(--text-secondary)]' },
   ]
 
   if (t.inpsExcess > 0) {
@@ -270,12 +268,12 @@ const taxTable = computed(() => {
   }
 
   rows.push(
-    { label: 'Base imponibile netta', value: fmt.eur(t.adjustedTaxableBase), class: 'text-[var(--text-secondary)]' },
+    { label: 'Imponibile dopo INPS', value: fmt.eur(t.adjustedTaxableBase), class: 'text-[var(--text-secondary)]' },
     { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-[var(--danger-text)]' },
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-[var(--danger-text)]' },
+    { label: 'Costo commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-[var(--danger-text)]' },
     { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-[var(--text-secondary)]' },
     {
-      label: isProj ? 'Netto annuale proiettato' : 'Netto da inizio anno',
+      label: isProj ? 'Disponibile a fine anno' : 'Disponibile da inizio anno',
       value: fmt.eur(t.annualNet),
       class: 'text-[var(--accent-text)] font-semibold',
     },

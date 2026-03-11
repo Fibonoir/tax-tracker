@@ -1,7 +1,7 @@
 <template>
   <SurfaceCard variant="soft" padding="md" class="ui-projection-summary">
     <div class="ui-stat-card__head">
-      <p class="label-xs">Traiettoria</p>
+      <p class="label-xs">Ritmo attuale</p>
       <span class="ui-stat-card__dot" />
     </div>
 
@@ -11,12 +11,12 @@
     </div>
 
     <div class="ui-projection-summary__row">
-      <span class="ui-projection-summary__label">Proiezione annuale</span>
+      <span class="ui-projection-summary__label">Stima fine anno</span>
       <span class="ui-projection-summary__value">{{ fmt.eur(projectedAnnual) }}/anno</span>
     </div>
 
     <div v-if="monthlySetAside !== undefined && monthlySetAside !== null" class="ui-projection-summary__row">
-      <span class="ui-projection-summary__label">Accantona</span>
+      <span class="ui-projection-summary__label">Da accantonare</span>
       <span class="ui-projection-summary__value text-[var(--danger-text)]">{{ fmt.eur(monthlySetAside) }}/mese</span>
     </div>
   </SurfaceCard>

@@ -4,18 +4,18 @@
       <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="order-2 fade-up fade-up-1 md:order-1">
         <div class="app-stage">
           <div class="app-stage__header">
-            <p class="app-stage__eyebrow">Decisione del mese</p>
+            <p class="app-stage__eyebrow">Questo mese</p>
             <h1 class="app-stage__title">{{ monthLabel }}</h1>
             <p class="app-stage__lead">
-              Registra il lavoro appena chiuso e controlla subito quanto puoi considerare disponibile,
-              quanto va accantonato e quale ritmo stai tenendo.
+              Registra un incasso e vedi subito tre numeri: quanto puoi tenere disponibile, quanto
+              devi accantonare e che ritmo sta prendendo l'anno.
             </p>
 
             <div class="app-stage__metric-block">
-              <p class="app-stage__metric-label">Disponibile stimato</p>
+              <p class="app-stage__metric-label">Disponibile del mese</p>
               <p class="app-stage__metric">{{ fmt.eur(monthData.net) }}</p>
               <p class="app-stage__summary">
-                Incassato {{ fmt.eur(monthData.gross) }} · accantona {{ fmt.eur(monthData.provision) }}
+                Incassato {{ fmt.eur(monthData.gross) }} · da accantonare {{ fmt.eur(monthData.provision) }}
               </p>
             </div>
           </div>
@@ -24,13 +24,13 @@
             <div class="app-stage__signal app-stage__signal--strong">
               <p class="app-stage__signal-label">Incassato nel mese</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.gross) }}</p>
-              <p class="app-stage__signal-note">Il lordo già registrato nelle voci correnti.</p>
+              <p class="app-stage__signal-note">Totale lordo gia registrato in questo mese.</p>
             </div>
 
             <div class="app-stage__signal">
               <p class="app-stage__signal-label">Da accantonare</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.provision) }}</p>
-              <p class="app-stage__signal-note">Quota stimata tra imposte, contributi e costi distribuiti.</p>
+              <p class="app-stage__signal-note">Parte da mettere da parte per imposte, contributi e costi.</p>
             </div>
 
             <div class="app-stage__signal">
@@ -47,11 +47,11 @@
           <div>
             <p class="label-xs">Nuovo incasso</p>
             <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-              Registra solo cio che serve.
+              Registra un incasso in pochi secondi.
             </h2>
             <p class="app-page-copy mt-3">
-              Tipo di lavoro, data e importo. Appena salvi, il quadro del mese si aggiorna con
-              disponibile, accantonamento e proiezione.
+              Scegli il tipo di lavoro, inserisci data e importo, poi salva. Il mese si aggiorna
+              subito.
             </p>
           </div>
 
@@ -89,7 +89,7 @@
             </div>
 
             <div v-else>
-              <label class="label-xs ui-field-label">Importo progetto (€)</label>
+              <label class="label-xs ui-field-label">Importo concordato (€)</label>
               <UInput
                 v-model="form.amount"
                 type="number"
@@ -102,11 +102,11 @@
           </div>
 
           <div>
-            <label class="label-xs ui-field-label">Descrizione</label>
+            <label class="label-xs ui-field-label">Nota</label>
             <UInput
               v-model="form.description"
               type="text"
-              placeholder="Cliente, milestone, call strategica..."
+              placeholder="Cliente, milestone o call strategica"
               :ui="fieldUi"
             />
           </div>
@@ -114,21 +114,21 @@
           <SurfaceCard variant="soft" padding="md">
             <div class="app-grid-3">
               <div>
-                <p class="label-xs">Lordo</p>
+                <p class="label-xs">Incasso lordo</p>
                 <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(previewGross) }}</p>
-                <p class="ui-field-help">Calcolato con la tariffa attuale o l'importo progetto inserito.</p>
+                <p class="ui-field-help">Calcolato con la tariffa salvata o con l'importo che hai inserito.</p>
               </div>
 
               <div>
-                <p class="label-xs">Disponibile</p>
+                <p class="label-xs">Disponibile stimato</p>
                 <p class="num-lg text-[var(--accent-text)] mt-3">{{ fmt.eur(previewNet) }}</p>
-                <p class="ui-field-help">Stima rapida basata sull'aliquota effettiva annuale in corso.</p>
+                <p class="ui-field-help">Stima veloce basata sull'aliquota effettiva dell'anno in corso.</p>
               </div>
 
               <div>
-                <p class="label-xs">Accantonamento</p>
+                <p class="label-xs">Da accantonare</p>
                 <p class="num-lg text-[var(--danger-text)] mt-3">{{ fmt.eur(previewProvision) }}</p>
-                <p class="ui-field-help">Quota da tenere fuori dal denaro spendibile del mese.</p>
+                <p class="ui-field-help">Quota da tenere fuori dai soldi spendibili del mese.</p>
               </div>
             </div>
           </SurfaceCard>
@@ -141,7 +141,7 @@
             :loading="saving"
             @click="submit"
           >
-            Salva incasso
+            Registra incasso
           </UButton>
         </div>
       </SurfaceCard>
@@ -173,7 +173,7 @@
           <div>
             <p class="label-xs">Focus del momento</p>
             <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-              Le tre cose da guardare subito.
+              Cosa guardare adesso.
             </h2>
           </div>
 
@@ -189,20 +189,20 @@
 
     <AppSection
       class="app-home-recent"
-      title="Attività recente"
-      subtitle="Apri una registrazione per controllare il dettaglio o correggere il mese corrente."
+      title="Registrazioni recenti"
+      subtitle="Apri una registrazione per correggere data, importo o nota."
       :delay="3"
     >
       <template #header-right>
         <NuxtLink to="/month" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]">
-          Apri mese
+          Vai al mese
         </NuxtLink>
       </template>
 
-      <StateBlock v-if="loadingEntries" type="loading" text="Sto caricando le registrazioni del mese..." />
+      <StateBlock v-if="loadingEntries" type="loading" text="Sto caricando le registrazioni di questo mese..." />
 
       <SurfaceCard v-else-if="entries.length === 0" padding="md">
-        <StateBlock type="empty" text="Nessuna registrazione ancora. Usa il composer sopra per creare la prima voce." />
+        <StateBlock type="empty" text="Nessuna registrazione per ora. Registra il primo incasso qui sopra." />
       </SurfaceCard>
 
       <SurfaceCard v-else padding="none">
@@ -235,7 +235,7 @@
     <UModal
       :open="deleteConfirmOpen"
       title="Elimina registrazione"
-      description="Questa azione rimuove la registrazione dal mese corrente e aggiorna tutte le stime."
+      description="La registrazione verra rimossa dal mese corrente e tutte le stime si aggiorneranno."
       @update:open="deleteConfirmOpen = $event"
     >
       <template #footer>
@@ -262,12 +262,12 @@ const typeOptions = [
   {
     value: 'HOURLY' as const,
     label: 'Sessione oraria',
-    copy: 'Ideale per call, consulenze e giornate fatturate a ore.',
+    copy: 'Per call, consulenze e giornate fatturate a ore.',
   },
   {
     value: 'PROJECT' as const,
     label: 'Fee progetto',
-    copy: 'Per milestone, consegne una tantum e importi già concordati.',
+    copy: 'Per milestone, consegne e importi gia concordati.',
   },
 ]
 
@@ -327,17 +327,17 @@ const homeStats = computed(() => {
     {
       label: 'Ore registrate',
       value: fmt.hours(monthData.value.totalHours),
-      sub: `${monthData.value.entryCount} voci nel mese`,
+      sub: `${monthData.value.entryCount} registrazioni nel mese`,
     },
     {
-      label: 'Media per voce',
+      label: 'Media per registrazione',
       value: fmt.eur(averageEntryGross.value),
-      sub: 'Quanto vale in media ogni registrazione salvata',
+      sub: 'Valore medio di ogni registrazione salvata',
     },
     {
       label: 'Aliquota stimata',
       value: fmt.pct(effectiveRate.value),
-      sub: 'Quota effettiva tra imposte, contributi e costi distribuiti',
+      sub: 'Peso effettivo tra imposte, contributi e costi distribuiti',
     },
   ]
 })
@@ -347,17 +347,17 @@ const focusRows = computed(() => {
 
   return [
     {
-      label: 'Puoi considerare disponibile',
+      label: 'Disponibile ora',
       value: fmt.eur(monthData.value.net),
       class: 'text-[var(--accent-text)]',
     },
     {
-      label: 'Da spostare per tasse',
+      label: 'Da accantonare',
       value: fmt.eur(monthData.value.provision),
       class: 'text-[var(--danger-text)]',
     },
     {
-      label: 'Proiezione fine anno',
+      label: 'Stima fine anno',
       value: fmt.eur(monthData.value.runningProjectedAnnual),
       class: 'text-[var(--text-primary)]',
     },

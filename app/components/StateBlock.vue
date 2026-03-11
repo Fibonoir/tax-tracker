@@ -7,7 +7,7 @@
 
     <template v-else>
       <UIcon name="lucide:inbox" class="w-7 h-7 text-[var(--text-secondary)]" />
-      <p class="ui-state-block__text">{{ props.text || 'Nessun risultato' }}</p>
+      <p class="ui-state-block__text">{{ props.text || 'Ancora nulla qui' }}</p>
     </template>
   </div>
 </template>

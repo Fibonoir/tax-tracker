@@ -42,7 +42,7 @@
             </div>
 
             <div v-else>
-              <label class="label-xs ui-field-label">Importo progetto (€)</label>
+              <label class="label-xs ui-field-label">Importo concordato (€)</label>
               <UInput
                 v-model="draft.amount"
                 type="number"
@@ -55,11 +55,11 @@
           </div>
 
           <div>
-            <label class="label-xs ui-field-label">Descrizione</label>
+            <label class="label-xs ui-field-label">Nota</label>
             <UInput
               v-model="draft.description"
               type="text"
-              placeholder="Cliente, milestone, call strategica..."
+              placeholder="Cliente, milestone o call strategica"
               :ui="fieldUi"
             />
           </div>
@@ -67,12 +67,12 @@
           <SurfaceCard variant="soft" padding="md">
             <div class="ui-form-grid-2">
               <div>
-                <p class="label-xs">Lordo stimato</p>
+                <p class="label-xs">Lordo previsto</p>
                 <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(draftGross) }}</p>
               </div>
 
               <div>
-                <p class="label-xs">Tipo registrazione</p>
+                <p class="label-xs">Tipo di lavoro</p>
                 <p class="num-md text-[var(--text-primary)] mt-3">{{ draftTypeLabel }}</p>
               </div>
             </div>
@@ -86,7 +86,7 @@
           </div>
 
           <div class="ui-invoice-detail__row">
-            <span class="ui-invoice-detail__label">Tipo</span>
+            <span class="ui-invoice-detail__label">Tipo di lavoro</span>
             <span class="ui-invoice-detail__value">{{ typeLabel }}</span>
           </div>
 
@@ -96,23 +96,23 @@
           </div>
 
           <div v-if="entry.type === 'HOURLY'" class="ui-invoice-detail__row">
-            <span class="ui-invoice-detail__label">Tariffa</span>
+            <span class="ui-invoice-detail__label">Tariffa oraria</span>
             <span class="ui-invoice-detail__value">{{ fmt.eur(hourlyRate || 30) }}/h</span>
           </div>
 
           <div v-if="entry.type === 'PROJECT'" class="ui-invoice-detail__row">
-            <span class="ui-invoice-detail__label">Importo progetto</span>
+            <span class="ui-invoice-detail__label">Importo concordato</span>
             <span class="ui-invoice-detail__value">{{ fmt.eur(entry.amount || 0) }}</span>
           </div>
 
           <div class="ui-invoice-detail__row">
-            <span class="ui-invoice-detail__label">Lordo</span>
+            <span class="ui-invoice-detail__label">Totale lordo</span>
             <span class="ui-invoice-detail__value ui-invoice-detail__value--strong">{{ fmt.eur(gross) }}</span>
           </div>
 
           <div class="ui-invoice-detail__block">
-            <p class="ui-invoice-detail__label">Descrizione</p>
-            <p class="ui-invoice-detail__text">{{ entry.description || 'Nessuna descrizione' }}</p>
+            <p class="ui-invoice-detail__label">Nota</p>
+            <p class="ui-invoice-detail__text">{{ entry.description || 'Nessuna nota' }}</p>
           </div>
         </template>
       </div>
@@ -204,12 +204,12 @@ const typeOptions = [
   {
     value: 'HOURLY' as const,
     label: 'Sessione oraria',
-    copy: 'Call, consulenze e giornate a ore.',
+    copy: 'Per call, consulenze e giornate fatturate a ore.',
   },
   {
     value: 'PROJECT' as const,
     label: 'Fee progetto',
-    copy: 'Milestone, consegne e importi concordati.',
+    copy: 'Per milestone, consegne e importi gia concordati.',
   },
 ]
 
@@ -223,20 +223,20 @@ const draft = reactive({
 
 const title = computed(() => {
   if (!props.entry) return 'Dettaglio registrazione'
-  return `Registrazione ${fmt.date(props.entry.date)}`
+  return `Registrazione del ${fmt.date(props.entry.date)}`
 })
 
 const modalDescription = computed(() => {
   if (props.editable && isEditing.value) {
-    return 'Correggi data, importo e descrizione prima di salvare le modifiche.'
+    return 'Aggiorna data, importo e nota, poi salva.'
   }
 
-  return props.entry?.description || 'Verifica importi, tipo di lavoro e origine della registrazione selezionata.'
+  return props.entry?.description || 'Controlla data, importo e nota della registrazione selezionata.'
 })
 
 const typeLabel = computed(() => {
   if (!props.entry) return '-'
-  return props.entry.type === 'HOURLY' ? 'Orario' : 'Progetto'
+  return props.entry.type === 'HOURLY' ? 'A ore' : 'Progetto'
 })
 
 const draftTypeLabel = computed(() =>
