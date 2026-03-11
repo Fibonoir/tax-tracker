@@ -536,9 +536,8 @@
   }
 
   [data-ui-variant="editorial"] .app-login__button-icon {
-    background: var(--surface-inset);
+    background: none;
     box-shadow: none;
-    border: 1px solid var(--border-default);
   }
 
   [data-ui-variant="editorial"] .app-login__note {
