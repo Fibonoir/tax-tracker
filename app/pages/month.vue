@@ -1,5 +1,5 @@
 <template>
-  <AppPageShell>
+  <AppPageShell class="app-page app-page--month">
     <StateBlock v-if="loading" type="loading" text="Sto preparando il riepilogo del mese selezionato..." />
 
     <template v-else-if="summary">

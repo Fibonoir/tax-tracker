@@ -1,6 +1,6 @@
 <template>
-  <AppPageShell>
-    <div class="app-main-stack">
+  <AppPageShell class="app-page app-page--settings">
+    <div class="app-main-stack app-settings-intro">
       <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
         <div class="app-stage">
           <div class="app-stage__header">

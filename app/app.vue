@@ -94,8 +94,12 @@
 </template>
 
 <script setup lang="ts">
+type UiVariant = 'classic' | 'editorial'
+
+const UI_VARIANT_STORAGE_KEY = 'chiaro-ui-variant'
 const route = useRoute()
 const colorMode = useColorMode()
+const uiVariant = useState<UiVariant>('ui-variant', () => normalizeUiVariant(route.query.ui) ?? 'classic')
 
 const currentYear = new Date().getFullYear()
 
@@ -108,6 +112,12 @@ const tabs = [
   { to: '/settings', label: 'Modello', icon: 'lucide:sliders-horizontal' },
 ]
 
+useHead(() => ({
+  htmlAttrs: {
+    'data-ui-variant': uiVariant.value,
+  },
+}))
+
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
   return route.path.startsWith(path)
@@ -116,4 +126,46 @@ function isActive(path: string) {
 function toggleColorMode() {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
 }
+
+function normalizeUiVariant(value: unknown): UiVariant | null {
+  const raw = Array.isArray(value) ? value[0] : value
+  if (typeof raw !== 'string') return null
+
+  const normalized = raw.toLowerCase()
+  if (normalized === 'classic' || normalized === 'editorial') return normalized
+  return null
+}
+
+function persistUiVariant(variant: UiVariant) {
+  if (!import.meta.client) return
+  localStorage.setItem(UI_VARIANT_STORAGE_KEY, variant)
+}
+
+function applyUiVariant(variant: UiVariant, persist = true) {
+  uiVariant.value = variant
+  if (persist) persistUiVariant(variant)
+}
+
+watch(
+  () => route.query.ui,
+  (value) => {
+    const queryVariant = normalizeUiVariant(value)
+
+    if (queryVariant) {
+      applyUiVariant(queryVariant)
+      return
+    }
+
+    if (value !== undefined) {
+      applyUiVariant('classic')
+      return
+    }
+
+    if (!import.meta.client) return
+
+    const storedVariant = normalizeUiVariant(localStorage.getItem(UI_VARIANT_STORAGE_KEY))
+    uiVariant.value = storedVariant ?? 'classic'
+  },
+  { immediate: true },
+)
 </script>

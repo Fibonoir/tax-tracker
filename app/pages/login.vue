@@ -1,5 +1,5 @@
 <template>
-  <div class="app-login">
+  <div class="app-login app-page app-page--login">
     <div class="app-login__container">
       <div class="app-grid-2 app-login__layout">
         <div class="fade-up fade-up-1">

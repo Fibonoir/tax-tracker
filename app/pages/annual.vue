@@ -1,9 +1,9 @@
 <template>
-  <AppPageShell>
+  <AppPageShell class="app-page app-page--annual">
     <StateBlock v-if="loading" type="loading" text="Sto calcolando il quadro annuale..." />
 
     <template v-else-if="data">
-      <div class="app-main-stack">
+      <div class="app-main-stack app-annual-intro">
         <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
           <div class="ui-form-stack">
             <div class="app-period-nav">

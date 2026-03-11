@@ -20,7 +20,7 @@
   }
 
   .ui-surface--gradient {
-    background: var(--app-gradient-hero);
+    background: var(--surface-stage);
     border-color: transparent;
     border-radius: var(--app-radius-lg);
     box-shadow: var(--app-shadow-lg);
@@ -31,17 +31,8 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+    box-shadow: var(--surface-stage-overlay);
     pointer-events: none;
-  }
-
-  .light .ui-surface--gradient {
-    background: var(--app-gradient-hero-light);
-    border-color: transparent;
-  }
-
-  .light .ui-surface--gradient::after {
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4);
   }
 
   @media (max-width: 767px) {
@@ -85,7 +76,7 @@
 
   .ui-section-header__title {
     margin: 0;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
     font-size: clamp(1.05rem, 2vw, 1.35rem);
     line-height: 1.15;
     letter-spacing: -0.03em;
@@ -150,7 +141,7 @@
   }
 
   .ui-kv-row__label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.76rem;
     color: var(--text-secondary);
     letter-spacing: 0.08em;
@@ -160,7 +151,7 @@
   }
 
   .ui-kv-row__value {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.9rem;
     font-weight: 600;
     text-align: right;
@@ -229,7 +220,7 @@
   }
 
   .ui-entry-badge {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     padding: 0.38rem 0.6rem;
     border-radius: 999px;
@@ -249,7 +240,7 @@
   }
 
   .ui-entry-date {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
@@ -348,7 +339,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: baseline;
     gap: 0.75rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     min-width: 0;
   }
 
@@ -386,7 +377,7 @@
   }
 
   .ui-invoice-detail__label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -394,7 +385,7 @@
   }
 
   .ui-invoice-detail__value {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.96rem;
     color: var(--text-primary);
     text-align: right;

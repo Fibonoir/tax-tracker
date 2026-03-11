@@ -67,7 +67,7 @@
     padding: 0.45rem 0.85rem;
     border-radius: 999px;
     font-size: 0.72rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     transition: all 0.2s ease;
     color: var(--text-secondary);
   }
@@ -165,14 +165,10 @@
     padding: 0.85rem;
     border-radius: 1.3rem;
     border: 1px solid var(--border-default);
-    background: var(--surface-page);
+    background: var(--calendar-panel-surface);
     box-shadow: var(--app-shadow-lg);
     overflow: hidden;
     isolation: isolate;
-  }
-
-  .light .ui-date-panel {
-    background: var(--surface-elevated);
   }
 
   .ui-date-popover {
@@ -197,7 +193,7 @@
   .ui-date-panel__action {
     padding: 0.35rem 0.55rem;
     border-radius: 0.7rem;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     color: var(--text-secondary);
     transition: color 0.2s ease, background 0.2s ease;
@@ -244,7 +240,7 @@
   }
 
   .ui-date-calendar [data-slot="heading"] {
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.03em;
@@ -263,7 +259,7 @@
   }
 
   .ui-date-calendar [data-slot="headCell"] {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -302,17 +298,13 @@
 
   .ui-date-calendar [data-slot="cellTrigger"][data-selected],
   .ui-date-calendar [data-slot="cellTrigger"][data-state="checked"] {
-    background: linear-gradient(135deg, var(--c-green), var(--c-green-dark));
-    color: #fff;
+    background: var(--calendar-selection-bg);
+    color: var(--calendar-selection-text);
     box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
   }
 
   .ui-date-calendar [data-slot="cellTrigger"][data-outside-view] {
-    color: rgb(153 171 165 / 0.46);
-  }
-
-  .light .ui-date-calendar [data-slot="cellTrigger"][data-outside-view] {
-    color: rgb(104 120 112 / 0.48);
+    color: var(--calendar-day-outside);
   }
 
   /* ─── Action buttons ─── */

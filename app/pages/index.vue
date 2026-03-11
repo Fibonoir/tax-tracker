@@ -1,6 +1,6 @@
 <template>
-  <AppPageShell>
-    <div class="app-main-stack">
+  <AppPageShell class="app-page app-page--home">
+    <div class="app-main-stack app-home-intro">
       <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="order-2 fade-up fade-up-1 md:order-1">
         <div class="app-stage">
           <div class="app-stage__header">
@@ -147,7 +147,7 @@
       </SurfaceCard>
     </div>
 
-    <div v-if="monthData" class="app-home-stat-grid">
+    <div v-if="monthData" class="app-home-stat-grid app-home-metrics">
       <StatCard
         v-for="stat in homeStats"
         :key="stat.label"
@@ -159,7 +159,7 @@
       />
     </div>
 
-    <div v-if="monthData" class="app-main-stack">
+    <div v-if="monthData" class="app-main-stack app-home-summary">
       <IncomeProjectionCard
         v-if="monthData.runningAvgMonthly > 0"
         :avg-monthly="monthData.runningAvgMonthly"
@@ -188,6 +188,7 @@
     </div>
 
     <AppSection
+      class="app-home-recent"
       title="Attività recente"
       subtitle="Apri una registrazione per controllare il dettaglio o correggere il mese corrente."
       :delay="3"
