@@ -42,20 +42,8 @@
               Chi usa questo modello.
             </h2>
             <p class="app-page-copy mt-3">
-              Accesso personale, anno fiscale attivo e conteggio delle uscite che entrano nelle
-              stime annuali.
+              Anno fiscale attivo e conteggio delle uscite che entrano nelle stime annuali.
             </p>
-          </div>
-
-          <div class="app-settings-account">
-            <div>
-              <p class="text-base font-semibold text-[var(--text-primary)]">{{ session?.user?.email }}</p>
-              <p class="text-sm text-[var(--text-secondary)] mt-2">{{ session?.user?.name || 'Utente autorizzato' }}</p>
-            </div>
-
-            <UButton variant="soft" color="neutral" class="ui-action-button--ghost" @click="logout">
-              Esci
-            </UButton>
           </div>
 
           <div class="ui-form-stack">
@@ -288,7 +276,6 @@
 <script setup lang="ts">
 const fmt = useFmt()
 const { fieldUi, selectUi } = useUiStyles()
-const { session } = useUserSession()
 const toast = useToast()
 
 const loading = ref(true)
@@ -436,11 +423,6 @@ async function addOnetimePayment() {
 async function deleteOnetimePayment(id: number) {
   await $fetch(`/api/payments/onetime?id=${id}`, { method: 'DELETE' })
   await loadData()
-}
-
-async function logout() {
-  await $fetch('/auth/logout', { method: 'POST' })
-  await navigateTo('/login')
 }
 
 onMounted(loadData)

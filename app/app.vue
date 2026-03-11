@@ -14,7 +14,6 @@
               </div>
 
               <div class="app-sidebar__meta">
-                <span class="app-sidebar__pill">Chiaro · Forfettario</span>
                 <p class="app-brand-title">Chiaro</p>
               </div>
             </div>
@@ -34,6 +33,13 @@
           </nav>
 
           <div class="app-sidebar__footer">
+            <div v-if="session?.user" class="app-sidebar-account">
+              <p class="app-sidebar-account__email">{{ session.user.email }}</p>
+              <button type="button" class="app-sidebar-account__action" title="Esci" @click="logout">
+                <UIcon name="lucide:log-out" class="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             <button type="button" class="app-toolbar-button" @click="toggleColorMode">
               <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-4 h-4" />
               <span class="app-toggle-copy">
@@ -60,9 +66,14 @@
               </div>
             </div>
 
-            <button type="button" class="app-toolbar-button" @click="toggleColorMode">
-              <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-4 h-4" />
-            </button>
+            <div class="app-mobile-header__actions">
+              <button v-if="session?.user" type="button" class="app-toolbar-button app-toolbar-button--icon" title="Esci" @click="logout">
+                <UIcon name="lucide:log-out" class="w-4 h-4" />
+              </button>
+              <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="toggleColorMode">
+                <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-4 h-4" />
+              </button>
+            </div>
           </header>
 
           <div class="app-shell-content pb-nav md:pb-8">
@@ -99,6 +110,7 @@ type UiVariant = 'classic' | 'editorial'
 const UI_VARIANT_STORAGE_KEY = 'chiaro-ui-variant'
 const route = useRoute()
 const colorMode = useColorMode()
+const { session } = useUserSession()
 const uiVariant = useState<UiVariant>('ui-variant', () => normalizeUiVariant(route.query.ui) ?? 'classic')
 
 const currentYear = new Date().getFullYear()
@@ -125,6 +137,11 @@ function isActive(path: string) {
 
 function toggleColorMode() {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
+}
+
+async function logout() {
+  await $fetch('/auth/logout', { method: 'POST' })
+  await navigateTo('/login')
 }
 
 function normalizeUiVariant(value: unknown): UiVariant | null {

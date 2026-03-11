@@ -71,6 +71,41 @@
     border-top: 1px solid var(--border-default);
   }
 
+  .app-sidebar-account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .app-sidebar-account__email {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .app-sidebar-account__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .app-sidebar-account__action:hover {
+    color: var(--danger-text);
+  }
+
   .app-sidebar__note {
     max-width: 26ch;
     font-size: 0.82rem;
@@ -123,6 +158,18 @@
     display: flex;
     align-items: center;
     gap: 0.875rem;
+  }
+
+  .app-mobile-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .app-toolbar-button--icon {
+    min-height: 2.5rem;
+    width: 2.5rem;
+    padding: 0;
   }
 
   .app-mobile-dock {
