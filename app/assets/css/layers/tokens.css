@@ -242,7 +242,7 @@
   --shell-ambient: none;
   --shell-sidebar-surface: var(--c-night-paper);
   --shell-sidebar-shadow: none;
-  --shell-dock-surface: oklch(0.24 0.014 56 / 0.96);
+  --shell-dock-surface: oklch(0.24 0.014 56);
   --shell-dock-border: var(--border-default);
 
   --stage-text-label: var(--c-ink-muted);
@@ -323,7 +323,7 @@
   --shell-ambient: none;
   --shell-sidebar-surface: var(--c-cream);
   --shell-sidebar-shadow: none;
-  --shell-dock-surface: oklch(0.96 0.007 78 / 0.96);
+  --shell-dock-surface: oklch(0.96 0.007 78);
   --shell-dock-border: var(--border-default);
 
   --stage-text-label: oklch(0.72 0.01 72);

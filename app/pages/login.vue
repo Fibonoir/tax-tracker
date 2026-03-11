@@ -25,40 +25,25 @@
           </p>
 
           <div class="app-grid-3 app-login__feature-grid mt-8">
-            <SurfaceCard variant="soft" class="app-login__feature-card">
-              <div class="ui-stat-card">
-                <div class="ui-stat-card__head app-login__feature-head">
-                  <p class="label-xs">Registra</p>
-                  <span class="ui-stat-card__dot" />
-                </div>
-                <p class="text-sm leading-7 text-[var(--text-primary)]">
-                  Sessioni orarie e fee progetto nello stesso flusso, con i soli dati utili.
-                </p>
-              </div>
+            <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
+              <p class="label-xs">Registra</p>
+              <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
+                Sessioni orarie e fee progetto nello stesso flusso, con i soli dati utili.
+              </p>
             </SurfaceCard>
 
-            <SurfaceCard variant="soft" class="app-login__feature-card">
-              <div class="ui-stat-card">
-                <div class="ui-stat-card__head app-login__feature-head">
-                  <p class="label-xs">Accantona</p>
-                  <span class="ui-stat-card__dot" />
-                </div>
-                <p class="text-sm leading-7 text-[var(--text-primary)]">
-                  Tieni visibile la distanza tra incassato, disponibile e quota da spostare.
-                </p>
-              </div>
+            <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
+              <p class="label-xs">Accantona</p>
+              <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
+                Tieni visibile la distanza tra incassato, disponibile e quota da spostare.
+              </p>
             </SurfaceCard>
 
-            <SurfaceCard variant="soft" class="app-login__feature-card">
-              <div class="ui-stat-card">
-                <div class="ui-stat-card__head app-login__feature-head">
-                  <p class="label-xs">Prevedi</p>
-                  <span class="ui-stat-card__dot" />
-                </div>
-                <p class="text-sm leading-7 text-[var(--text-primary)]">
-                  Trasforma la proiezione fiscale in scadenze e decisioni mensili piu sicure.
-                </p>
-              </div>
+            <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
+              <p class="label-xs">Prevedi</p>
+              <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
+                Trasforma la proiezione fiscale in scadenze e decisioni mensili piu sicure.
+              </p>
             </SurfaceCard>
           </div>
         </div>

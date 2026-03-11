@@ -441,8 +441,7 @@
 
   [data-ui-variant="editorial"] .ui-pill-toggle__btn {
     border: 1px solid var(--border-default);
-    border-bottom-width: 2px;
-    border-bottom-color: transparent;
+    border-bottom: 2px solid var(--border-default);
     padding: 0.55rem 0.95rem;
     border-radius: 0 !important;
   }

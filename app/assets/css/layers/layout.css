@@ -160,16 +160,39 @@
     gap: 0.875rem;
   }
 
-  .app-mobile-header__actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .app-toolbar-button--icon {
     min-height: 2.5rem;
     width: 2.5rem;
     padding: 0;
+  }
+
+  .app-mobile-menu {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-default);
+    margin-bottom: 0.5rem;
+  }
+
+  .app-mobile-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, background 0.15s ease;
+    border-radius: var(--app-radius-xs);
+  }
+
+  .app-mobile-menu__item:hover {
+    color: var(--text-primary);
+    background: var(--glow-hover);
+  }
+
+  .app-mobile-menu__item--danger:hover {
+    color: var(--danger-text);
   }
 
   .app-mobile-dock {
@@ -461,34 +484,8 @@
 
   .app-login__feature-card {
     display: flex;
-    min-height: 15.25rem;
-  }
-
-  .app-login__feature-card .ui-stat-card {
-    width: 100%;
-  }
-
-  .app-login__feature-head {
-    align-items: flex-start;
-    gap: 0.6rem;
-    min-height: 2.2rem;
-  }
-
-  .app-login__feature-head .label-xs {
-    display: block;
-    line-height: 1.45;
-    min-height: 2.2rem;
-    max-width: 12ch;
-    margin: 0;
-  }
-
-  .app-login__feature-card .text-sm {
-    margin: 0;
-  }
-
-  .app-login__feature-head .ui-stat-card__dot {
-    flex-shrink: 0;
-    margin-top: 0.18rem;
+    flex-direction: column;
+    justify-content: flex-start;
   }
 
   .app-login__panel {
@@ -886,6 +883,11 @@
     min-width: 100px;
     text-align: right;
     flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: baseline;
+    gap: 0.15rem 0.65rem;
   }
 
   /* ═══════════════════════════════════════════
@@ -1173,6 +1175,8 @@
 
   .app-annual-month-values {
     min-width: 0;
+    justify-content: space-between;
+    text-align: left;
   }
 
   .app-home-hero__stats {

@@ -66,15 +66,21 @@
               </div>
             </div>
 
-            <div class="app-mobile-header__actions">
-              <button v-if="session?.user" type="button" class="app-toolbar-button app-toolbar-button--icon" title="Esci" @click="logout">
-                <UIcon name="lucide:log-out" class="w-4 h-4" />
-              </button>
-              <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="toggleColorMode">
-                <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-4 h-4" />
-              </button>
-            </div>
+            <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="mobileMenuOpen = !mobileMenuOpen">
+              <UIcon :name="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'" class="w-5 h-5" />
+            </button>
           </header>
+
+          <div v-if="mobileMenuOpen" class="app-mobile-menu md:hidden">
+            <button type="button" class="app-mobile-menu__item" @click="toggleColorMode">
+              <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-5 h-5" />
+              <span>{{ colorMode.preference === 'dark' ? 'Tema chiaro' : 'Tema scuro' }}</span>
+            </button>
+            <button v-if="session?.user" type="button" class="app-mobile-menu__item app-mobile-menu__item--danger" @click="logout">
+              <UIcon name="lucide:log-out" class="w-5 h-5" />
+              <span>Esci · {{ session.user.email }}</span>
+            </button>
+          </div>
 
           <div class="app-shell-content pb-nav md:pb-8">
             <NuxtPage />
@@ -114,6 +120,7 @@ const { session } = useUserSession()
 const uiVariant = useState<UiVariant>('ui-variant', () => normalizeUiVariant(route.query.ui) ?? 'classic')
 
 const currentYear = new Date().getFullYear()
+const mobileMenuOpen = ref(false)
 
 const isLoginPage = computed(() => route.path === '/login')
 
@@ -129,6 +136,8 @@ useHead(() => ({
     'data-ui-variant': uiVariant.value,
   },
 }))
+
+watch(() => route.path, () => { mobileMenuOpen.value = false })
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
