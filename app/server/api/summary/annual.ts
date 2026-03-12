@@ -1,5 +1,8 @@
 import { prisma } from '~/server/utils/prisma'
 import { calcTaxesWithSettings, getSettings, type TaxSettings, type TaxBreakdown } from '~/server/utils/taxes'
+import { recordCalculationRun } from '~/server/utils/calculations'
+import { buildProvisionExplanations } from '~/server/utils/explanations'
+import { requireAppUser } from '~/server/utils/users'
 
 function annualizeRecurring(payments: { amount: number; frequency: string; active: boolean }[]) {
   return payments
@@ -47,28 +50,36 @@ function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: 
 }
 
 export default defineEventHandler(async (event) => {
+  const currentUser = await requireAppUser(event)
   const query = getQuery(event)
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth()
   const year = parseInt(query.year as string) || currentYear
+  const source = typeof query.source === 'string' ? query.source : 'summary'
   const isCurrentYear = year === currentYear
+  const rulesetVersion = '2026.1'
 
   const [entries, settings, recurringPayments, onetimePayments, prevYearCount] = await Promise.all([
     prisma.entry.findMany({
       where: {
+        userId: currentUser.id,
         date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
       },
     }),
-    getSettings(),
-    prisma.recurringPayment.findMany(),
+    getSettings(currentUser.id),
+    prisma.recurringPayment.findMany({
+      where: { userId: currentUser.id },
+    }),
     prisma.oneTimePayment.findMany({
       where: {
+        userId: currentUser.id,
         date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
       },
     }),
     prisma.entry.count({
       where: {
+        userId: currentUser.id,
         date: { gte: new Date(year - 1, 0, 1), lt: new Date(year, 0, 1) },
       },
     }),
@@ -107,9 +118,50 @@ export default defineEventHandler(async (event) => {
   const monthlyPayments = paymentsTotal / activeMonths
 
   const paymentDeadlines = buildPaymentDeadlines(year, projectedTaxes, settings, isFirstYear)
+  const explanations = buildProvisionExplanations({
+    activeMonths,
+    monthlyPayments,
+    projectedTaxes: {
+      ...projectedTaxes,
+      annualNet: projectedTaxes.annualNet - paymentsTotal,
+    },
+  })
+
+  const calculationRun = await recordCalculationRun({
+    userId: currentUser.id,
+    source,
+    rulesetYear: year,
+    rulesetVersion,
+    inputSnapshot: {
+      annualGross,
+      activeMonths,
+      monthlyPayments,
+      isFirstYear,
+      settings: {
+        hourlyRate: settings.hourlyRate,
+        coefficiente: settings.coefficiente,
+        irpefRate: settings.irpefRate,
+        inpsType: settings.inpsType,
+        inpsRate: settings.inpsRate,
+        inpsFixedAnnual: settings.inpsFixedAnnual,
+        inpsMinimaleThreshold: settings.inpsMinimaleThreshold,
+        inpsExcessRate: settings.inpsExcessRate,
+        accountantAnnual: settings.accountantAnnual,
+      },
+    },
+    outputSnapshot: {
+      projectedAnnualGross,
+      recommendedMonthlySetAside,
+      projectedTaxes,
+      paymentDeadlines,
+    },
+  })
 
   return {
     year,
+    rulesetYear: year,
+    rulesetVersion,
+    calculationRunId: calculationRun.id,
     annualGross,
     isFirstYear,
     startMonth: effectiveStart,
@@ -118,6 +170,7 @@ export default defineEventHandler(async (event) => {
     projectedAnnualGross,
     recommendedMonthlySetAside,
     monthlyPayments,
+    explanations,
     ytdTaxes: { ...ytdTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: ytdTaxes.annualNet - paymentsTotal },
     projectedTaxes: { ...projectedTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: projectedTaxes.annualNet - paymentsTotal },
     paymentDeadlines,

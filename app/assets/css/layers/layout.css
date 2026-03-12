@@ -930,6 +930,46 @@
   .app-settings-gap-bottom {
     margin-bottom: 1rem;
   }
+
+  .app-onboarding-step-card {
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  }
+
+  .app-onboarding-step-card.is-active {
+    border-color: var(--border-active);
+    transform: translateY(-1px);
+  }
+
+  .ui-explanation-panel__summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+  }
+
+  .ui-explanation-panel__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ui-explanation-panel .iconify {
+    transition: transform 0.2s ease;
+  }
+
+  .ui-explanation-panel[open] .iconify {
+    transform: rotate(180deg);
+  }
+
+  .ui-explanation-panel__item + .ui-explanation-panel__item {
+    margin-top: 0.75rem;
+  }
+
+  .app-decision-grid,
+  .app-deadline-grid {
+    display: grid;
+    gap: 1rem;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -1063,6 +1103,14 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .app-decision-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .app-deadline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .app-main-stack {
     gap: 1rem;
   }
@@ -1180,6 +1228,10 @@
   }
 
   .app-home-hero__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .app-deadline-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -20,14 +20,15 @@
 
             <div class="app-stage app-stage--annual">
               <div class="app-stage__header">
-                <p class="app-stage__eyebrow">Anno selezionato</p>
+                <p class="app-stage__eyebrow">Planning annuale</p>
                 <p class="app-stage__metric-label">Disponibile a fine anno</p>
                 <p class="app-stage__metric">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
                 <p class="app-stage__summary">
                   Lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · da accantonare {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
                 </p>
                 <p class="app-stage__lead">
-                  Qui vedi l'anno intero: ritmo dei mesi, peso fiscale e prossime scadenze.
+                  L’anno serve a leggere ritmo, scadenze e carico fiscale. La decisione operativa
+                  resta mensile; qui capisci dove sta andando.
                 </p>
               </div>
 
@@ -76,6 +77,30 @@
             </div>
           </div>
         </SurfaceCard>
+      </div>
+
+      <div class="app-decision-grid fade-up fade-up-2">
+        <DecisionMetric
+          label="Lordo previsto"
+          :value="fmt.eur(data.projectedAnnualGross)"
+          note="La proiezione dell’anno se il ritmo corrente resta stabile."
+          tone="default"
+          compact
+        />
+        <DecisionMetric
+          label="Aliquota effettiva"
+          :value="fmt.pct(data.projectedTaxes.effectiveRate)"
+          note="Il peso aggregato di imposta, INPS e costi distribuiti."
+          tone="info"
+          compact
+        />
+        <DecisionMetric
+          label="Accantonamento mensile"
+          :value="fmt.eur(data.recommendedMonthlySetAside)"
+          note="Il cuscinetto consigliato per non concentrare il rischio sulle scadenze."
+          tone="danger"
+          compact
+        />
       </div>
 
       <AppSection title="Andamento dei mesi" subtitle="Il grafico mostra l'incassato mese per mese e mette in evidenza il mese attuale." :delay="2">
@@ -129,36 +154,38 @@
           </SectionHeader>
 
           <SurfaceCard padding="none" divided>
-            <div v-for="row in taxTable" :key="row.label" class="ui-kv-row">
-              <span class="ui-kv-row__label">{{ row.label }}</span>
-              <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
-            </div>
+            <BreakdownRow
+              v-for="row in taxTable"
+              :key="row.label"
+              :label="row.label"
+              :value="row.value"
+              :tone="row.tone"
+              :detail="row.detail"
+            />
           </SurfaceCard>
         </AppSection>
       </div>
 
       <AppSection v-if="data.paymentDeadlines?.length" title="Scadenze fiscali" subtitle="Date e importi previsti secondo il modello fiscale salvato." :delay="4">
-        <SurfaceCard padding="none" divided>
-          <div
+        <div class="app-deadline-grid">
+          <DeadlineCard
             v-for="(dl, i) in data.paymentDeadlines"
             :key="i"
-            class="app-deadline-row"
-            :class="{ 'opacity-40': dl.isPast }"
-          >
-            <div
-              class="app-deadline-dot"
-              :class="dl.isPast ? 'bg-[var(--text-secondary)]' : nextDeadlineDate === dl.date ? 'bg-[var(--accent)] animate-pulse' : 'bg-[var(--border-default)]'"
-            />
-            <div class="app-deadline-main">
-              <p class="font-mono text-xs text-[var(--text-primary)]">{{ dl.label }}</p>
-              <p class="font-mono text-xs text-[var(--text-secondary)] mt-0.5">{{ formatDeadlineDate(dl.date) }}</p>
-            </div>
-            <span class="num-sm text-[var(--danger-text)] shrink-0">{{ fmt.eur(dl.estimatedAmount) }}</span>
-          </div>
-        </SurfaceCard>
-
-        <p class="font-mono text-xs text-[var(--text-secondary)] mt-2 px-1">Importi stimati sul reddito proiettato e sui parametri salvati.</p>
+            :label="dl.label"
+            :date="formatDeadlineDate(dl.date)"
+            :note="dl.isPast ? 'Gia passata' : 'Stimata sul reddito proiettato e sui parametri correnti.'"
+            :amount="fmt.eur(dl.estimatedAmount)"
+            :active="nextDeadlineDate === dl.date"
+          />
+        </div>
       </AppSection>
+
+      <ExplanationPanel
+        v-if="explanationItems.length"
+        title="Come leggere il quadro annuale"
+        subtitle="L’annuale non e un numero da celebrare: serve a capire il peso fiscale e ad arrivare preparato alle scadenze."
+        :items="explanationItems"
+      />
 
       <AppSection title="Mese per mese" subtitle="Confronta incassato e disponibile distribuito lungo l'anno." :delay="5">
         <SurfaceCard padding="none" divided>
@@ -254,32 +281,60 @@ const taxTable = computed(() => {
   const grossValue = isProj ? data.value.projectedAnnualGross : data.value.annualGross
 
   const rows = [
-    { label: grossLabel, value: fmt.eur(grossValue), class: 'text-[var(--text-primary)]' },
-    { label: 'Reddito imponibile (67%)', value: fmt.eur(t.taxableBase), class: 'text-[var(--text-secondary)]' },
+    {
+      label: grossLabel,
+      value: fmt.eur(grossValue),
+      tone: 'default' as const,
+      detail: 'Il lordo resta un dato di orientamento, non il numero spendibile.',
+    },
+    {
+      label: 'Reddito imponibile (67%)',
+      value: fmt.eur(t.taxableBase),
+      tone: 'muted' as const,
+      detail: 'Base fiscale ottenuta applicando il coefficiente al lordo.',
+    },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, class: 'text-[var(--danger-text)]' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, class: 'text-[var(--danger-text)]' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed)}`, tone: 'danger', detail: 'Quota fissa annuale del regime artigiani/commercianti.' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess)}`, tone: 'danger', detail: 'Contributi extra oltre il minimale.' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps)}`, class: 'text-[var(--danger-text)]' })
+    rows.push({
+      label: 'INPS totale',
+      value: `−${fmt.eur(t.inps)}`,
+      tone: 'danger',
+      detail: 'Stimato come percentuale del reddito imponibile.',
+    })
   }
 
   rows.push(
-    { label: 'Imponibile dopo INPS', value: fmt.eur(t.adjustedTaxableBase), class: 'text-[var(--text-secondary)]' },
-    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, class: 'text-[var(--danger-text)]' },
-    { label: 'Costo commercialista', value: `−${fmt.eur(t.accountant)}`, class: 'text-[var(--danger-text)]' },
-    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), class: 'text-[var(--text-secondary)]' },
+    { label: 'Imponibile dopo INPS', value: fmt.eur(t.adjustedTaxableBase), tone: 'muted', detail: 'Base residua su cui viene calcolata l’imposta sostitutiva.' },
+    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, tone: 'danger', detail: 'Il carico fiscale principale del forfettario.' },
+    { label: 'Costo commercialista', value: `−${fmt.eur(t.accountant)}`, tone: 'danger', detail: 'Distribuito nel modello per mostrare un netto piu realistico.' },
+    { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), tone: 'info', detail: 'Sintesi del peso complessivo tra imposta, INPS e costi.' },
     {
       label: isProj ? 'Disponibile a fine anno' : 'Disponibile da inizio anno',
       value: fmt.eur(t.annualNet),
-      class: 'text-[var(--accent-text)] font-semibold',
+      tone: 'accent',
+      detail: 'Il netto che rimane dopo aver escluso cio che non e davvero tuo da spendere.',
     },
   )
 
   return rows
+})
+
+const explanationItems = computed(() => {
+  if (!data.value?.explanations) return []
+
+  return data.value.explanations.map((item: any) => ({
+    id: item.id,
+    label: item.label,
+    value: fmt.eur(item.value),
+    text: item.text,
+    tone: item.tone === 'warning' ? 'warning' : item.tone,
+  }))
 })
 
 const nextDeadlineDate = computed(() => {
@@ -300,7 +355,7 @@ function formatDeadlineDate(dateStr: string) {
 
 async function load() {
   loading.value = true
-  data.value = await $fetch<any>(`/api/summary/annual?year=${viewYear.value}`)
+  data.value = await $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=annual`)
   loading.value = false
 }
 

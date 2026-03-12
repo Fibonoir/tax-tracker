@@ -1,6 +1,8 @@
 import { prisma } from './prisma'
+import { createDefaultSettings, DEFAULT_TAX_SETTINGS } from './settings'
 
 export interface TaxSettings {
+  userId?: number | null
   hourlyRate: number
   coefficiente: number
   irpefRate: number
@@ -12,26 +14,19 @@ export interface TaxSettings {
   accountantAnnual: number
 }
 
-export async function getSettings(): Promise<TaxSettings> {
-  let settings = await prisma.settings.findUnique({ where: { id: 1 } })
-  
+export function getDefaultTaxSettings(): TaxSettings {
+  return { ...DEFAULT_TAX_SETTINGS }
+}
+
+export async function getSettings(userId: number): Promise<TaxSettings> {
+  let settings = await prisma.settings.findUnique({ where: { userId } })
+
   if (!settings) {
     settings = await prisma.settings.create({
-      data: {
-        id: 1,
-        hourlyRate: 30,
-        coefficiente: 0.67,
-        irpefRate: 0.15,
-        inpsType: 'GESTIONE_SEPARATA',
-        inpsRate: 0.2607,
-        inpsFixedAnnual: 0,
-        inpsMinimaleThreshold: 18808,
-        inpsExcessRate: 0.156,
-        accountantAnnual: 300,
-      },
+      data: createDefaultSettings(userId),
     })
   }
-  
+
   return settings
 }
 
@@ -86,7 +81,7 @@ export function calcTaxesWithSettings(annualGross: number, settings: TaxSettings
   }
 }
 
-export async function calcTaxes(annualGross: number): Promise<TaxBreakdown> {
-  const settings = await getSettings()
+export async function calcTaxes(annualGross: number, userId: number): Promise<TaxBreakdown> {
+  const settings = await getSettings(userId)
   return calcTaxesWithSettings(annualGross, settings)
 }

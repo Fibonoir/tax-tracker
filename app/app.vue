@@ -2,7 +2,7 @@
   <UApp>
     <NuxtLoadingIndicator />
 
-    <div v-if="!isLoginPage" class="app-shell">
+    <div v-if="!isStandalonePage" class="app-shell">
       <div class="app-shell__ambient" />
 
       <div class="app-shell__frame">
@@ -117,12 +117,13 @@ const UI_VARIANT_STORAGE_KEY = 'chiaro-ui-variant'
 const route = useRoute()
 const colorMode = useColorMode()
 const { session } = useUserSession()
+const { clear: clearCurrentUser } = useCurrentUser()
 const uiVariant = useState<UiVariant>('ui-variant', () => normalizeUiVariant(route.query.ui) ?? 'classic')
 
 const currentYear = new Date().getFullYear()
 const mobileMenuOpen = ref(false)
 
-const isLoginPage = computed(() => route.path === '/login')
+const isStandalonePage = computed(() => route.path === '/login' || route.path === '/onboarding')
 
 const tabs = [
   { to: '/', label: 'Home', icon: 'lucide:square-pen' },
@@ -150,6 +151,7 @@ function toggleColorMode() {
 
 async function logout() {
   await $fetch('/auth/logout', { method: 'POST' })
+  clearCurrentUser()
   await navigateTo('/login')
 }
 

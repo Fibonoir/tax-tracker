@@ -20,28 +20,22 @@
           <div class="app-stage">
             <div class="app-stage__header">
               <p class="app-stage__eyebrow">Mese selezionato</p>
-              <p class="app-stage__metric-label">Disponibile del mese</p>
+              <p class="app-stage__metric-label">Quanto puoi usare nel mese</p>
               <p class="app-stage__metric">{{ fmt.eur(summary.net) }}</p>
               <p class="app-stage__summary">
                 Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
               </p>
               <p class="app-stage__lead">
-                Qui vedi il mese in una schermata: quanto hai incassato, quanto va accantonato e da
-                dove arriva il lavoro.
+                Il mese deve leggersi come un conto chiaro: prima il numero spendibile, poi il
+                perche, poi le righe che lo compongono.
               </p>
             </div>
 
             <div class="app-stage__signals">
               <div class="app-stage__signal app-stage__signal--strong">
-                <p class="app-stage__signal-label">Incassato</p>
-                <p class="app-stage__signal-value">{{ fmt.eur(summary.gross) }}</p>
-                <p class="app-stage__signal-note">Totale lordo registrato nel mese.</p>
-              </div>
-
-              <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Da accantonare</p>
                 <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
-                <p class="app-stage__signal-note">Parte stimata da mettere da parte nel mese.</p>
+                <p class="app-stage__signal-note">La quota che non dovrebbe restare nei soldi liberi del mese.</p>
               </div>
 
               <div class="app-stage__signal">
@@ -49,62 +43,89 @@
                 <p class="app-stage__signal-value">{{ summary.entryCount }}</p>
                 <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} di lavoro gia registrato nel mese.</p>
               </div>
+
+              <div class="app-stage__signal">
+                <p class="app-stage__signal-label">Stima fine anno</p>
+                <p class="app-stage__signal-value">{{ fmt.eur(summary.runningProjectedAnnual) }}</p>
+                <p class="app-stage__signal-note">Se il ritmo resta cosi, qui potrebbe chiudersi l’anno.</p>
+              </div>
             </div>
           </div>
         </div>
       </SurfaceCard>
 
-      <div class="app-month-stat-grid fade-up fade-up-2">
-        <StatCard label="Incassato totale" :value="fmt.eur(summary.gross)" sub="Somma di tutte le registrazioni del mese" />
-        <StatCard label="Attivita a ore" :value="fmt.eur(summary.hourlyGross)" sub="Incassi da sessioni e consulenze a ore" />
-        <StatCard label="Progetti" :value="fmt.eur(summary.projectGross)" sub="Incassi da fee e consegne concordate" />
-        <StatCard
+      <div class="app-decision-grid fade-up fade-up-2">
+        <DecisionMetric
+          label="Disponibile del mese"
+          :value="fmt.eur(summary.net)"
+          note="Il numero guida del mese, gia ripulito da accantonamenti e costi distribuiti."
+          tone="accent"
+          compact
+        />
+        <DecisionMetric
+          label="Incassato del mese"
+          :value="fmt.eur(summary.gross)"
+          note="Somma di sessioni orarie e fee progetto registrate in questo mese."
+          tone="default"
+          compact
+        />
+        <DecisionMetric
           label="Da accantonare"
           :value="fmt.eur(summary.provision)"
-          sub="Quota stimata per imposte, INPS e costi"
-          value-class="text-[var(--danger-text)]"
-        />
-        <StatCard
-          label="Disponibile stimato"
-          :value="fmt.eur(summary.net)"
-          sub="Quello che resta spendibile dopo gli accantonamenti"
-          value-class="text-[var(--accent-text)]"
+          note="Quota stimata che Chiaro tiene separata dai soldi realmente spendibili."
+          tone="danger"
+          compact
         />
       </div>
 
       <div class="app-main-stack">
-        <IncomeProjectionCard
-          v-if="summary.runningAvgMonthly > 0"
-          :avg-monthly="summary.runningAvgMonthly"
-          :projected-annual="summary.runningProjectedAnnual"
-          class="fade-up fade-up-2"
-        />
-
-        <SurfaceCard class="fade-up fade-up-3">
+        <SurfaceCard class="fade-up fade-up-2">
           <div class="ui-form-stack">
             <div>
-              <p class="label-xs">Mix del mese</p>
+              <p class="label-xs">Ledger del mese</p>
               <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Da dove arriva l'incasso.
+                Da dove arriva il lordo.
               </h2>
             </div>
 
             <div class="ui-form-stack">
-              <div v-for="row in mixRows" :key="row.label" class="ui-kv-row">
-                <span class="ui-kv-row__label">{{ row.label }}</span>
-                <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
-              </div>
+              <BreakdownRow
+                v-for="row in mixRows"
+                :key="row.label"
+                :label="row.label"
+                :value="row.value"
+                :tone="row.tone"
+                :detail="row.detail"
+              />
             </div>
           </div>
         </SurfaceCard>
+
+        <ExplanationPanel
+          v-if="explanationItems.length"
+          title="Come si forma l'accantonamento del mese"
+          subtitle="La quota del mese non e una penalita astratta: e il modo con cui Chiaro anticipa il peso fiscale e operativo dell’anno."
+          :items="explanationItems"
+        />
+
+        <IncomeProjectionCard
+          v-if="summary.runningAvgMonthly > 0"
+          :avg-monthly="summary.runningAvgMonthly"
+          :projected-annual="summary.runningProjectedAnnual"
+          class="fade-up fade-up-3"
+        />
       </div>
 
       <AppSection title="Cosa compone l'accantonamento" subtitle="La quota del mese divisa tra imposta, INPS e costi distribuiti." :delay="3">
         <SurfaceCard padding="none" divided>
-          <div v-for="row in taxRows" :key="row.label" class="ui-kv-row">
-            <span class="ui-kv-row__label">{{ row.label }}</span>
-            <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
-          </div>
+          <BreakdownRow
+            v-for="row in taxRows"
+            :key="row.label"
+            :label="row.label"
+            :value="row.value"
+            :tone="row.tone"
+            :detail="row.detail"
+          />
         </SurfaceCard>
       </AppSection>
 
@@ -202,17 +223,20 @@ const mixRows = computed(() => {
     {
       label: 'Attivita a ore',
       value: fmt.eur(summary.value.hourlyGross),
-      class: 'text-[var(--text-primary)]',
+      tone: 'default' as const,
+      detail: 'Sessioni, consulenze e lavoro a ore registrato nel mese.',
     },
     {
       label: 'Progetti',
       value: fmt.eur(summary.value.projectGross),
-      class: 'text-[var(--info)]',
+      tone: 'info' as const,
+      detail: 'Fee progetto, milestone e importi concordati.',
     },
     {
       label: 'Media per registrazione',
       value: fmt.eur(averageEntryGross.value),
-      class: 'text-[var(--accent-text)]',
+      tone: 'accent' as const,
+      detail: 'Aiuta a capire se il mese e trainato da poche voci o da un flusso piu costante.',
     },
   ]
 })
@@ -221,25 +245,47 @@ const taxRows = computed(() => {
   if (!summary.value?.projectedTaxes) return []
   const t = summary.value.projectedTaxes
   const n = activeMonths.value
-  const rows: { label: string; value: string; class: string }[] = [
-    { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef / n)}`, class: 'text-[var(--danger-text)]' },
+  const rows: { label: string; value: string; tone: 'default' | 'accent' | 'danger' | 'info'; detail?: string }[] = [
+    {
+      label: 'Imposta sostitutiva',
+      value: `−${fmt.eur(t.irpef / n)}`,
+      tone: 'danger',
+      detail: 'Ripartita sui mesi attivi per trasformare un saldo futuro in un’abitudine mensile.',
+    },
   ]
 
   if (t.inpsExcess > 0) {
     rows.push(
-      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, class: 'text-[var(--danger-text)]' },
-      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, class: 'text-[var(--danger-text)]' },
+      { label: 'INPS fissi', value: `−${fmt.eur(t.inpsFixed / n)}`, tone: 'danger', detail: 'Quota fissa ripartita sul mese selezionato.' },
+      { label: 'INPS eccedenza', value: `−${fmt.eur(t.inpsExcess / n)}`, tone: 'danger', detail: 'Contributi aggiuntivi oltre la soglia minimale.' },
     )
   } else {
-    rows.push({ label: 'INPS totale', value: `−${fmt.eur(t.inps / n)}`, class: 'text-[var(--danger-text)]' })
+    rows.push({
+      label: 'INPS totale',
+      value: `−${fmt.eur(t.inps / n)}`,
+      tone: 'danger',
+      detail: 'Stimato in percentuale sul reddito imponibile.',
+    })
   }
 
   rows.push(
-    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, class: 'text-[var(--danger-text)]' },
-    { label: 'Disponibile del mese', value: fmt.eur(summary.value.net), class: 'text-[var(--accent-text)] font-semibold' },
+    { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, tone: 'danger', detail: 'Distribuito sui mesi attivi per non alterare il netto in un solo momento.' },
+    { label: 'Disponibile del mese', value: fmt.eur(summary.value.net), tone: 'accent', detail: 'Il netto operativo dopo il carico del mese.' },
   )
 
   return rows
+})
+
+const explanationItems = computed(() => {
+  if (!annualData.value?.explanations) return []
+
+  return annualData.value.explanations.map((item: any) => ({
+    id: item.id,
+    label: item.label,
+    value: fmt.eur(item.value),
+    text: item.text,
+    tone: item.tone === 'warning' ? 'warning' : item.tone,
+  }))
 })
 
 function prevMonth() {
@@ -320,7 +366,7 @@ async function load() {
   loading.value = true
   const [e, a, s] = await Promise.all([
     $fetch<any[]>(`/api/entries?year=${viewYear.value}&month=${viewMonth.value}`),
-    $fetch<any>(`/api/summary/annual?year=${viewYear.value}`),
+    $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=month`),
     $fetch<any>('/api/settings'),
   ])
   entries.value = e

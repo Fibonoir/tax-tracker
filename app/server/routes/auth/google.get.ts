@@ -1,22 +1,26 @@
+import { isEmailAllowed, requireAppUser } from '~/server/utils/users'
+
 export default defineOAuthGoogleEventHandler({
   async onSuccess(event, { user }) {
     const config = useRuntimeConfig()
-    const allowedEmail = config.allowedEmail
 
-    if (allowedEmail && user.email !== allowedEmail) {
+    if (!isEmailAllowed(user.email, config.betaAllowlist)) {
       throw createError({
         statusCode: 403,
-        statusMessage: 'Unauthorized: Your email is not authorized to access this application.',
+        statusMessage: 'Unauthorized: Your email is not authorized for this beta.',
       })
     }
 
     await setUserSession(event, {
       user: {
+        id: '',
         email: user.email,
         name: user.name,
         picture: user.picture,
       },
     })
+
+    await requireAppUser(event)
 
     return sendRedirect(event, '/')
   },

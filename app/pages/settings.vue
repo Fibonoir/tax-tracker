@@ -278,6 +278,7 @@
 const fmt = useFmt()
 const { fieldUi, selectUi } = useUiStyles()
 const toast = useToast()
+const { currentUser, refresh } = useCurrentUser()
 
 const loading = ref(true)
 const saving = ref(false)
@@ -318,18 +319,28 @@ const inpsTypeLabel = computed(() =>
 
 const profileRows = computed(() => [
   {
-    label: 'Anno di riferimento',
-    value: String(currentYear),
+    label: 'Profilo',
+    value: currentUser.value?.displayName || currentUser.value?.name || 'Profilo personale',
     class: 'text-[var(--text-primary)]',
   },
   {
-    label: 'Costi ricorrenti',
-    value: String(recurringPayments.value.length),
+    label: 'Attivita',
+    value: currentUser.value?.activityLabel || 'Freelance in forfettario',
     class: 'text-[var(--info)]',
   },
   {
-    label: 'Uscite una tantum',
-    value: String(onetimePayments.value.length),
+    label: 'ATECO',
+    value: currentUser.value?.atecoCode || 'Non impostato',
+    class: 'text-[var(--text-primary)]',
+  },
+  {
+    label: 'Anno di riferimento',
+    value: String(currentUser.value?.taxYear || currentYear),
+    class: 'text-[var(--text-primary)]',
+  },
+  {
+    label: 'Costi attivi',
+    value: `${recurringPayments.value.length} ricorrenti · ${onetimePayments.value.length} una tantum`,
     class: 'text-[var(--accent-text)]',
   },
 ])
@@ -343,6 +354,7 @@ function formatFrequency(frequency: string) {
 
 async function loadData() {
   loading.value = true
+  await refresh(true)
   const [s, r, o] = await Promise.all([
     $fetch('/api/settings'),
     $fetch('/api/payments/recurring'),

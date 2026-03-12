@@ -1,190 +1,205 @@
 <template>
   <AppPageShell class="app-page app-page--home">
     <div class="app-main-stack app-home-intro">
-      <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="order-2 fade-up fade-up-1 md:order-1">
+      <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="fade-up fade-up-1">
         <div class="app-stage">
           <div class="app-stage__header">
-            <p class="app-stage__eyebrow">Questo mese</p>
-            <h1 class="app-stage__title">{{ monthLabel }}</h1>
+            <p class="app-stage__eyebrow">Cockpit mensile</p>
+            <h1 class="app-stage__title">Quanto puoi usare adesso.</h1>
             <p class="app-stage__lead">
-              Registra un incasso e vedi subito tre numeri: quanto puoi tenere disponibile, quanto
-              devi accantonare e che ritmo sta prendendo l'anno.
+              Chiaro tiene al centro il numero operativo del mese: quello che resta davvero
+              utilizzabile dopo accantonamenti, contributi e costi gia previsti.
             </p>
 
             <div class="app-stage__metric-block">
-              <p class="app-stage__metric-label">Disponibile del mese</p>
+              <p class="app-stage__metric-label">Disponibile ora</p>
               <p class="app-stage__metric">{{ fmt.eur(monthData.net) }}</p>
               <p class="app-stage__summary">
-                Incassato {{ fmt.eur(monthData.gross) }} · da accantonare {{ fmt.eur(monthData.provision) }}
+                {{ monthLabel }} · incassato {{ fmt.eur(monthData.gross) }} · da accantonare
+                {{ fmt.eur(monthData.provision) }}
               </p>
             </div>
           </div>
 
           <div class="app-stage__signals">
             <div class="app-stage__signal app-stage__signal--strong">
-              <p class="app-stage__signal-label">Incassato nel mese</p>
-              <p class="app-stage__signal-value">{{ fmt.eur(monthData.gross) }}</p>
-              <p class="app-stage__signal-note">Totale lordo gia registrato in questo mese.</p>
-            </div>
-
-            <div class="app-stage__signal">
               <p class="app-stage__signal-label">Da accantonare</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.provision) }}</p>
-              <p class="app-stage__signal-note">Parte da mettere da parte per imposte, contributi e costi.</p>
+              <p class="app-stage__signal-note">La parte del mese che non vuoi spendere per errore.</p>
             </div>
 
             <div class="app-stage__signal">
-              <p class="app-stage__signal-label">Ritmo medio</p>
-              <p class="app-stage__signal-value">{{ fmt.eur(monthData.runningAvgMonthly) }}</p>
-              <p class="app-stage__signal-note">Media mensile da inizio operativita.</p>
+              <p class="app-stage__signal-label">Prossima scadenza</p>
+              <p class="app-stage__signal-value">{{ nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna' }}</p>
+              <p class="app-stage__signal-note">
+                {{ nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Nessuna scadenza fiscale attiva nel resto dell’anno.' }}
+              </p>
+            </div>
+
+            <div class="app-stage__signal">
+              <p class="app-stage__signal-label">Stima fine anno</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(monthData.runningProjectedAnnual) }}</p>
+              <p class="app-stage__signal-note">Il ritmo attuale proiettato sui mesi attivi dell’anno.</p>
             </div>
           </div>
         </div>
       </SurfaceCard>
 
-      <SurfaceCard padding="lg" class="order-1 fade-up fade-up-2 md:order-2">
-        <div class="ui-form-stack">
-          <div>
-            <p class="label-xs">Nuovo incasso</p>
-            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-              Registra un incasso in pochi secondi.
-            </h2>
-            <p class="app-page-copy mt-3">
-              Scegli il tipo di lavoro, inserisci data e importo, poi salva. Il mese si aggiorna
-              subito.
-            </p>
-          </div>
+      <div v-if="monthData" class="app-decision-grid fade-up fade-up-2">
+        <DecisionMetric
+          label="Disponibile ora"
+          :value="fmt.eur(monthData.net)"
+          note="Quello che puoi usare senza confondere lordo e soldi da mettere via."
+          tone="accent"
+          compact
+        />
+        <DecisionMetric
+          label="Da accantonare questo mese"
+          :value="fmt.eur(monthData.provision)"
+          note="Imposte, contributi e costi distribuiti sul mese corrente."
+          tone="danger"
+          compact
+        />
+        <DecisionMetric
+          label="Prossima scadenza"
+          :value="nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Nessuna'"
+          :note="nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Nessuna scadenza fiscale attiva.'"
+          tone="info"
+          compact
+        />
+      </div>
 
-          <div class="ui-form-grid-2 ui-form-grid-2--compact">
-            <button
-              v-for="option in typeOptions"
-              :key="option.value"
-              type="button"
-              class="ui-segment-btn"
-              :class="{ 'is-active': form.type === option.value }"
-              @click="form.type = option.value"
-            >
-              <span>{{ option.label }}</span>
-              <span class="text-xs leading-6 text-[var(--text-secondary)]">{{ option.copy }}</span>
-            </button>
-          </div>
-
-          <div class="ui-form-grid-2">
-            <div>
-              <label class="label-xs ui-field-label">Data</label>
-              <AppDateField v-model="form.date" />
-            </div>
-
-            <div v-if="form.type === 'HOURLY'">
-              <label class="label-xs ui-field-label">Ore lavorate</label>
-              <UInput
-                v-model="form.hours"
-                type="number"
-                step="0.25"
-                min="0"
-                max="12"
-                placeholder="7.5"
-                :ui="fieldUi"
-              />
-            </div>
-
-            <div v-else>
-              <label class="label-xs ui-field-label">Importo concordato (€)</label>
-              <UInput
-                v-model="form.amount"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="500.00"
-                :ui="fieldUi"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="label-xs ui-field-label">Nota</label>
-            <UInput
-              v-model="form.description"
-              type="text"
-              placeholder="Cliente, milestone o call strategica"
-              :ui="fieldUi"
-            />
-          </div>
-
-          <SurfaceCard variant="soft" padding="md">
-            <div class="app-grid-3">
-              <div>
-                <p class="label-xs">Incasso lordo</p>
-                <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(previewGross) }}</p>
-                <p class="ui-field-help">Calcolato con la tariffa salvata o con l'importo che hai inserito.</p>
-              </div>
-
-              <div>
-                <p class="label-xs">Disponibile stimato</p>
-                <p class="num-lg text-[var(--accent-text)] mt-3">{{ fmt.eur(previewNet) }}</p>
-                <p class="ui-field-help">Stima veloce basata sull'aliquota effettiva dell'anno in corso.</p>
-              </div>
-
-              <div>
-                <p class="label-xs">Da accantonare</p>
-                <p class="num-lg text-[var(--danger-text)] mt-3">{{ fmt.eur(previewProvision) }}</p>
-                <p class="ui-field-help">Quota da tenere fuori dai soldi spendibili del mese.</p>
-              </div>
-            </div>
-          </SurfaceCard>
-
-          <UButton
-            block
-            color="primary"
-            class="ui-action-button"
-            :disabled="!canSubmit || saving"
-            :loading="saving"
-            @click="submit"
-          >
-            Registra incasso
-          </UButton>
-        </div>
-      </SurfaceCard>
-    </div>
-
-    <div v-if="monthData" class="app-home-stat-grid app-home-metrics">
-      <StatCard
-        v-for="stat in homeStats"
-        :key="stat.label"
-        :label="stat.label"
-        :value="stat.value"
-        :sub="stat.sub"
-        :value-class="stat.valueClass"
-        class="fade-up fade-up-2"
-      />
-    </div>
-
-    <div v-if="monthData" class="app-main-stack app-home-summary">
-      <IncomeProjectionCard
-        v-if="monthData.runningAvgMonthly > 0"
-        :avg-monthly="monthData.runningAvgMonthly"
-        :projected-annual="monthData.runningProjectedAnnual"
-        :monthly-set-aside="annualData?.recommendedMonthlySetAside"
-        class="fade-up fade-up-2"
-      />
-
-      <SurfaceCard class="fade-up fade-up-3">
-        <div class="ui-form-stack">
-          <div>
-            <p class="label-xs">Focus del momento</p>
-            <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-              Cosa guardare adesso.
-            </h2>
-          </div>
-
+      <div class="app-grid-2">
+        <SurfaceCard padding="lg" class="fade-up fade-up-2">
           <div class="ui-form-stack">
-            <div v-for="row in focusRows" :key="row.label" class="ui-kv-row">
-              <span class="ui-kv-row__label">{{ row.label }}</span>
-              <span class="ui-kv-row__value" :class="row.class">{{ row.value }}</span>
+            <div>
+              <p class="label-xs">Nuovo incasso</p>
+              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
+                Registra un incasso senza uscire dal flusso.
+              </h2>
+              <p class="app-page-copy mt-3">
+                Scegli il tipo di lavoro, salva il lordo e guarda subito quanto resta utilizzabile.
+              </p>
             </div>
+
+            <div class="ui-form-grid-2 ui-form-grid-2--compact">
+              <button
+                v-for="option in typeOptions"
+                :key="option.value"
+                type="button"
+                class="ui-segment-btn"
+                :class="{ 'is-active': form.type === option.value }"
+                @click="form.type = option.value"
+              >
+                <span>{{ option.label }}</span>
+                <span class="text-xs leading-6 text-[var(--text-secondary)]">{{ option.copy }}</span>
+              </button>
+            </div>
+
+            <div class="ui-form-grid-2">
+              <div>
+                <label class="label-xs ui-field-label">Data</label>
+                <AppDateField v-model="form.date" />
+              </div>
+
+              <div v-if="form.type === 'HOURLY'">
+                <label class="label-xs ui-field-label">Ore lavorate</label>
+                <UInput
+                  v-model="form.hours"
+                  type="number"
+                  step="0.25"
+                  min="0"
+                  max="12"
+                  placeholder="7.5"
+                  :ui="fieldUi"
+                />
+              </div>
+
+              <div v-else>
+                <label class="label-xs ui-field-label">Importo concordato (€)</label>
+                <UInput
+                  v-model="form.amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="500.00"
+                  :ui="fieldUi"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="label-xs ui-field-label">Nota</label>
+              <UInput
+                v-model="form.description"
+                type="text"
+                placeholder="Cliente, milestone o call strategica"
+                :ui="fieldUi"
+              />
+            </div>
+
+            <SurfaceCard variant="soft" padding="md">
+              <div class="app-grid-3">
+                <div>
+                  <p class="label-xs">Incasso lordo</p>
+                  <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(previewGross) }}</p>
+                  <p class="ui-field-help">Calcolato con la tariffa salvata o con l'importo che hai inserito.</p>
+                </div>
+
+                <div>
+                  <p class="label-xs">Da accantonare</p>
+                  <p class="num-lg text-[var(--danger-text)] mt-3">{{ fmt.eur(previewProvision) }}</p>
+                  <p class="ui-field-help">La parte che Chiaro tiene fuori dai soldi spendibili.</p>
+                </div>
+
+                <div>
+                  <p class="label-xs">Quanto puoi usare</p>
+                  <p class="num-lg text-[var(--accent-text)] mt-3">{{ fmt.eur(previewNet) }}</p>
+                  <p class="ui-field-help">La stima veloce che guida la decisione, non il lordo.</p>
+                </div>
+              </div>
+            </SurfaceCard>
+
+            <UButton
+              block
+              color="primary"
+              class="ui-action-button"
+              :disabled="!canSubmit || saving"
+              :loading="saving"
+              @click="submit"
+            >
+              Registra incasso
+            </UButton>
           </div>
+        </SurfaceCard>
+
+        <div class="app-main-stack">
+          <ExplanationPanel
+            v-if="explanationItems.length"
+            title="Perche il disponibile non coincide con il lordo"
+            subtitle="La logica e sempre la stessa: togliere prima cio che non e davvero spendibile."
+            :items="explanationItems"
+            open
+          />
+
+          <DeadlineCard
+            v-if="nextDeadline"
+            :label="nextDeadline.label"
+            :date="formatDeadlineDate(nextDeadline.date)"
+            :note="nextDeadline.isPast ? 'Scadenza gia passata' : 'Prossimo appuntamento fiscale previsto dal tuo modello.'"
+            :amount="fmt.eur(nextDeadline.estimatedAmount)"
+            :active="!nextDeadline.isPast"
+          />
+
+          <IncomeProjectionCard
+            v-if="monthData.runningAvgMonthly > 0"
+            :avg-monthly="monthData.runningAvgMonthly"
+            :projected-annual="monthData.runningProjectedAnnual"
+            :monthly-set-aside="annualData?.recommendedMonthlySetAside"
+            class="fade-up fade-up-2"
+          />
         </div>
-      </SurfaceCard>
+      </div>
     </div>
 
     <AppSection
@@ -315,53 +330,21 @@ const previewNet = computed(() => {
 
 const previewProvision = computed(() => Math.max(previewGross.value - previewNet.value, 0))
 
-const averageEntryGross = computed(() => {
-  if (!monthData.value?.entryCount) return 0
-  return monthData.value.gross / monthData.value.entryCount
+const nextDeadline = computed(() => {
+  if (!annualData.value?.paymentDeadlines) return null
+  return annualData.value.paymentDeadlines.find((deadline: any) => !deadline.isPast) ?? null
 })
 
-const homeStats = computed(() => {
-  if (!monthData.value) return []
+const explanationItems = computed(() => {
+  if (!annualData.value?.explanations) return []
 
-  return [
-    {
-      label: 'Ore registrate',
-      value: fmt.hours(monthData.value.totalHours),
-      sub: `${monthData.value.entryCount} registrazioni nel mese`,
-    },
-    {
-      label: 'Media per registrazione',
-      value: fmt.eur(averageEntryGross.value),
-      sub: 'Valore medio di ogni registrazione salvata',
-    },
-    {
-      label: 'Aliquota stimata',
-      value: fmt.pct(effectiveRate.value),
-      sub: 'Peso effettivo tra imposte, contributi e costi distribuiti',
-    },
-  ]
-})
-
-const focusRows = computed(() => {
-  if (!monthData.value || !annualData.value) return []
-
-  return [
-    {
-      label: 'Disponibile ora',
-      value: fmt.eur(monthData.value.net),
-      class: 'text-[var(--accent-text)]',
-    },
-    {
-      label: 'Da accantonare',
-      value: fmt.eur(monthData.value.provision),
-      class: 'text-[var(--danger-text)]',
-    },
-    {
-      label: 'Stima fine anno',
-      value: fmt.eur(monthData.value.runningProjectedAnnual),
-      class: 'text-[var(--text-primary)]',
-    },
-  ]
+  return annualData.value.explanations.map((item: any) => ({
+    id: item.id,
+    label: item.label,
+    value: fmt.eur(item.value),
+    text: item.text,
+    tone: item.tone === 'warning' ? 'warning' : item.tone,
+  }))
 })
 
 async function loadEntries() {
@@ -371,7 +354,7 @@ async function loadEntries() {
 }
 
 async function loadMonthData() {
-  const data = await $fetch<any>(`/api/summary/annual?year=${now.getFullYear()}`)
+  const data = await $fetch<any>(`/api/summary/annual?year=${now.getFullYear()}&source=home`)
   annualData.value = data
   monthData.value = data.months[now.getMonth()]
 }
@@ -449,6 +432,11 @@ async function confirmDelete() {
     deleteConfirmOpen.value = false
     pendingDeleteId.value = null
   }
+}
+
+function formatDeadlineDate(dateStr: string) {
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })
 }
 
 onMounted(() => {

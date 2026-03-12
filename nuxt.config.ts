@@ -17,7 +17,12 @@ export default defineNuxtConfig({
         clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
       },
     },
-    allowedEmail: process.env.ALLOWED_EMAIL,
+    betaAllowlist: process.env.BETA_ALLOWLIST,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    public: {
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    },
   },
   
   app: {

@@ -9,6 +9,8 @@ description: Turn Fattura Tracker/Chiaro product strategy and local design books
 
 Use this skill to keep design work tied to Chiaro's business wedge: monthly fiscal clarity for Italian freelancers in forfettario. Load only the docs relevant to the task, then run a deliberate Impeccable sequence instead of mixing commands randomly.
 
+When the task requires actually building or restyling the interface, pair this skill with `frontend-design`. Use `chiaro-design-flow` to choose the right product and design constraints from local books, then use `frontend-design` to execute the UI with enough visual ambition and implementation quality.
+
 Read `references/source-map.md` first for the doc-to-problem mapping.
 
 ## Workflow
@@ -58,6 +60,7 @@ For core product shaping:
 - use `clarify` to rewrite labels, hints, onboarding, and warnings
 - use `normalize` to align pages to one system
 - use `adapt` when dashboard density breaks on mobile
+- use `frontend-design` when building a new screen, redesigning an existing one, or translating the local books into concrete production UI
 
 For finishing:
 - use `polish` after functionality is complete
@@ -81,7 +84,17 @@ For selective enhancement only after clarity is solved:
 - Avoid card-on-card stacking when one strong surface can do the job.
 - Prefer asymmetric, intentional layouts over dashboard sameness, but keep the task path obvious.
 
-### 6. Ship with proof
+### 6. Translate books into frontend choices
+
+When using local design books, convert them into concrete implementation rules:
+- `docs/refactoring_ui.md`: hierarchy, spacing system, grayscale-first composition, font discipline, restrained depth
+- `docs/practical_ui_preview.md`: interaction cost, grouping, alignment, scannability, line length
+- `docs/basic_color_theory.md`: emotional palette choice, contrast logic, accent discipline
+- `docs/ux_strategy.md`: value proposition clarity, conversion, onboarding, wedge fit
+
+Do not quote the books back at the user. Turn them into decisions about layout, copy, tokens, color, and component behavior.
+
+### 7. Ship with proof
 
 When implementing, verify:
 - the monthly control loop is easier to understand

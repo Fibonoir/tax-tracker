@@ -1,34 +1,21 @@
 import { prisma } from '~/server/utils/prisma'
+import { logAuditEvent } from '~/server/utils/audit'
+import { createDefaultSettings } from '~/server/utils/settings'
+import { getSettings } from '~/server/utils/taxes'
+import { requireAppUser } from '~/server/utils/users'
 
 export default defineEventHandler(async (event) => {
+  const currentUser = await requireAppUser(event)
+
   if (event.method === 'GET') {
-    let settings = await prisma.settings.findUnique({ where: { id: 1 } })
-    
-    if (!settings) {
-      settings = await prisma.settings.create({
-        data: {
-          id: 1,
-          hourlyRate: 30,
-          coefficiente: 0.67,
-          irpefRate: 0.15,
-          inpsType: 'GESTIONE_SEPARATA',
-          inpsRate: 0.2607,
-          inpsFixedAnnual: 0,
-          inpsMinimaleThreshold: 18808,
-          inpsExcessRate: 0.156,
-          accountantAnnual: 300,
-        },
-      })
-    }
-    
-    return settings
+    return getSettings(currentUser.id)
   }
 
   if (event.method === 'PUT') {
     const body = await readBody(event)
-    
-    return prisma.settings.upsert({
-      where: { id: 1 },
+
+    const settings = await prisma.settings.upsert({
+      where: { userId: currentUser.id },
       update: {
         hourlyRate: body.hourlyRate,
         coefficiente: body.coefficiente,
@@ -41,7 +28,7 @@ export default defineEventHandler(async (event) => {
         accountantAnnual: body.accountantAnnual,
       },
       create: {
-        id: 1,
+        ...createDefaultSettings(currentUser.id),
         hourlyRate: body.hourlyRate,
         coefficiente: body.coefficiente,
         irpefRate: body.irpefRate,
@@ -53,5 +40,20 @@ export default defineEventHandler(async (event) => {
         accountantAnnual: body.accountantAnnual,
       },
     })
+
+    await logAuditEvent({
+      userId: currentUser.id,
+      action: 'settings.updated',
+      entityType: 'settings',
+      entityId: String(settings.id),
+      payload: {
+        hourlyRate: settings.hourlyRate,
+        coefficiente: settings.coefficiente,
+        irpefRate: settings.irpefRate,
+        inpsType: settings.inpsType,
+      },
+    })
+
+    return settings
   }
 })
