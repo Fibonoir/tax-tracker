@@ -56,7 +56,7 @@ enum EntryType {
 
 model Settings {
   id                    Int      @id @default(autoincrement())
-  userId                Int?     @unique
+  userId                Int?
   hourlyRate            Float    @default(30)
   coefficiente          Float    @default(0.67)
   irpefRate             Float    @default(0.15)
@@ -68,6 +68,8 @@ model Settings {
   accountantAnnual      Float    @default(300)
   updatedAt             DateTime @updatedAt @default(now())
   user                  User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
 }
 
 model RecurringPayment {

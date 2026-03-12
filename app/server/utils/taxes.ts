@@ -19,7 +19,10 @@ export function getDefaultTaxSettings(): TaxSettings {
 }
 
 export async function getSettings(userId: number): Promise<TaxSettings> {
-  let settings = await prisma.settings.findUnique({ where: { userId } })
+  let settings = await prisma.settings.findFirst({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+  })
 
   if (!settings) {
     settings = await prisma.settings.create({

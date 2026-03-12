@@ -38,34 +38,34 @@ export default defineEventHandler(async (event) => {
       },
     })
 
-    const settings = await tx.settings.upsert({
+    const existingSettings = await tx.settings.findFirst({
       where: { userId: currentUser.id },
-      update: {
-        hourlyRate: Number(body.hourlyRate) || 30,
-        coefficiente: Number(body.coefficiente) || 0.67,
-        irpefRate: Number(body.startupRate) || 0.15,
-        inpsType: body.inpsType || 'GESTIONE_SEPARATA',
-        inpsRate: body.inpsType === 'GESTIONE_SEPARATA'
-          ? Number(body.inpsRate) || 0.2607
-          : Number(body.inpsRate) || 0.2607,
-        inpsFixedAnnual: Number(body.inpsFixedAnnual) || 0,
-        inpsMinimaleThreshold: Number(body.inpsMinimaleThreshold) || 18808,
-        inpsExcessRate: Number(body.inpsExcessRate) || 0.156,
-        accountantAnnual: Number(body.accountantAnnual) || 300,
-      },
-      create: {
-        ...createDefaultSettings(currentUser.id),
-        hourlyRate: Number(body.hourlyRate) || 30,
-        coefficiente: Number(body.coefficiente) || 0.67,
-        irpefRate: Number(body.startupRate) || 0.15,
-        inpsType: body.inpsType || 'GESTIONE_SEPARATA',
-        inpsRate: Number(body.inpsRate) || 0.2607,
-        inpsFixedAnnual: Number(body.inpsFixedAnnual) || 0,
-        inpsMinimaleThreshold: Number(body.inpsMinimaleThreshold) || 18808,
-        inpsExcessRate: Number(body.inpsExcessRate) || 0.156,
-        accountantAnnual: Number(body.accountantAnnual) || 300,
-      },
+      orderBy: { updatedAt: 'desc' },
     })
+
+    const settingsPayload = {
+      hourlyRate: Number(body.hourlyRate) || 30,
+      coefficiente: Number(body.coefficiente) || 0.67,
+      irpefRate: Number(body.startupRate) || 0.15,
+      inpsType: body.inpsType || 'GESTIONE_SEPARATA',
+      inpsRate: Number(body.inpsRate) || 0.2607,
+      inpsFixedAnnual: Number(body.inpsFixedAnnual) || 0,
+      inpsMinimaleThreshold: Number(body.inpsMinimaleThreshold) || 18808,
+      inpsExcessRate: Number(body.inpsExcessRate) || 0.156,
+      accountantAnnual: Number(body.accountantAnnual) || 300,
+    }
+
+    const settings = existingSettings
+      ? await tx.settings.update({
+          where: { id: existingSettings.id },
+          data: settingsPayload,
+        })
+      : await tx.settings.create({
+          data: {
+            ...createDefaultSettings(currentUser.id),
+            ...settingsPayload,
+          },
+        })
 
     if (replacePayments) {
       await tx.recurringPayment.deleteMany({ where: { userId: currentUser.id } })

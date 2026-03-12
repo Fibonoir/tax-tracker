@@ -13,33 +13,34 @@ export default defineEventHandler(async (event) => {
 
   if (event.method === 'PUT') {
     const body = await readBody(event)
-
-    const settings = await prisma.settings.upsert({
+    const existing = await prisma.settings.findFirst({
       where: { userId: currentUser.id },
-      update: {
-        hourlyRate: body.hourlyRate,
-        coefficiente: body.coefficiente,
-        irpefRate: body.irpefRate,
-        inpsType: body.inpsType,
-        inpsRate: body.inpsRate,
-        inpsFixedAnnual: body.inpsFixedAnnual,
-        inpsMinimaleThreshold: body.inpsMinimaleThreshold,
-        inpsExcessRate: body.inpsExcessRate,
-        accountantAnnual: body.accountantAnnual,
-      },
-      create: {
-        ...createDefaultSettings(currentUser.id),
-        hourlyRate: body.hourlyRate,
-        coefficiente: body.coefficiente,
-        irpefRate: body.irpefRate,
-        inpsType: body.inpsType,
-        inpsRate: body.inpsRate,
-        inpsFixedAnnual: body.inpsFixedAnnual,
-        inpsMinimaleThreshold: body.inpsMinimaleThreshold,
-        inpsExcessRate: body.inpsExcessRate,
-        accountantAnnual: body.accountantAnnual,
-      },
+      orderBy: { updatedAt: 'desc' },
     })
+
+    const payload = {
+      hourlyRate: body.hourlyRate,
+      coefficiente: body.coefficiente,
+      irpefRate: body.irpefRate,
+      inpsType: body.inpsType,
+      inpsRate: body.inpsRate,
+      inpsFixedAnnual: body.inpsFixedAnnual,
+      inpsMinimaleThreshold: body.inpsMinimaleThreshold,
+      inpsExcessRate: body.inpsExcessRate,
+      accountantAnnual: body.accountantAnnual,
+    }
+
+    const settings = existing
+      ? await prisma.settings.update({
+          where: { id: existing.id },
+          data: payload,
+        })
+      : await prisma.settings.create({
+          data: {
+            ...createDefaultSettings(currentUser.id),
+            ...payload,
+          },
+        })
 
     await logAuditEvent({
       userId: currentUser.id,

@@ -107,11 +107,9 @@ async function claimLegacyData(userId: number) {
 
   const hasLegacyData = Boolean(legacySettings) || legacyEntries > 0 || legacyRecurring > 0 || legacyOnetime > 0
   if (!hasLegacyData) {
-    await prisma.settings.upsert({
-      where: { userId },
-      update: {},
-      create: createDefaultSettings(userId),
-    })
+    const existing = await prisma.settings.findFirst({ where: { userId } })
+    if (!existing)
+      await prisma.settings.create({ data: createDefaultSettings(userId) })
     return
   }
 
