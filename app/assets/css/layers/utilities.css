@@ -40,6 +40,20 @@
     opacity: 0;
   }
 
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.55s var(--app-fade-ease),
+      transform 0.55s var(--app-fade-ease);
+    will-change: opacity, transform;
+  }
+
+  .reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   .pb-nav {
     padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
@@ -60,5 +74,15 @@
 @media (min-width: 768px) {
   .pb-nav {
     padding-bottom: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .reveal-on-scroll {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

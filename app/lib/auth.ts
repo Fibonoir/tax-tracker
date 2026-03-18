@@ -6,11 +6,25 @@ import { isEmailAllowed } from '~/server/utils/auth-allowlist'
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET
+const configuredAuthOrigin = process.env.BETTER_AUTH_URL
+  ? new URL(process.env.BETTER_AUTH_URL).origin
+  : null
 
 export const auth = betterAuth({
   appName: 'Chiaro',
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: async (request) => {
+    const origins = new Set<string>()
+
+    if (configuredAuthOrigin)
+      origins.add(configuredAuthOrigin)
+
+    if (request)
+      origins.add(new URL(request.url).origin)
+
+    return Array.from(origins)
+  },
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
     usePlural: false,
@@ -28,20 +42,20 @@ export const auth = betterAuth({
     },
   },
   user: {
-    modelName: 'User',
+    modelName: 'user',
     fields: {
       image: 'picture',
       emailVerified: 'emailVerified',
     },
   },
   session: {
-    modelName: 'Session',
+    modelName: 'session',
   },
   account: {
-    modelName: 'Account',
+    modelName: 'account',
   },
   verification: {
-    modelName: 'Verification',
+    modelName: 'verification',
     fields: {
       token: 'token',
     },

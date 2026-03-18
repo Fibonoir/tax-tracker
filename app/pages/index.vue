@@ -1,7 +1,7 @@
 <template>
   <div class="app-landing">
-    <section class="app-landing__hero">
-      <div class="app-landing__hero-copy fade-up fade-up-1">
+    <section id="top" class="app-landing__hero reveal-on-scroll is-visible">
+      <div class="app-landing__hero-copy">
         <p class="app-landing__eyebrow">Chiaro · prodotto di chiarezza per forfettario</p>
         <h1 class="app-landing__title">
           Non spendere soldi che non sono davvero tuoi.
@@ -13,16 +13,16 @@
         </p>
 
         <div class="app-landing__actions">
-          <UButton to="/login" size="lg" color="primary" class="ui-action-button">
-            Continua con Google
+          <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
+            {{ currentUser ? 'Apri app' : 'Continua con Google' }}
           </UButton>
-          <UButton to="/pricing" size="lg" variant="soft" color="neutral" class="ui-action-button">
+          <UButton to="/#prezzi" size="lg" variant="soft" color="neutral" class="ui-action-button">
             Guarda i piani
           </UButton>
         </div>
       </div>
 
-      <SurfaceCard variant="gradient" padding="lg" class="app-landing__panel fade-up fade-up-2">
+      <SurfaceCard variant="gradient" padding="lg" class="app-landing__panel">
         <div class="ui-form-stack">
           <div class="ui-kv-row">
             <span class="ui-kv-row__label">Promessa</span>
@@ -44,7 +44,7 @@
       </SurfaceCard>
     </section>
 
-    <div class="app-landing__metric-grid fade-up fade-up-2">
+    <div class="app-landing__metric-grid reveal-on-scroll">
       <DecisionMetric
         label="Incassato"
         value="Quello che entra"
@@ -68,7 +68,7 @@
       />
     </div>
 
-    <section id="come-funziona" class="app-landing__section fade-up fade-up-2">
+    <section id="come-funziona" class="app-landing__section reveal-on-scroll">
       <div>
         <p class="app-landing__eyebrow">Come funziona</p>
         <h2 class="app-landing__section-title">Tre passaggi e il controllo mensile è leggibile.</h2>
@@ -79,21 +79,21 @@
       </div>
 
       <div class="app-grid-3">
-        <SurfaceCard variant="soft" padding="md">
+        <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
           <p class="label-xs">1. Imposta il profilo</p>
           <p class="app-page-copy mt-3">
             ATECO, coefficiente, INPS e costi fissi entrano nel modello una sola volta.
           </p>
         </SurfaceCard>
 
-        <SurfaceCard variant="soft" padding="md">
+        <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
           <p class="label-xs">2. Registra gli incassi</p>
           <p class="app-page-copy mt-3">
             Ogni incasso aggiorna il mese, il netto e la quota da accantonare in tempo reale.
           </p>
         </SurfaceCard>
 
-        <SurfaceCard variant="soft" padding="md">
+        <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
           <p class="label-xs">3. Leggi il disponibile</p>
           <p class="app-page-copy mt-3">
             Vedi subito cosa resta davvero tuo e quali scadenze stanno arrivando.
@@ -102,7 +102,7 @@
       </div>
     </section>
 
-    <section class="app-landing__section fade-up fade-up-2">
+    <section class="app-landing__section reveal-on-scroll">
       <div>
         <p class="app-landing__eyebrow">Perché esiste</p>
         <h2 class="app-landing__section-title">Il problema non è il conto. È confondere il saldo con il tuo denaro.</h2>
@@ -113,7 +113,7 @@
       </div>
 
       <div class="app-grid-2">
-        <SurfaceCard padding="lg">
+        <SurfaceCard padding="lg" class="app-landing__story-card">
           <p class="label-xs">Relief</p>
           <h3 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
             Un controllo mensile che abbassa il rumore.
@@ -123,7 +123,7 @@
           </p>
         </SurfaceCard>
 
-        <SurfaceCard padding="lg">
+        <SurfaceCard padding="lg" class="app-landing__story-card">
           <p class="label-xs">Trust</p>
           <h3 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
             Numeri spiegabili, non solo mostrati.
@@ -135,13 +135,14 @@
       </div>
     </section>
 
-    <section id="prezzi" class="app-landing__section fade-up fade-up-2">
+    <section id="prezzi" class="app-landing__section reveal-on-scroll">
       <div>
         <p class="app-landing__eyebrow">Prezzi</p>
         <h2 class="app-landing__section-title">Tre piani, una promessa sola.</h2>
         <p class="app-landing__section-copy">
           Core è il piano consigliato. Planning aggiunge scenario ed export. Free resta una
-          dimostrazione utile, non un vicolo cieco.
+          dimostrazione utile, non un vicolo cieco. Hai 30 giorni per capire se il rituale mensile
+          ti dà più controllo del tuo sistema attuale.
         </p>
       </div>
 
@@ -159,8 +160,13 @@
             <p class="app-landing__feature">Preview del dashboard</p>
             <p class="app-landing__feature">Storico limitato</p>
           </div>
-          <UButton to="/pricing" variant="soft" color="neutral" class="ui-action-button">
-            Vedi dettaglio piani
+          <UButton
+            :to="currentUser ? '/app' : '/login'"
+            variant="soft"
+            color="neutral"
+            class="ui-action-button"
+          >
+            {{ currentUser ? 'Apri app' : 'Inizia gratis' }}
           </UButton>
         </SurfaceCard>
 
@@ -178,8 +184,13 @@
             <p class="app-landing__feature">Scadenze e spiegazioni</p>
             <p class="app-landing__feature">Storico completo</p>
           </div>
-          <UButton to="/pricing" color="primary" class="ui-action-button">
-            Scegli Core
+          <UButton
+            color="primary"
+            class="ui-action-button"
+            :loading="billingLoading && pendingPlan === 'CORE_CLARITY'"
+            @click="handlePlanAction('CORE_CLARITY')"
+          >
+            {{ currentUser ? coreActionLabel : 'Accedi per scegliere Core' }}
           </UButton>
         </SurfaceCard>
 
@@ -197,14 +208,20 @@
             <p class="app-landing__feature">Export per commercialista</p>
             <p class="app-landing__feature">Planning annuale avanzato</p>
           </div>
-          <UButton to="/pricing" variant="soft" color="neutral" class="ui-action-button">
-            Vai al piano alto
+          <UButton
+            variant="soft"
+            color="neutral"
+            class="ui-action-button"
+            :loading="billingLoading && pendingPlan === 'PLANNING_SCENARIOS'"
+            @click="handlePlanAction('PLANNING_SCENARIOS')"
+          >
+            {{ currentUser ? planningActionLabel : 'Accedi per scegliere Planning' }}
           </UButton>
         </SurfaceCard>
       </div>
     </section>
 
-    <section class="app-landing__section fade-up fade-up-2">
+    <section class="app-landing__section reveal-on-scroll">
       <div>
         <p class="app-landing__eyebrow">Fiducia</p>
         <h2 class="app-landing__section-title">La chiarezza vale solo se il calcolo si può spiegare.</h2>
@@ -215,14 +232,14 @@
       </div>
 
       <div class="app-grid-2">
-        <SurfaceCard padding="lg">
+        <SurfaceCard padding="lg" class="app-landing__story-card">
           <p class="label-xs">Ruleset</p>
           <p class="app-page-copy mt-3">
             Le regole fiscali sono trattate come parte del prodotto, non come un dettaglio nascosto.
           </p>
         </SurfaceCard>
 
-        <SurfaceCard padding="lg">
+        <SurfaceCard padding="lg" class="app-landing__story-card">
           <p class="label-xs">Spiegazioni</p>
           <p class="app-page-copy mt-3">
             Il calcolo si legge in italiano, con assunzioni esplicite e senza gergo da consulente.
@@ -231,7 +248,7 @@
       </div>
     </section>
 
-    <section class="app-landing__section fade-up fade-up-2">
+    <section class="app-landing__section reveal-on-scroll">
       <div>
         <p class="app-landing__eyebrow">FAQ</p>
         <h2 class="app-landing__section-title">Le domande che contano prima di iniziare.</h2>
@@ -272,7 +289,7 @@
       </div>
     </section>
 
-    <section class="app-landing__section fade-up fade-up-2">
+    <section class="app-landing__section reveal-on-scroll">
       <SurfaceCard variant="gradient" padding="lg">
         <div class="app-grid-2">
           <div>
@@ -281,10 +298,10 @@
           </div>
 
           <div class="app-landing__actions md:justify-end md:items-start md:pt-1">
-            <UButton to="/login" size="lg" color="primary" class="ui-action-button">
-              Entra con Google
+            <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
+              {{ currentUser ? 'Apri app' : 'Entra con Google' }}
             </UButton>
-            <UButton to="/pricing" size="lg" variant="soft" color="neutral" class="ui-action-button">
+            <UButton to="/#prezzi" size="lg" variant="soft" color="neutral" class="ui-action-button">
               Vedi prezzi
             </UButton>
           </div>
@@ -295,6 +312,47 @@
 </template>
 
 <script setup lang="ts">
+const { currentUser } = useCurrentUser()
+const { startCheckout, openPortal, loading } = useBilling()
+
+const pendingPlan = ref<'CORE_CLARITY' | 'PLANNING_SCENARIOS' | 'PORTAL' | null>(null)
+const billingLoading = computed(() => loading.value)
+
+const coreActionLabel = computed(() => {
+  if (currentUser.value?.billing?.planTier === 'CORE_CLARITY' && currentUser.value.billing.isPaid) {
+    return 'Piano attivo'
+  }
+  if (currentUser.value?.billing?.isPaid) {
+    return 'Passa a Core'
+  }
+  return 'Scegli Core'
+})
+
+const planningActionLabel = computed(() => {
+  if (currentUser.value?.billing?.planTier === 'PLANNING_SCENARIOS' && currentUser.value.billing.isPaid) {
+    return 'Piano attivo'
+  }
+  return 'Scegli Planning'
+})
+
+async function handlePlanAction(plan: 'CORE_CLARITY' | 'PLANNING_SCENARIOS') {
+  if (!currentUser.value) {
+    await navigateTo('/login')
+    return
+  }
+
+  if (currentUser.value.billing.planTier === plan && currentUser.value.billing.isPaid) {
+    pendingPlan.value = 'PORTAL'
+    await openPortal()
+    pendingPlan.value = null
+    return
+  }
+
+  pendingPlan.value = plan
+  await startCheckout(plan)
+  pendingPlan.value = null
+}
+
 useHead({
   title: 'Chiaro',
   meta: [

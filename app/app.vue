@@ -121,7 +121,7 @@
 
           <nav class="app-public-nav">
             <NuxtLink to="/#come-funziona" class="app-public-nav__link">Come funziona</NuxtLink>
-            <NuxtLink to="/pricing" class="app-public-nav__link">Prezzi</NuxtLink>
+            <NuxtLink to="/#prezzi" class="app-public-nav__link">Prezzi</NuxtLink>
             <NuxtLink :to="session?.user ? '/app' : '/login'" class="app-toolbar-button app-public-nav__cta">
               {{ session?.user ? 'Apri app' : 'Accedi' }}
             </NuxtLink>
