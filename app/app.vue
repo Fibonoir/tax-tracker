@@ -120,8 +120,12 @@
           </NuxtLink>
 
           <nav class="app-public-nav">
-            <NuxtLink to="/#come-funziona" class="app-public-nav__link">Come funziona</NuxtLink>
-            <NuxtLink to="/#prezzi" class="app-public-nav__link">Prezzi</NuxtLink>
+            <button type="button" class="app-public-nav__link" @click="goToMarketingSection('come-funziona')">
+              Come funziona
+            </button>
+            <button type="button" class="app-public-nav__link" @click="goToMarketingSection('prezzi')">
+              Prezzi
+            </button>
             <NuxtLink :to="session?.user ? '/app' : '/login'" class="app-toolbar-button app-public-nav__cta">
               {{ session?.user ? 'Apri app' : 'Accedi' }}
             </NuxtLink>
@@ -173,6 +177,19 @@ function isActive(path: string) {
 
 function toggleColorMode() {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
+}
+
+async function goToMarketingSection(sectionId: string) {
+  if (import.meta.client && route.path === '/') {
+    const section = document.getElementById(sectionId)
+    if (section) {
+      const top = section.getBoundingClientRect().top + window.scrollY - 88
+      window.scrollTo({ top, behavior: 'smooth' })
+      return
+    }
+  }
+
+  await navigateTo(`/#${sectionId}`)
 }
 
 async function logout() {

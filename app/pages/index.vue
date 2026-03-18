@@ -16,7 +16,7 @@
           <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
             {{ currentUser ? 'Apri app' : 'Continua con Google' }}
           </UButton>
-          <UButton to="/#prezzi" size="lg" variant="soft" color="neutral" class="ui-action-button">
+          <UButton size="lg" variant="soft" color="neutral" class="ui-action-button" @click="scrollToSection('prezzi')">
             Guarda i piani
           </UButton>
         </div>
@@ -301,7 +301,7 @@
             <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
               {{ currentUser ? 'Apri app' : 'Entra con Google' }}
             </UButton>
-            <UButton to="/#prezzi" size="lg" variant="soft" color="neutral" class="ui-action-button">
+            <UButton size="lg" variant="soft" color="neutral" class="ui-action-button" @click="scrollToSection('prezzi')">
               Vedi prezzi
             </UButton>
           </div>
@@ -351,6 +351,18 @@ async function handlePlanAction(plan: 'CORE_CLARITY' | 'PLANNING_SCENARIOS') {
   pendingPlan.value = plan
   await startCheckout(plan)
   pendingPlan.value = null
+}
+
+function scrollToSection(sectionId: string) {
+  if (!import.meta.client)
+    return
+
+  const section = document.getElementById(sectionId)
+  if (!section)
+    return
+
+  const top = section.getBoundingClientRect().top + window.scrollY - 88
+  window.scrollTo({ top, behavior: 'smooth' })
 }
 
 useHead({

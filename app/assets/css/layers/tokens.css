@@ -89,6 +89,11 @@
   --shell-sidebar-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.03);
   --shell-dock-surface: oklch(0.2 0.012 56 / 0.9);
   --shell-dock-border: var(--border-default);
+  --brand-mark-surface:
+    radial-gradient(circle at 30% 20%, rgb(255 255 255 / 0.12), transparent 46%),
+    linear-gradient(145deg, oklch(0.32 0.03 154), oklch(0.22 0.02 56));
+  --brand-mark-text: oklch(0.98 0.006 82);
+  --brand-mark-border: rgb(255 255 255 / 0.14);
 
   --stage-text-label: oklch(0.8 0.01 74);
   --stage-text-primary: oklch(0.98 0.006 82);
@@ -184,6 +189,11 @@
   --shell-sidebar-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.58);
   --shell-dock-surface: oklch(0.976 0.005 88 / 0.78);
   --shell-dock-border: var(--border-subtle);
+  --brand-mark-surface:
+    radial-gradient(circle at 28% 18%, rgb(255 255 255 / 0.5), transparent 42%),
+    linear-gradient(145deg, oklch(0.74 0.05 154), oklch(0.46 0.05 122));
+  --brand-mark-text: oklch(0.97 0.006 88);
+  --brand-mark-border: rgb(255 255 255 / 0.36);
 
   --stage-text-label: oklch(0.4 0.03 68);
   --stage-text-primary: var(--text-primary);

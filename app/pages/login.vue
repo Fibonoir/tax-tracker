@@ -51,28 +51,25 @@
               </p>
             </div>
 
-            <SurfaceCard variant="soft" padding="md">
-              <div class="ui-form-stack">
-                <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Per chi</span>
-                  <span class="ui-kv-row__value text-[var(--text-primary)]">Freelance in forfettario</span>
-                </div>
-                <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Focus</span>
-                  <span class="ui-kv-row__value text-[var(--accent-text)]">Disponibile reale</span>
-                </div>
-                <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Esito</span>
-                  <span class="ui-kv-row__value text-[var(--info)]">Dal setup al primo incasso</span>
-                </div>
+            <div class="app-login__facts">
+              <div class="app-login__fact">
+                <span class="app-login__fact-label">Per chi</span>
+                <span class="app-login__fact-value text-[var(--text-primary)]">Freelance in forfettario</span>
               </div>
-            </SurfaceCard>
+              <div class="app-login__fact">
+                <span class="app-login__fact-label">Focus</span>
+                <span class="app-login__fact-value text-[var(--accent-text)]">Disponibile reale</span>
+              </div>
+              <div class="app-login__fact">
+                <span class="app-login__fact-label">Esito</span>
+                <span class="app-login__fact-value text-[var(--info)]">Dal setup al primo incasso</span>
+              </div>
+            </div>
 
             <UButton
               block
               size="lg"
-              color="neutral"
-              variant="soft"
+              color="primary"
               class="app-login__button app-login__button--google ui-action-button"
               :loading="loading"
               @click="signInWithGoogle"
