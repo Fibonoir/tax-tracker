@@ -11,6 +11,7 @@ model User {
   id                    Int              @id @default(autoincrement())
   email                 String           @unique
   name                  String?
+  emailVerified         Boolean          @default(false)
   picture               String?
   displayName           String?
   activityLabel         String?
@@ -21,10 +22,12 @@ model User {
   onboardingCompletedAt DateTime?
   planTier              String           @default("FREE")
   subscriptionStatus    String           @default("INACTIVE")
-  stripeCustomerId      String?
-  stripeSubscriptionId  String?
+  stripeCustomerId      String?          @unique
+  stripeSubscriptionId  String?          @unique
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
+  accounts              Account[]
+  sessions              Session[]
   settings              Settings?
   entries               Entry[]
   recurringPayments     RecurringPayment[]
@@ -56,7 +59,7 @@ enum EntryType {
 
 model Settings {
   id                    Int      @id @default(autoincrement())
-  userId                Int?
+  userId                Int?     @unique
   hourlyRate            Float    @default(30)
   coefficiente          Float    @default(0.67)
   irpefRate             Float    @default(0.15)
@@ -68,8 +71,6 @@ model Settings {
   accountantAnnual      Float    @default(300)
   updatedAt             DateTime @updatedAt @default(now())
   user                  User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
 }
 
 model RecurringPayment {
@@ -84,6 +85,52 @@ model RecurringPayment {
   user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    Int       @id @default(autoincrement())
+  userId                Int
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  value      String
+  token      String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
 
 model OneTimePayment {

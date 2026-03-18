@@ -140,6 +140,249 @@
   }
 
   /* ═══════════════════════════════════════════
+     Public shell + landing
+     ═══════════════════════════════════════════ */
+  .app-public-shell {
+    min-height: 100dvh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-public-shell__frame {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 82rem);
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .app-public-shell__content {
+    display: grid;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    width: min(100%, 74rem);
+    margin: 0 auto;
+  }
+
+  .app-public-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0 0.5rem;
+  }
+
+  .app-public-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+  }
+
+  .app-public-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .app-public-nav__link {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 0.65rem 0.8rem;
+    border-radius: 999px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .app-public-nav__link:hover {
+    background: var(--glow-hover);
+    color: var(--text-primary);
+  }
+
+  .app-public-nav__cta {
+    min-height: 2.6rem;
+    padding-inline: 1rem;
+  }
+
+  .app-landing {
+    display: grid;
+    gap: clamp(1.25rem, 2vw, 2rem);
+    padding-bottom: 3rem;
+  }
+
+  .app-landing__hero {
+    display: grid;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .app-landing__hero-copy {
+    display: grid;
+    gap: 0.9rem;
+    min-width: 0;
+    max-width: 42rem;
+  }
+
+  .app-landing__eyebrow {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--stage-text-label);
+  }
+
+  .app-landing__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 7vw, 5.6rem);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    color: var(--text-primary);
+    max-width: 10ch;
+    text-wrap: balance;
+  }
+
+  .app-landing__lead {
+    margin: 0;
+    max-width: 58ch;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  .app-landing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .app-landing__panel {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .app-landing__metric-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .app-landing__section {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .app-landing__section-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--text-primary);
+  }
+
+  .app-landing__section-copy {
+    margin: 0;
+    max-width: 60ch;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .app-landing__price-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .app-landing__price-card {
+    display: grid;
+    gap: 0.85rem;
+    align-content: start;
+  }
+
+  .app-landing__price-card--featured {
+    border-color: var(--border-active);
+    box-shadow: var(--app-shadow-md);
+  }
+
+  .app-landing__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .app-landing__price-value {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--text-primary);
+  }
+
+  .app-landing__price-period {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .app-landing__feature-list {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .app-landing__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .app-landing__feature::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    margin-top: 0.45rem;
+    flex-shrink: 0;
+    background: var(--accent);
+  }
+
+  .app-landing__faq {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .app-landing__faq-item {
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-default);
+  }
+
+  .app-landing__faq-item:last-child {
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .app-landing__faq-question {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+  }
+
+  .app-landing__faq-answer {
+    margin: 0.45rem 0 0;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ═══════════════════════════════════════════
      Mobile header + dock
      ═══════════════════════════════════════════ */
   .app-mobile-header {
@@ -981,6 +1224,10 @@
     gap: 0.75rem;
   }
 
+  .app-public-shell__frame {
+    padding: 0.75rem;
+  }
+
   .app-mobile-header {
     padding: 0.65rem 0.1rem 0.15rem;
   }
@@ -1004,6 +1251,16 @@
 
   .app-home-hero__stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-public-topbar {
+    flex-wrap: wrap;
+  }
+
+  .app-public-nav {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
 
@@ -1115,6 +1372,23 @@
     gap: 1rem;
   }
 
+  .app-public-shell__content {
+    gap: 1.75rem;
+  }
+
+  .app-landing__hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
+    gap: 1.25rem;
+  }
+
+  .app-landing__metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .app-landing__price-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .app-sidebar .app-mobile-brand {
     align-items: flex-start;
     gap: 1rem;
@@ -1187,6 +1461,18 @@
 
   .app-main-stack {
     gap: 1.25rem;
+  }
+
+  .app-public-shell__frame {
+    padding: 1.25rem;
+  }
+
+  .app-public-shell__content {
+    padding-top: 1.5rem;
+  }
+
+  .app-landing {
+    gap: 1.5rem;
   }
 }
 

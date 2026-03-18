@@ -1,5 +1,31 @@
 ## Design Context
 
+## Documentation Source Of Truth
+
+The canonical product documentation for Chiaro lives in Notion.
+
+Primary hub:
+- `Chiaro`: `https://www.notion.so/31ba7b154dab80df9c56e94db7fe8a7b`
+
+Canonical subpages:
+- `Business Plan 2026`: `https://www.notion.so/327a7b154dab810ab5b2c8ba43274489`
+- `Current Product Documentation`: `https://www.notion.so/327a7b154dab81f5accbc5857c17ff94`
+- `Plan Review & Recommended Improvements`: `https://www.notion.so/327a7b154dab81e387cccbe7969a4454`
+
+Use Notion as the source of truth for:
+- product strategy and positioning
+- current architecture and product state
+- major roadmap decisions
+- plan revisions and strategic recommendations
+
+Do not try to re-sync Notion on every normal coding turn. That would add unnecessary token and execution overhead.
+
+Preferred sync policy:
+1. Update Notion when a change materially affects product behavior, architecture, billing, onboarding, auth, fiscal logic, roadmap, or positioning.
+2. For routine implementation churn, keep working locally and batch the Notion update later.
+3. Prefer a dedicated periodic sync prompt or automation for documentation hygiene, such as weekly or at major milestones.
+4. If a task explicitly changes source-of-truth product assumptions, update the relevant Notion page in the same task.
+
 ### Users
 Italian freelancers in regime forfettario use this product to understand how much of their invoiced money is actually spendable. Their core job is not bookkeeping; it is making safer monthly decisions about cash, tax set-asides, and upcoming deadlines with minimal cognitive load.
 

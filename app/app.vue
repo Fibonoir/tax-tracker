@@ -2,7 +2,7 @@
   <UApp>
     <NuxtLoadingIndicator />
 
-    <div v-if="!isStandalonePage" class="app-shell">
+    <div v-if="isAppRoute" class="app-shell">
       <div class="app-shell__ambient" />
 
       <div class="app-shell__frame">
@@ -104,44 +104,70 @@
       </nav>
     </div>
 
-    <div v-else>
-      <NuxtPage />
+    <div v-else-if="isMarketingRoute" class="app-public-shell">
+      <div class="app-shell__ambient" />
+      <div class="app-public-shell__frame">
+        <header class="app-public-topbar">
+          <NuxtLink to="/" class="app-public-brand">
+            <div class="app-brand-mark">
+              <span class="app-brand-mark__letter">C</span>
+            </div>
+
+            <div>
+              <p class="app-brand-title">Chiaro</p>
+              <p class="app-brand-copy">Prodotto di chiarezza per forfettario</p>
+            </div>
+          </NuxtLink>
+
+          <nav class="app-public-nav">
+            <NuxtLink to="/#come-funziona" class="app-public-nav__link">Come funziona</NuxtLink>
+            <NuxtLink to="/pricing" class="app-public-nav__link">Prezzi</NuxtLink>
+            <NuxtLink :to="session?.user ? '/app' : '/login'" class="app-toolbar-button app-public-nav__cta">
+              {{ session?.user ? 'Apri app' : 'Accedi' }}
+            </NuxtLink>
+          </nav>
+        </header>
+
+        <div class="app-public-shell__content">
+          <NuxtPage />
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="app-public-shell app-public-shell--plain">
+      <div class="app-shell__ambient" />
+      <div class="app-public-shell__frame">
+        <div class="app-public-shell__content">
+          <NuxtPage />
+        </div>
+      </div>
     </div>
   </UApp>
 </template>
 
 <script setup lang="ts">
-type UiVariant = 'classic' | 'editorial'
-
-const UI_VARIANT_STORAGE_KEY = 'chiaro-ui-variant'
 const route = useRoute()
 const colorMode = useColorMode()
-const { session } = useUserSession()
+const { session, signOut, clear: clearAuthState } = useAuthState()
 const { clear: clearCurrentUser } = useCurrentUser()
-const uiVariant = useState<UiVariant>('ui-variant', () => normalizeUiVariant(route.query.ui) ?? 'classic')
 
 const currentYear = new Date().getFullYear()
 const mobileMenuOpen = ref(false)
 
-const isStandalonePage = computed(() => route.path === '/login' || route.path === '/onboarding')
+const isAppRoute = computed(() => route.path.startsWith('/app'))
+const isMarketingRoute = computed(() => ['/', '/login', '/pricing'].includes(route.path))
 
 const tabs = [
-  { to: '/', label: 'Home', icon: 'lucide:square-pen' },
-  { to: '/month', label: 'Mese', icon: 'lucide:calendar-range' },
-  { to: '/annual', label: 'Anno', icon: 'lucide:chart-column-big' },
-  { to: '/settings', label: 'Modello', icon: 'lucide:sliders-horizontal' },
+  { to: '/app', label: 'Home', icon: 'lucide:square-pen' },
+  { to: '/app/month', label: 'Mese', icon: 'lucide:calendar-range' },
+  { to: '/app/annual', label: 'Anno', icon: 'lucide:chart-column-big' },
+  { to: '/app/settings', label: 'Modello', icon: 'lucide:sliders-horizontal' },
 ]
-
-useHead(() => ({
-  htmlAttrs: {
-    'data-ui-variant': uiVariant.value,
-  },
-}))
 
 watch(() => route.path, () => { mobileMenuOpen.value = false })
 
 function isActive(path: string) {
-  if (path === '/') return route.path === '/'
+  if (path === '/app') return route.path === '/app'
   return route.path.startsWith(path)
 }
 
@@ -150,50 +176,9 @@ function toggleColorMode() {
 }
 
 async function logout() {
-  await $fetch('/auth/logout', { method: 'POST' })
+  await signOut()
+  clearAuthState()
   clearCurrentUser()
   await navigateTo('/login')
 }
-
-function normalizeUiVariant(value: unknown): UiVariant | null {
-  const raw = Array.isArray(value) ? value[0] : value
-  if (typeof raw !== 'string') return null
-
-  const normalized = raw.toLowerCase()
-  if (normalized === 'classic' || normalized === 'editorial') return normalized
-  return null
-}
-
-function persistUiVariant(variant: UiVariant) {
-  if (!import.meta.client) return
-  localStorage.setItem(UI_VARIANT_STORAGE_KEY, variant)
-}
-
-function applyUiVariant(variant: UiVariant, persist = true) {
-  uiVariant.value = variant
-  if (persist) persistUiVariant(variant)
-}
-
-watch(
-  () => route.query.ui,
-  (value) => {
-    const queryVariant = normalizeUiVariant(value)
-
-    if (queryVariant) {
-      applyUiVariant(queryVariant)
-      return
-    }
-
-    if (value !== undefined) {
-      applyUiVariant('classic')
-      return
-    }
-
-    if (!import.meta.client) return
-
-    const storedVariant = normalizeUiVariant(localStorage.getItem(UI_VARIANT_STORAGE_KEY))
-    uiVariant.value = storedVariant ?? 'classic'
-  },
-  { immediate: true },
-)
 </script>

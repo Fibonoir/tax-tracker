@@ -1,7 +1,9 @@
+import { auth } from '~/lib/auth'
+
 export default defineEventHandler(async (event) => {
   const path = getRequestURL(event).pathname
 
-  if (path.startsWith('/api/_auth/'))
+  if (path.startsWith('/api/auth/') || path === '/api/billing/webhook')
     return
 
   if (path.startsWith('/api/')) {
@@ -9,9 +11,11 @@ export default defineEventHandler(async (event) => {
       return
     }
 
-    const session = await getUserSession(event)
+    const session = await auth.api.getSession({
+      headers: event.headers,
+    })
 
-    if (!session.user) {
+    if (!session?.user) {
       throw createError({
         statusCode: 401,
         statusMessage: 'Unauthorized: Please login to access this resource.',

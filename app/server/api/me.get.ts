@@ -1,9 +1,11 @@
+import { getBillingState } from '~/server/utils/billing'
 import { getSettings } from '~/server/utils/taxes'
 import { requireAppUser } from '~/server/utils/users'
 
 export default defineEventHandler(async (event) => {
   const currentUser = await requireAppUser(event)
   const settings = await getSettings(currentUser.id)
+  const billing = getBillingState(currentUser)
 
   return {
     id: currentUser.id,
@@ -16,8 +18,9 @@ export default defineEventHandler(async (event) => {
     atecoLabel: currentUser.atecoLabel,
     taxYear: currentUser.taxYear,
     startupRate: currentUser.startupRate,
-    planTier: currentUser.planTier,
-    subscriptionStatus: currentUser.subscriptionStatus,
+    planTier: billing.planTier,
+    subscriptionStatus: billing.subscriptionStatus,
+    billing,
     onboardingCompleted: Boolean(currentUser.onboardingCompletedAt),
     onboardingCompletedAt: currentUser.onboardingCompletedAt,
     settings: {

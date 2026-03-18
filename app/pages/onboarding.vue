@@ -452,7 +452,7 @@ async function handlePrimaryAction() {
 
     await refresh(true)
     toast.add({ title: 'Profilo salvato. Da ora Chiaro ti mostra il numero che conta davvero.', color: 'success' })
-    await navigateTo('/')
+    await navigateTo('/app')
   } catch {
     toast.add({ title: 'Non sono riuscito a completare il setup. Riprova.', color: 'error' })
   } finally {

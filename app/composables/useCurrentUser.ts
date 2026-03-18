@@ -1,3 +1,20 @@
+export interface BillingEntitlementsState {
+  dashboardHistoryLimit: number | null
+  annualVisibilityLimitMonths: number | null
+  canUseDeadlines: boolean
+  canUseMonthlyLoop: boolean
+  canUseAnnualPlanning: boolean
+  canCompareScenarios: boolean
+  canExportForAccountant: boolean
+}
+
+export interface BillingState {
+  planTier: string
+  subscriptionStatus: string
+  isPaid: boolean
+  entitlements: BillingEntitlementsState
+}
+
 export interface CurrentUserState {
   id: number
   email: string
@@ -11,6 +28,7 @@ export interface CurrentUserState {
   startupRate?: number | null
   planTier: string
   subscriptionStatus: string
+  billing: BillingState
   onboardingCompleted: boolean
   onboardingCompletedAt?: string | null
   settings: {

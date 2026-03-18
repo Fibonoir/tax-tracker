@@ -4,45 +4,35 @@
       <div class="app-grid-2 app-login__layout">
         <div class="fade-up fade-up-1">
           <div class="app-login__header">
-            <div class="app-mobile-brand">
-              <div class="app-brand-mark">
-                <span class="app-brand-mark__letter">C</span>
-              </div>
-
-              <div>
-                <p class="app-brand-title">Chiaro</p>
-                <p class="app-brand-copy">Per freelance in forfettario</p>
-              </div>
-            </div>
+            <p class="label-xs">Accesso Chiaro</p>
+            <h1 class="app-login__title">
+              Non spendere soldi che non sono davvero tuoi.
+            </h1>
+            <p class="app-login__subtitle">
+              Chiaro è costruito per il controllo mensile del denaro disponibile: pochi numeri,
+              lettura chiara, nessuna sorpresa tra quello che entra e quello che puoi usare.
+            </p>
           </div>
-
-          <h1 class="app-login__title">
-            Non spendere soldi che non sono davvero tuoi.
-          </h1>
-          <p class="app-login__subtitle">
-            Chiaro ti mostra ogni mese tre numeri: quanto hai incassato, quanto devi accantonare e
-            quanto puoi davvero spendere.
-          </p>
 
           <div class="app-grid-3 app-login__feature-grid mt-8">
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
-              <p class="label-xs">Registra</p>
+              <p class="label-xs">Leggi</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Registra ore e progetti con data, importo e una nota.
+                Il mese parte dal disponibile reale, non dal saldo grezzo.
               </p>
             </SurfaceCard>
 
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
               <p class="label-xs">Accantona</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Vedi subito la differenza tra incassato, da accantonare e disponibile.
+                Tasse, INPS e costi vengono separati prima di fare le scelte.
               </p>
             </SurfaceCard>
 
             <SurfaceCard variant="soft" padding="sm" class="app-login__feature-card">
-              <p class="label-xs">Prevedi</p>
+              <p class="label-xs">Decidi</p>
               <p class="text-sm leading-6 text-[var(--text-primary)] mt-2">
-                Anticipa imposte, contributi e scadenze senza fare conti a mano.
+                Ogni numero importante è spiegato e resta leggibile.
               </p>
             </SurfaceCard>
           </div>
@@ -51,13 +41,13 @@
         <SurfaceCard padding="lg" class="app-login__panel rounded-[2rem] fade-up fade-up-2">
           <div class="ui-form-stack app-login__panel-stack">
             <div>
-              <p class="label-xs">Accesso protetto</p>
+              <p class="label-xs">Accedi con Google</p>
               <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Accedi al tuo spazio.
+                Entra nel tuo spazio.
               </h2>
               <p class="app-page-copy mt-3">
-                Solo l'email autorizzata puo entrare. Usiamo Google per rendere l'accesso rapido e
-                tenere Chiaro in uno spazio personale.
+                L'accesso resta semplice: una sola identità, uno spazio personale, un flusso chiaro
+                tra onboarding e controllo mensile.
               </p>
             </div>
 
@@ -68,12 +58,12 @@
                   <span class="ui-kv-row__value text-[var(--text-primary)]">Freelance in forfettario</span>
                 </div>
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Ti mostra</span>
-                  <span class="ui-kv-row__value text-[var(--accent-text)]">Quanto puoi spendere davvero</span>
+                  <span class="ui-kv-row__label">Focus</span>
+                  <span class="ui-kv-row__value text-[var(--accent-text)]">Disponibile reale</span>
                 </div>
                 <div class="ui-kv-row">
-                  <span class="ui-kv-row__label">Accesso</span>
-                  <span class="ui-kv-row__value text-[var(--info)]">Solo email autorizzata</span>
+                  <span class="ui-kv-row__label">Esito</span>
+                  <span class="ui-kv-row__value text-[var(--info)]">Dal setup al primo incasso</span>
                 </div>
               </div>
             </SurfaceCard>
@@ -94,7 +84,7 @@
             </UButton>
 
             <p class="app-login__note">
-              Dopo l'accesso trovi incassi, stime fiscali e costi nello stesso posto.
+              Ti portiamo dentro il prodotto, poi ti facciamo leggere il mese senza confusione.
             </p>
           </div>
         </SurfaceCard>
@@ -104,6 +94,8 @@
 </template>
 
 <script setup lang="ts">
+import { authClient } from '~/lib/auth-client'
+
 definePageMeta({
   layout: false,
 })
@@ -111,7 +103,15 @@ definePageMeta({
 const loading = ref(false)
 
 async function signInWithGoogle() {
-  loading.value = true
-  await navigateTo('/auth/google', { external: true })
+  try {
+    loading.value = true
+    await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: '/app',
+      errorCallbackURL: '/login?error=auth_failed',
+    })
+  } finally {
+    loading.value = false
+  }
 }
 </script>

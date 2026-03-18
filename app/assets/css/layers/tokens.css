@@ -38,157 +38,164 @@
 
 :root {
   --font-body: "Manrope", sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
+  --font-display: "Fraunces", serif;
   --font-mono: "IBM Plex Mono", monospace;
 
-  --surface-page: var(--c-black);
-  --surface-card: var(--c-card);
-  --surface-card-gradient: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02));
-  --surface-soft: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.03));
-  --surface-elevated: oklch(0.32 0.04 170);
-  --surface-inset: oklch(0.14 0.02 172);
-  --surface-input: rgb(255 255 255 / 0.03);
+  --surface-page: oklch(0.195 0.015 56);
+  --surface-card: oklch(0.245 0.015 56);
+  --surface-card-gradient:
+    linear-gradient(180deg, oklch(0.255 0.014 56), oklch(0.22 0.012 56));
+  --surface-soft: linear-gradient(180deg, oklch(0.27 0.012 56), oklch(0.23 0.01 56));
+  --surface-elevated: oklch(0.285 0.013 56);
+  --surface-inset: oklch(0.165 0.01 56);
+  --surface-input: oklch(0.215 0.012 56);
   --surface-stage:
-    radial-gradient(circle at 14% 14%, rgb(255 255 255 / 0.14), transparent 22rem),
-    radial-gradient(circle at 100% 100%, rgb(163 165 112 / 0.16), transparent 18rem),
-    linear-gradient(145deg, oklch(0.29 0.046 171) 0%, oklch(0.52 0.088 165) 56%, oklch(0.67 0.056 104) 100%);
-  --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+    radial-gradient(circle at 12% 12%, rgb(255 255 255 / 0.1), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgb(132 153 119 / 0.16), transparent 18rem),
+    linear-gradient(145deg, oklch(0.23 0.018 56) 0%, oklch(0.3 0.024 158) 58%, oklch(0.35 0.02 88) 100%);
+  --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.1);
 
-  --text-primary: var(--c-text);
-  --text-secondary: var(--c-muted);
+  --text-primary: oklch(0.964 0.008 82);
+  --text-secondary: oklch(0.78 0.01 72);
 
-  --border-default: var(--c-border);
-  --border-subtle: rgb(255 255 255 / 0.08);
-  --border-hover: rgb(255 255 255 / 0.22);
-  --border-active: rgb(31 143 105 / 0.36);
+  --border-default: oklch(0.395 0.01 66);
+  --border-subtle: oklch(0.31 0.008 66);
+  --border-hover: oklch(0.5 0.012 68);
+  --border-active: oklch(0.63 0.09 151);
 
-  --accent: var(--c-green);
-  --accent-text: var(--c-green);
-  --accent-hover: rgb(31 143 105 / 0.18);
-  --accent-decorative: oklch(0.75 0.09 95);
-  --danger: var(--c-red);
-  --danger-text: var(--c-red);
-  --warning: var(--c-amber);
-  --info: var(--c-blue);
+  --accent: oklch(0.68 0.09 154);
+  --accent-text: oklch(0.78 0.09 154);
+  --accent-hover: rgb(44 168 124 / 0.2);
+  --accent-decorative: oklch(0.72 0.08 88);
+  --danger: oklch(0.7 0.115 39);
+  --danger-text: oklch(0.78 0.1 39);
+  --warning: oklch(0.82 0.1 84);
+  --info: oklch(0.72 0.06 228);
 
-  --glow-subtle: rgb(255 255 255 / 0.05);
-  --glow-hover: rgb(255 255 255 / 0.08);
-  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.04);
-  --focus-ring: 0 0 0 4px rgb(31 143 105 / 0.12);
+  --glow-subtle: rgb(255 255 255 / 0.03);
+  --glow-hover: rgb(255 255 255 / 0.07);
+  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.03);
+  --focus-ring: 0 0 0 4px rgb(44 168 124 / 0.12);
 
   --page-bg-image:
-    radial-gradient(circle at top left, rgb(44 168 124 / 0.18), transparent 28rem),
-    radial-gradient(circle at top right, rgb(207 173 99 / 0.14), transparent 24rem),
-    linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 30%);
+    radial-gradient(circle at top left, rgb(44 168 124 / 0.12), transparent 24rem),
+    radial-gradient(circle at top right, rgb(207 173 99 / 0.1), transparent 22rem),
+    linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 28%);
   --shell-ambient:
-    radial-gradient(circle at 10% 15%, rgb(44 168 124 / 0.16), transparent 20rem),
-    radial-gradient(circle at 90% 10%, rgb(207 173 99 / 0.14), transparent 18rem),
-    linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 28rem);
-  --shell-sidebar-surface: var(--surface-card-gradient);
+    radial-gradient(circle at 10% 15%, rgb(44 168 124 / 0.12), transparent 18rem),
+    radial-gradient(circle at 90% 10%, rgb(207 173 99 / 0.08), transparent 16rem),
+    linear-gradient(180deg, rgb(255 255 255 / 0.03), transparent 24rem);
+  --shell-sidebar-surface: linear-gradient(180deg, oklch(0.255 0.013 56), oklch(0.215 0.012 56));
   --shell-sidebar-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.03);
-  --shell-dock-surface: rgb(8 19 16 / 0.82);
+  --shell-dock-surface: oklch(0.2 0.012 56 / 0.9);
   --shell-dock-border: var(--border-default);
 
-  --stage-text-label: rgb(255 255 255 / 0.76);
-  --stage-text-primary: rgb(255 255 255 / 0.98);
-  --stage-text-secondary: rgb(255 255 255 / 0.88);
-  --stage-signal-surface: rgb(255 255 255 / 0.09);
-  --stage-signal-surface-strong: rgb(255 255 255 / 0.15);
-  --stage-signal-border: rgb(255 255 255 / 0.12);
-  --stage-signal-border-strong: rgb(255 255 255 / 0.2);
+  --stage-text-label: oklch(0.8 0.01 74);
+  --stage-text-primary: oklch(0.98 0.006 82);
+  --stage-text-secondary: oklch(0.86 0.008 78);
+  --stage-signal-surface: oklch(0.255 0.012 56);
+  --stage-signal-surface-strong: oklch(0.285 0.013 56);
+  --stage-signal-border: oklch(0.36 0.01 66);
+  --stage-signal-border-strong: oklch(0.58 0.09 151);
 
   --cta-login-bg:
-    radial-gradient(140% 120% at 10% 0%, rgb(255 255 255 / 0.24), transparent 45%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.03)),
-    linear-gradient(120deg, #32d29b 0%, #25b985 36%, #1f8f69 68%, #166348 100%);
-  --cta-login-border: rgb(45 178 135 / 0.7);
+    radial-gradient(140% 120% at 10% 0%, rgb(255 255 255 / 0.12), transparent 45%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)),
+    linear-gradient(120deg, #327f68 0%, #2e9f72 32%, #1f8f69 72%, #163f31 100%);
+  --cta-login-border: rgb(45 178 135 / 0.58);
   --cta-login-shadow:
-    0 14px 26px rgb(3 25 19 / 0.38),
-    0 0 0 1px rgb(52 210 155 / 0.18),
-    inset 0 1px 0 rgb(255 255 255 / 0.25);
+    0 14px 26px rgb(10 28 21 / 0.32),
+    0 0 0 1px rgb(52 210 155 / 0.14),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
   --cta-login-hover-shadow:
-    0 20px 34px rgb(3 25 19 / 0.46),
-    0 0 0 1px rgb(52 210 155 / 0.28),
-    0 0 28px rgb(50 210 155 / 0.22),
-    inset 0 1px 0 rgb(255 255 255 / 0.3);
+    0 20px 34px rgb(10 28 21 / 0.42),
+    0 0 0 1px rgb(52 210 155 / 0.2),
+    0 0 28px rgb(50 210 155 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.2);
   --cta-login-focus-shadow:
-    0 0 0 3px rgb(45 185 135 / 0.32),
-    0 14px 26px rgb(3 25 19 / 0.38),
-    inset 0 1px 0 rgb(255 255 255 / 0.25);
+    0 0 0 3px rgb(45 185 135 / 0.28),
+    0 14px 26px rgb(10 28 21 / 0.34),
+    inset 0 1px 0 rgb(255 255 255 / 0.18);
 
-  --calendar-panel-surface: var(--surface-page);
-  --calendar-day-outside: rgb(153 171 165 / 0.46);
-  --calendar-selection-bg: linear-gradient(135deg, var(--c-green), var(--c-green-dark));
+  --calendar-panel-surface: var(--surface-card);
+  --calendar-day-outside: rgb(153 171 165 / 0.5);
+  --calendar-selection-bg: linear-gradient(135deg, oklch(0.68 0.09 154), oklch(0.55 0.08 154));
   --calendar-selection-text: #fff;
 
-  --app-radius-xs: 0.75rem;
-  --app-radius-sm: 1rem;
-  --app-radius-md: 1.5rem;
-  --app-radius-lg: 2rem;
-  --app-radius-xl: 2.5rem;
-  --app-shadow-sm: 0 10px 24px rgb(13 28 24 / 0.08);
-  --app-shadow-md: 0 22px 44px rgb(13 28 24 / 0.12);
-  --app-shadow-lg: 0 34px 78px rgb(10 24 20 / 0.2);
+  --app-radius-xs: 0.7rem;
+  --app-radius-sm: 0.95rem;
+  --app-radius-md: 1.35rem;
+  --app-radius-lg: 1.9rem;
+  --app-radius-xl: 2.4rem;
+  --app-shadow-sm: 0 12px 24px rgb(13 28 24 / 0.08);
+  --app-shadow-md: 0 22px 44px rgb(13 28 24 / 0.14);
+  --app-shadow-lg: 0 38px 82px rgb(10 24 20 / 0.22);
   --app-fade-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root.light {
-  --surface-page: var(--c-light-bg);
-  --surface-card: var(--c-light-card);
-  --surface-card-gradient: linear-gradient(180deg, rgb(255 255 255 / 0.99), var(--c-light-inset));
-  --surface-soft: linear-gradient(180deg, rgb(255 255 255 / 0.99), oklch(0.97 0.005 155));
-  --surface-elevated: var(--c-light-elevated);
-  --surface-inset: var(--c-light-inset);
-  --surface-input: oklch(0.96 0.005 155);
+  --surface-page: oklch(0.975 0.006 88);
+  --surface-card: oklch(0.988 0.003 88);
+  --surface-card-gradient:
+    linear-gradient(180deg, oklch(0.998 0.002 88), oklch(0.955 0.01 88));
+  --surface-soft: linear-gradient(180deg, oklch(0.996 0.002 88), oklch(0.972 0.004 88));
+  --surface-elevated: oklch(0.995 0.002 88);
+  --surface-inset: oklch(0.94 0.008 88);
+  --surface-input: oklch(0.992 0.002 88);
   --surface-stage:
-    radial-gradient(circle at 10% 12%, rgb(255 255 255 / 0.9), transparent 17rem),
-    radial-gradient(circle at 100% 100%, rgb(140 160 120 / 0.14), transparent 20rem),
-    linear-gradient(145deg, oklch(0.88 0.028 165) 0%, oklch(0.83 0.04 162) 58%, oklch(0.88 0.028 104) 100%);
-  --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.4);
+    radial-gradient(circle at 10% 12%, rgb(255 255 255 / 0.94), transparent 16rem),
+    radial-gradient(circle at 100% 100%, rgb(140 160 120 / 0.12), transparent 18rem),
+    linear-gradient(145deg, oklch(0.94 0.03 160) 0%, oklch(0.9 0.03 156) 58%, oklch(0.95 0.022 104) 100%);
+  --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.42);
 
-  --text-primary: var(--c-light-text);
-  --text-secondary: var(--c-light-muted);
+  --text-primary: oklch(0.2 0.018 56);
+  --text-secondary: oklch(0.44 0.018 56);
 
-  --border-default: var(--c-light-border);
-  --border-subtle: var(--c-light-border-subtle);
-  --border-hover: rgb(56 88 78 / 0.16);
-  --border-active: rgb(44 168 124 / 0.3);
+  --border-default: oklch(0.85 0.01 78);
+  --border-subtle: oklch(0.89 0.008 78);
+  --border-hover: oklch(0.63 0.014 68);
+  --border-active: oklch(0.58 0.13 154);
 
-  --accent-text: var(--c-green-dark);
-  --accent-hover: rgb(44 168 124 / 0.14);
-  --danger-text: var(--c-red-dark);
+  --accent: oklch(0.48 0.08 154);
+  --accent-text: oklch(0.42 0.07 154);
+  --accent-hover: rgb(44 168 124 / 0.12);
+  --accent-decorative: oklch(0.6 0.09 88);
+  --danger: oklch(0.53 0.12 39);
+  --danger-text: oklch(0.48 0.11 39);
+  --warning: oklch(0.58 0.12 84);
+  --info: oklch(0.45 0.06 228);
 
-  --glow-subtle: rgb(255 255 255 / 0.84);
+  --glow-subtle: rgb(255 255 255 / 0.86);
   --glow-hover: #fff;
-  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --shadow-inset: inset 0 1px 0 rgb(255 255 255 / 0.88);
   --focus-ring: 0 0 0 4px rgb(44 168 124 / 0.08);
 
   --page-bg-image:
-    radial-gradient(circle at top left, rgb(79 126 110 / 0.06), transparent 25rem),
-    radial-gradient(circle at 85% 0%, rgb(164 173 137 / 0.05), transparent 20rem),
-    linear-gradient(180deg, oklch(0.98 0.004 155) 0%, oklch(0.975 0.005 155) 20rem, var(--surface-page) 100%);
+    radial-gradient(circle at top left, rgb(79 126 110 / 0.07), transparent 24rem),
+    radial-gradient(circle at 85% 0%, rgb(164 173 137 / 0.06), transparent 20rem),
+    linear-gradient(180deg, oklch(0.99 0.003 88) 0%, oklch(0.98 0.004 88) 16rem, var(--surface-page) 100%);
   --shell-ambient:
-    radial-gradient(circle at 10% 15%, rgb(79 126 110 / 0.03), transparent 18rem),
-    radial-gradient(circle at 90% 10%, rgb(164 173 137 / 0.04), transparent 16rem),
+    radial-gradient(circle at 10% 15%, rgb(79 126 110 / 0.04), transparent 18rem),
+    radial-gradient(circle at 90% 10%, rgb(164 173 137 / 0.05), transparent 16rem),
     linear-gradient(180deg, rgb(255 255 255 / 0.58), transparent 24rem);
   --shell-sidebar-surface:
     radial-gradient(circle at top right, rgb(138 165 149 / 0.08), transparent 14rem),
     linear-gradient(180deg, var(--surface-elevated), var(--surface-card));
-  --shell-sidebar-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.6);
-  --shell-dock-surface: oklch(0.97 0.004 155 / 0.88);
+  --shell-sidebar-shadow: var(--app-shadow-md), inset 0 0 0 1px rgb(255 255 255 / 0.58);
+  --shell-dock-surface: oklch(0.985 0.004 88 / 0.9);
   --shell-dock-border: var(--border-subtle);
 
-  --stage-text-label: oklch(0.38 0.03 170);
-  --stage-text-primary: var(--c-light-text);
-  --stage-text-secondary: oklch(0.32 0.025 170);
-  --stage-signal-surface: linear-gradient(180deg, rgb(255 255 255 / 0.42), rgb(255 255 255 / 0.22));
-  --stage-signal-surface-strong: linear-gradient(180deg, rgb(255 255 255 / 0.56), rgb(255 255 255 / 0.28));
-  --stage-signal-border: rgb(255 255 255 / 0.34);
-  --stage-signal-border-strong: rgb(255 255 255 / 0.46);
+  --stage-text-label: oklch(0.4 0.03 68);
+  --stage-text-primary: var(--text-primary);
+  --stage-text-secondary: oklch(0.35 0.02 68);
+  --stage-signal-surface: linear-gradient(180deg, rgb(255 255 255 / 0.74), rgb(255 255 255 / 0.5));
+  --stage-signal-surface-strong: linear-gradient(180deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.62));
+  --stage-signal-border: rgb(255 255 255 / 0.52);
+  --stage-signal-border-strong: rgb(210 155 110 / 0.44);
 
   --cta-login-border: rgb(31 143 105 / 0.5);
-  --cta-login-shadow: 0 12px 20px rgb(22 99 72 / 0.24), inset 0 1px 0 rgb(255 255 255 / 0.2);
-  --cta-login-hover-shadow: 0 14px 22px rgb(22 99 72 / 0.24), inset 0 1px 0 rgb(255 255 255 / 0.18);
+  --cta-login-shadow: 0 12px 20px rgb(22 99 72 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.2);
+  --cta-login-hover-shadow: 0 14px 22px rgb(22 99 72 / 0.2), inset 0 1px 0 rgb(255 255 255 / 0.18);
   --cta-login-focus-shadow:
     0 0 0 3px rgb(45 185 135 / 0.22),
     0 12px 20px rgb(22 99 72 / 0.24),
@@ -197,166 +204,7 @@
   --calendar-panel-surface: var(--surface-elevated);
   --calendar-day-outside: rgb(104 120 112 / 0.48);
 
-  --app-shadow-sm: 0 8px 20px rgb(36 53 46 / 0.06);
-  --app-shadow-md: 0 14px 32px rgb(36 53 46 / 0.08);
-  --app-shadow-lg: 0 22px 44px rgb(36 53 46 / 0.12);
-}
-
-/* ─── Editorial dark: inked paper, no glass, flat surfaces ─── */
-:root[data-ui-variant="editorial"] {
-  --font-display: "Fraunces", serif;
-
-  --surface-page: var(--c-night-deep);
-  --surface-card: var(--c-night-paper);
-  --surface-card-gradient: var(--c-night-paper);
-  --surface-soft: oklch(0.26 0.015 56);
-  --surface-elevated: oklch(0.33 0.016 56);
-  --surface-inset: oklch(0.21 0.013 56);
-  --surface-input: oklch(0.26 0.014 56);
-  --surface-stage: var(--c-ink);
-  --surface-stage-overlay: none;
-
-  --text-primary: oklch(0.94 0.01 82);
-  --text-secondary: oklch(0.68 0.012 72);
-
-  --border-default: var(--c-night-border);
-  --border-subtle: oklch(0.35 0.008 70);
-  --border-hover: oklch(0.52 0.011 72);
-  --border-active: var(--c-rust);
-
-  --accent: var(--c-olive);
-  --accent-text: oklch(0.68 0.06 140);
-  --accent-hover: oklch(0.58 0.06 140 / 0.18);
-  --accent-decorative: var(--c-rust);
-  --danger: oklch(0.7 0.112 38);
-  --danger-text: oklch(0.76 0.108 38);
-  --warning: oklch(0.82 0.1 84);
-  --info: oklch(0.72 0.05 230);
-
-  --glow-subtle: transparent;
-  --glow-hover: oklch(0.34 0.012 60);
-  --shadow-inset: none;
-  --focus-ring: 0 0 0 3px var(--c-rust);
-
-  --page-bg-image: none;
-  --shell-ambient: none;
-  --shell-sidebar-surface: var(--c-night-paper);
-  --shell-sidebar-shadow: none;
-  --shell-dock-surface: oklch(0.24 0.014 56);
-  --shell-dock-border: var(--border-default);
-
-  --stage-text-label: var(--c-ink-muted);
-  --stage-text-primary: oklch(0.94 0.01 82);
-  --stage-text-secondary: oklch(0.82 0.01 78);
-  --stage-signal-surface: oklch(0.26 0.015 56);
-  --stage-signal-surface-strong: oklch(0.3 0.016 56);
-  --stage-signal-border: var(--c-night-border);
-  --stage-signal-border-strong: var(--c-rust);
-
-  --cta-login-bg: var(--c-night-paper);
-  --cta-login-border: var(--c-night-border);
-  --cta-login-shadow: none;
-  --cta-login-hover-shadow: none;
-  --cta-login-focus-shadow: 0 0 0 3px var(--c-rust);
-
-  --calendar-panel-surface: var(--c-night-paper);
-  --calendar-selection-bg: var(--c-rust);
-  --calendar-day-outside: oklch(0.5 0.008 74);
-
-  --app-radius-xs: 0;
-  --app-radius-sm: 0;
-  --app-radius-md: 0;
-  --app-radius-lg: 0;
-  --app-radius-xl: 0;
-  --app-shadow-sm: none;
-  --app-shadow-md: none;
-  --app-shadow-lg: none;
-
-  --ui-color-primary-50: oklch(0.97 0.015 42);
-  --ui-color-primary-100: oklch(0.93 0.035 42);
-  --ui-color-primary-200: oklch(0.87 0.06 42);
-  --ui-color-primary-300: oklch(0.78 0.09 42);
-  --ui-color-primary-400: oklch(0.68 0.13 42);
-  --ui-color-primary-500: oklch(0.58 0.148 42);
-  --ui-color-primary-600: oklch(0.51 0.14 42);
-  --ui-color-primary-700: oklch(0.44 0.12 42);
-  --ui-color-primary-800: oklch(0.37 0.1 42);
-  --ui-color-primary-900: oklch(0.3 0.08 42);
-  --ui-color-primary-950: oklch(0.24 0.06 42);
-}
-
-/* ─── Editorial light: paper/ink, no glass, flat surfaces ─── */
-:root.light[data-ui-variant="editorial"] {
-  --surface-page: var(--c-paper);
-  --surface-card: var(--c-cream);
-  --surface-card-gradient: var(--c-cream);
-  --surface-soft: oklch(0.93 0.012 78);
-  --surface-elevated: oklch(0.995 0.004 85);
-  --surface-inset: oklch(0.91 0.014 76);
-  --surface-input: oklch(0.97 0.006 80);
-  --surface-stage: var(--c-ink);
-  --surface-stage-overlay: none;
-
-  --text-primary: var(--c-ink);
-  --text-secondary: oklch(0.46 0.02 65);
-
-  --border-default: var(--c-paper-border);
-  --border-subtle: oklch(0.85 0.008 78);
-  --border-hover: oklch(0.62 0.014 68);
-  --border-active: var(--c-rust);
-
-  --accent: var(--c-olive);
-  --accent-text: oklch(0.4 0.065 140);
-  --accent-hover: oklch(0.52 0.06 140 / 0.12);
-  --accent-decorative: var(--c-rust);
-  --danger: oklch(0.5 0.12 38);
-  --danger-text: oklch(0.46 0.11 38);
-  --warning: oklch(0.55 0.12 84);
-  --info: oklch(0.42 0.055 230);
-
-  --glow-subtle: transparent;
-  --glow-hover: oklch(0.97 0.005 80);
-  --shadow-inset: none;
-  --focus-ring: 0 0 0 3px var(--c-rust);
-
-  --page-bg-image: none;
-  --shell-ambient: none;
-  --shell-sidebar-surface: var(--c-cream);
-  --shell-sidebar-shadow: none;
-  --shell-dock-surface: oklch(0.96 0.007 78);
-  --shell-dock-border: var(--border-default);
-
-  --stage-text-label: oklch(0.72 0.01 72);
-  --stage-text-primary: var(--c-paper);
-  --stage-text-secondary: oklch(0.85 0.01 78);
-  --stage-signal-surface: var(--c-cream);
-  --stage-signal-surface-strong: var(--surface-elevated);
-  --stage-signal-border: var(--c-paper-border);
-  --stage-signal-border-strong: var(--c-rust);
-
-  --cta-login-bg: var(--c-cream);
-  --cta-login-border: var(--c-paper-border);
-  --cta-login-shadow: none;
-  --cta-login-hover-shadow: none;
-  --cta-login-focus-shadow: 0 0 0 3px var(--c-rust);
-
-  --calendar-panel-surface: var(--surface-elevated);
-  --calendar-selection-bg: var(--c-rust);
-  --calendar-day-outside: oklch(0.62 0.01 74);
-
-  --app-shadow-sm: none;
-  --app-shadow-md: none;
-  --app-shadow-lg: none;
-
-  --ui-color-primary-50: oklch(0.97 0.015 42);
-  --ui-color-primary-100: oklch(0.93 0.035 42);
-  --ui-color-primary-200: oklch(0.87 0.06 42);
-  --ui-color-primary-300: oklch(0.78 0.09 42);
-  --ui-color-primary-400: oklch(0.68 0.13 42);
-  --ui-color-primary-500: oklch(0.58 0.148 42);
-  --ui-color-primary-600: oklch(0.51 0.14 42);
-  --ui-color-primary-700: oklch(0.44 0.12 42);
-  --ui-color-primary-800: oklch(0.37 0.1 42);
-  --ui-color-primary-900: oklch(0.3 0.08 42);
-  --ui-color-primary-950: oklch(0.24 0.06 42);
+  --app-shadow-sm: 0 10px 22px rgb(36 53 46 / 0.05);
+  --app-shadow-md: 0 16px 34px rgb(36 53 46 / 0.07);
+  --app-shadow-lg: 0 24px 48px rgb(36 53 46 / 0.1);
 }

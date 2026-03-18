@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', 'nuxt-auth-utils'],
+  modules: ['@nuxt/ui'],
 
   serverDir: 'app/server',
   css: ['~/assets/css/main.css'],
@@ -11,17 +11,18 @@ export default defineNuxtConfig({
   
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    oauth: {
-      google: {
-        clientId: process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
-        clientSecret: process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
-      },
-    },
+    betterAuthSecret: process.env.BETTER_AUTH_SECRET,
+    betterAuthUrl: process.env.BETTER_AUTH_URL,
+    googleClientId: process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
     betaAllowlist: process.env.BETA_ALLOWLIST,
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    stripeCoreClarityPriceId: process.env.STRIPE_CORE_CLARITY_PRICE_ID,
+    stripePlanningScenariosPriceId: process.env.STRIPE_PLANNING_SCENARIOS_PRICE_ID,
     public: {
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+      betterAuthUrl: process.env.BETTER_AUTH_URL ?? '',
     },
   },
   

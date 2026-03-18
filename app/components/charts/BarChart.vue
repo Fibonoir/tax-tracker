@@ -28,13 +28,13 @@ const { eur } = useFmt()
 const MONTH_LABELS = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
 
 const chartData = computed(() => ({
-  labels: MONTH_LABELS,
+  labels: props.months.map(m => MONTH_LABELS[m.month]),
   datasets: [
     {
       label: 'Gross',
       data: props.months.map(m => m.gross),
-      backgroundColor: props.months.map((m, i) =>
-        i === props.highlight ? '#2f6b57' : (colorMode.value === 'dark' ? '#27493f' : '#d7ddd8')
+      backgroundColor: props.months.map((m) =>
+        m.month === props.highlight ? '#2f6b57' : (colorMode.value === 'dark' ? '#27493f' : '#d7ddd8')
       ),
       borderRadius: 999,
       borderSkipped: false,

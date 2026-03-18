@@ -1,4 +1,5 @@
 import { prisma } from '~/server/utils/prisma'
+import { getBillingState } from '~/server/utils/billing'
 import { calcTaxesWithSettings, getSettings, type TaxSettings, type TaxBreakdown } from '~/server/utils/taxes'
 import { recordCalculationRun } from '~/server/utils/calculations'
 import { buildProvisionExplanations } from '~/server/utils/explanations'
@@ -51,12 +52,21 @@ function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: 
 
 export default defineEventHandler(async (event) => {
   const currentUser = await requireAppUser(event)
+  const billing = getBillingState(currentUser)
   const query = getQuery(event)
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth()
   const year = parseInt(query.year as string) || currentYear
   const source = typeof query.source === 'string' ? query.source : 'summary'
+
+  if (source === 'month' && !billing.entitlements.canUseMonthlyLoop) {
+    throw createError({
+      statusCode: 402,
+      statusMessage: 'Core Clarity sblocca la vista mensile completa.',
+    })
+  }
+
   const isCurrentYear = year === currentYear
   const rulesetVersion = '2026.1'
 
@@ -157,11 +167,61 @@ export default defineEventHandler(async (event) => {
     },
   })
 
+  const monthsWithCalculations = months.map((m, idx) => {
+    const beforeStart = idx < effectiveStart
+    const cumulativeGross = months.slice(0, idx + 1).reduce((s, x) => s + x.gross, 0)
+    const monthsSinceStart = Math.max(1, idx - effectiveStart + 1)
+    const runningAvg = beforeStart ? 0 : cumulativeGross / monthsSinceStart
+    const runningProjectedAnnual = runningAvg * activeMonths
+
+    const projected = calcTaxesWithSettings(runningProjectedAnnual, settings)
+    const provision = beforeStart ? 0 : projected.totalTax / activeMonths
+
+    return {
+      ...m,
+      cumulativeGross,
+      runningAvgMonthly: runningAvg,
+      runningProjectedAnnual,
+      provision,
+      net: beforeStart ? 0 : m.gross - provision - monthlyPayments,
+      projectedTaxes: beforeStart ? null : projected,
+    }
+  })
+
+  const visibleAnnualMonths = billing.entitlements.annualVisibilityLimitMonths
+  const annualPreviewEnd = visibleAnnualMonths === null
+    ? 12
+    : Math.min(12, effectiveStart + visibleAnnualMonths)
+
+  const maskedAnnualMonths = source === 'annual' && visibleAnnualMonths !== null
+    ? monthsWithCalculations.map((month, idx) => {
+        const isVisible = idx >= effectiveStart && idx < annualPreviewEnd
+        return isVisible
+          ? month
+          : {
+              ...month,
+              gross: 0,
+              hourlyGross: 0,
+              projectGross: 0,
+              totalHours: 0,
+              entryCount: 0,
+              cumulativeGross: 0,
+              runningAvgMonthly: 0,
+              runningProjectedAnnual: 0,
+              provision: 0,
+              net: 0,
+              projectedTaxes: null,
+              locked: true,
+            }
+      })
+    : monthsWithCalculations
+
   return {
     year,
     rulesetYear: year,
     rulesetVersion,
     calculationRunId: calculationRun.id,
+    billing,
     annualGross,
     isFirstYear,
     startMonth: effectiveStart,
@@ -173,26 +233,7 @@ export default defineEventHandler(async (event) => {
     explanations,
     ytdTaxes: { ...ytdTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: ytdTaxes.annualNet - paymentsTotal },
     projectedTaxes: { ...projectedTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: projectedTaxes.annualNet - paymentsTotal },
-    paymentDeadlines,
-    months: months.map((m, idx) => {
-      const beforeStart = idx < effectiveStart
-      const cumulativeGross = months.slice(0, idx + 1).reduce((s, x) => s + x.gross, 0)
-      const monthsSinceStart = Math.max(1, idx - effectiveStart + 1)
-      const runningAvg = beforeStart ? 0 : cumulativeGross / monthsSinceStart
-      const runningProjectedAnnual = runningAvg * activeMonths
-
-      const projected = calcTaxesWithSettings(runningProjectedAnnual, settings)
-      const provision = beforeStart ? 0 : projected.totalTax / activeMonths
-
-      return {
-        ...m,
-        cumulativeGross,
-        runningAvgMonthly: runningAvg,
-        runningProjectedAnnual,
-        provision,
-        net: beforeStart ? 0 : m.gross - provision - monthlyPayments,
-        projectedTaxes: beforeStart ? null : projected,
-      }
-    }),
+    paymentDeadlines: billing.entitlements.canUseDeadlines ? paymentDeadlines : [],
+    months: maskedAnnualMonths,
   }
 })

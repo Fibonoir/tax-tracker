@@ -1,14 +1,17 @@
 import { prisma } from '~/server/utils/prisma'
 import { logAuditEvent } from '~/server/utils/audit'
+import { getBillingState } from '~/server/utils/billing'
 import { requireAppUser } from '~/server/utils/users'
 
 export default defineEventHandler(async (event) => {
   const currentUser = await requireAppUser(event)
+  const billing = getBillingState(currentUser)
 
   if (event.method === 'GET') {
     const query = getQuery(event)
     const year = parseInt(query.year as string) || new Date().getFullYear()
     const month = query.month !== undefined ? parseInt(query.month as string) : undefined
+    const source = typeof query.source === 'string' ? query.source : 'entries'
 
     const where: any = {
       userId: currentUser.id,
@@ -18,7 +21,11 @@ export default defineEventHandler(async (event) => {
       },
     }
 
-    return prisma.entry.findMany({ where, orderBy: { date: 'desc' } })
+    const take = source === 'home'
+      ? billing.entitlements.dashboardHistoryLimit ?? undefined
+      : undefined
+
+    return prisma.entry.findMany({ where, orderBy: { date: 'desc' }, take })
   }
 
   if (event.method === 'POST') {

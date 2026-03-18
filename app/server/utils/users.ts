@@ -1,50 +1,35 @@
 import type { H3Event } from 'h3'
 import type { User } from '../generated/prisma/client'
+import { auth } from '~/lib/auth'
 import { prisma } from './prisma'
 import { createDefaultSettings } from './settings'
+import { isEmailAllowed } from './auth-allowlist'
 
 const DEV_USER_EMAIL = 'dev@chiaro.local'
 
-type SessionLikeUser = {
-  id?: string
-  email?: string | null
-  name?: string | null
-  picture?: string | null
-}
+type BetterAuthSession = Awaited<ReturnType<typeof auth.api.getSession>>
+type SessionLikeUser = BetterAuthSession extends { user: infer T } ? T : never
 
 function getBypassEnabled() {
   return import.meta.dev && process.env.DEV_AUTH_BYPASS !== 'false'
 }
 
-function normalizeEmailList(raw: string | undefined) {
-  return (raw ?? '')
-    .split(',')
-    .map(email => email.trim().toLowerCase())
-    .filter(Boolean)
-}
-
-export function isEmailAllowed(email: string, rawAllowlist?: string) {
-  const allowlist = normalizeEmailList(rawAllowlist)
-  if (allowlist.length === 0)
-    return true
-
-  return allowlist.includes(email.trim().toLowerCase())
-}
-
-async function upsertUserFromSession(sessionUser: SessionLikeUser) {
-  if (!sessionUser.email)
+async function syncUserFromSession(sessionUser: SessionLikeUser) {
+  if (!sessionUser?.email)
     throw createError({ statusCode: 401, statusMessage: 'Missing session email.' })
 
   return prisma.user.upsert({
     where: { email: sessionUser.email },
     update: {
       name: sessionUser.name ?? undefined,
-      picture: sessionUser.picture ?? undefined,
+      emailVerified: Boolean(sessionUser.emailVerified),
+      picture: sessionUser.image ?? undefined,
     },
     create: {
       email: sessionUser.email,
       name: sessionUser.name ?? undefined,
-      picture: sessionUser.picture ?? undefined,
+      emailVerified: Boolean(sessionUser.emailVerified),
+      picture: sessionUser.image ?? undefined,
     },
   })
 }
@@ -54,34 +39,16 @@ async function ensureDevUser() {
     where: { email: DEV_USER_EMAIL },
     update: {
       name: 'Dev User',
+      emailVerified: true,
     },
     create: {
       email: DEV_USER_EMAIL,
       name: 'Dev User',
+      emailVerified: true,
       displayName: 'Dev User',
       taxYear: new Date().getFullYear(),
     },
   })
-}
-
-async function syncUserSession(event: H3Event, user: User, sessionUser?: SessionLikeUser) {
-  const sessionData = {
-    user: {
-      id: String(user.id),
-      email: user.email,
-      name: sessionUser?.name ?? user.name,
-      picture: sessionUser?.picture ?? user.picture,
-    },
-  }
-
-  const session = await getUserSession(event)
-  const sameUser = session.user?.id === sessionData.user.id
-    && session.user?.email === sessionData.user.email
-    && session.user?.name === sessionData.user.name
-    && session.user?.picture === sessionData.user.picture
-
-  if (!sameUser)
-    await setUserSession(event, sessionData)
 }
 
 async function claimLegacyData(userId: number) {
@@ -140,6 +107,12 @@ async function claimLegacyData(userId: number) {
   })
 }
 
+export async function getAuthSession(event: H3Event) {
+  return auth.api.getSession({
+    headers: event.headers,
+  })
+}
+
 export async function requireAppUser(event: H3Event) {
   if ((event.context as { currentUser?: User }).currentUser)
     return (event.context as { currentUser: User }).currentUser
@@ -149,13 +122,18 @@ export async function requireAppUser(event: H3Event) {
   if (getBypassEnabled()) {
     user = await ensureDevUser()
   } else {
-    const session = await getUserSession(event)
-    if (!session.user?.email)
+    const session = await getAuthSession(event)
+    if (!session?.user?.email)
       throw createError({ statusCode: 401, statusMessage: 'Please login to access this resource.' })
 
-    const sessionUser = session.user as SessionLikeUser
-    user = await upsertUserFromSession(sessionUser)
-    await syncUserSession(event, user, sessionUser)
+    if (!isEmailAllowed(session.user.email, process.env.BETA_ALLOWLIST)) {
+      throw createError({
+        statusCode: 403,
+        statusMessage: 'Unauthorized: Your email is not authorized for this beta.',
+      })
+    }
+
+    user = await syncUserFromSession(session.user as SessionLikeUser)
   }
 
   await claimLegacyData(user.id)

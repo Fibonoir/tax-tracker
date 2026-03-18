@@ -1,35 +1,49 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return
-  if (to.path === '/login') return
 
-  const { loggedIn, fetch: fetchSession } = useUserSession()
+  const { session, loggedIn, refresh: refreshSession, clear: clearSession } = useAuthState()
   const { currentUser, refresh, clear } = useCurrentUser()
+  const isPublicRoute = to.path === '/' || to.path === '/login' || to.path === '/pricing'
+  const requiresAuth = to.path === '/onboarding' || to.path.startsWith('/app')
 
-  if (!process.dev) {
-    await fetchSession()
+  try {
+    await refreshSession(!session.value)
+  } catch {
+    clearSession()
+  }
 
-    if (!loggedIn.value) {
-      clear()
+  if (!loggedIn.value) {
+    clear()
+
+    if (requiresAuth)
       return navigateTo('/login')
-    }
+
+    return
   }
 
   try {
     await refresh(!currentUser.value)
   } catch {
     clear()
+    clearSession()
 
-    if (!process.dev)
+    if (requiresAuth)
       return navigateTo('/login')
   }
 
   if (!currentUser.value)
     return
 
-  if (!currentUser.value.onboardingCompleted && to.path !== '/onboarding')
+  if (to.path === '/login')
+    return navigateTo(currentUser.value.onboardingCompleted ? '/app' : '/onboarding')
+
+  if (!currentUser.value.onboardingCompleted && requiresAuth && to.path !== '/onboarding')
     return navigateTo('/onboarding')
 
   if (currentUser.value.onboardingCompleted && to.path === '/onboarding') {
-    return navigateTo('/')
+    return navigateTo('/app')
   }
+
+  if (isPublicRoute)
+    return
 })
