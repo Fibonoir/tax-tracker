@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { APIError } from 'better-auth/api'
+import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { prismaAdapter } from '@better-auth/prisma-adapter'
 import { prisma } from '~/server/utils/prisma'
 import { isEmailAllowed } from '~/server/utils/auth-allowlist'
@@ -97,34 +97,28 @@ export const auth = betterAuth({
     modelName: 'verification',
   },
   hooks: {
-    before: [
-      {
-        matcher: ctx => ctx.path === '/sign-up/email' || ctx.path === '/sign-in/email',
-        handler: async (ctx) => {
-          const email = ctx.body?.email as string | undefined
-          if (email && !isEmailAllowed(email, betaAllowlist)) {
-            throw new APIError('FORBIDDEN', {
-              message: 'Questo indirizzo non è abilitato per la beta.',
-            })
-          }
-        },
-      },
-    ],
-    after: [
-      {
-        matcher: ctx => ctx.path.startsWith('/callback/'),
-        handler: async (ctx) => {
-          const email = ctx.context.session?.user?.email
-          if (!email || isEmailAllowed(email, betaAllowlist))
-            return
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === '/sign-up/email' || ctx.path === '/sign-in/email') {
+        const email = ctx.body?.email as string | undefined
+        if (email && !isEmailAllowed(email, betaAllowlist)) {
+          throw new APIError('FORBIDDEN', {
+            message: 'Questo indirizzo non è abilitato per la beta.',
+          })
+        }
+      }
+    }),
+    after: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith('/callback/')) {
+        const email = ctx.context.session?.user?.email
+        if (!email || isEmailAllowed(email, betaAllowlist))
+          return
 
-          await auth.api.signOut({
-            headers: ctx.headers,
-          }).catch(() => undefined)
+        await auth.api.signOut({
+          headers: ctx.headers,
+        }).catch(() => undefined)
 
-          return ctx.redirect('/login?error=unauthorized_email')
-        },
-      },
-    ],
+        return ctx.redirect('/login?error=unauthorized_email')
+      }
+    }),
   },
 })
