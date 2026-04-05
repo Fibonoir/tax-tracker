@@ -181,9 +181,9 @@
           />
 
           <IncomeProjectionCard
-            v-if="monthData.runningAvgMonthly > 0"
-            :avg-monthly="monthData.runningAvgMonthly"
-            :projected-annual="monthData.runningProjectedAnnual"
+            v-if="monthData?.runningAvgMonthly > 0"
+            :avg-monthly="monthData?.runningAvgMonthly ?? 0"
+            :projected-annual="monthData?.runningProjectedAnnual ?? 0"
             :monthly-set-aside="annualData?.recommendedMonthlySetAside"
             class="fade-up fade-up-2"
           />
@@ -368,7 +368,7 @@ async function loadEntries() {
 async function loadMonthData() {
   const data = await $fetch<any>(`/api/summary/annual?year=${now.getFullYear()}&source=home`)
   annualData.value = data
-  monthData.value = data.months[now.getMonth()]
+  monthData.value = data?.months?.[now.getMonth()] ?? null
 }
 
 async function loadSettings() {

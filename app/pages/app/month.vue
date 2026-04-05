@@ -141,9 +141,9 @@
         />
 
         <IncomeProjectionCard
-          v-if="summary.runningAvgMonthly > 0"
-          :avg-monthly="summary.runningAvgMonthly"
-          :projected-annual="summary.runningProjectedAnnual"
+          v-if="summary?.runningAvgMonthly > 0"
+          :avg-monthly="summary?.runningAvgMonthly ?? 0"
+          :projected-annual="summary?.runningProjectedAnnual ?? 0"
           class="fade-up fade-up-3"
         />
       </div>
@@ -237,7 +237,7 @@ const deleting = ref(false)
 const pendingDeleteId = ref<number | null>(null)
 const hasMonthlyAccess = computed(() => currentUser.value?.billing?.entitlements.canUseMonthlyLoop ?? false)
 
-const summary = computed(() => annualData.value?.months[viewMonth.value])
+const summary = computed(() => annualData.value?.months?.[viewMonth.value] ?? null)
 
 const isCurrentMonth = computed(() =>
   viewYear.value === now.getFullYear() && viewMonth.value === now.getMonth()
