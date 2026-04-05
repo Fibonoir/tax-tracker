@@ -29,6 +29,10 @@ export type BillingEntitlements = {
   canExportForAccountant: boolean
 }
 
+const BILLING_ADMIN_EMAILS = new Set([
+  'valentinogoxhaj@gmail.com',
+])
+
 const PRICE_ENV_BY_PLAN: Record<Exclude<BillingPlanTier, 'FREE'>, string> = {
   CORE_CLARITY: 'STRIPE_CORE_CLARITY_PRICE_ID',
   PLANNING_SCENARIOS: 'STRIPE_PLANNING_SCENARIOS_PRICE_ID',
@@ -64,6 +68,10 @@ const PLANNING_ENTITLEMENTS: BillingEntitlements = {
   canExportForAccountant: true,
 }
 
+function isBillingAdminEmail(email: string | null | undefined) {
+  return typeof email === 'string' && BILLING_ADMIN_EMAILS.has(email.trim().toLowerCase())
+}
+
 export function isBillingPlanTier(value: unknown): value is BillingPlanTier {
   return typeof value === 'string' && BILLING_PLAN_TIERS.includes(value as BillingPlanTier)
 }
@@ -97,7 +105,11 @@ export function isBillingActiveStatus(status: BillingSubscriptionStatus) {
   return status === 'ACTIVE' || status === 'TRIALING' || status === 'PAST_DUE'
 }
 
-export function getBillingEntitlements(input: Pick<User, 'planTier' | 'subscriptionStatus'>): BillingEntitlements {
+export function getBillingEntitlements(input: Pick<User, 'planTier' | 'subscriptionStatus'> & { email?: string | null }): BillingEntitlements {
+  if (isBillingAdminEmail(input.email)) {
+    return { ...PLANNING_ENTITLEMENTS }
+  }
+
   const planTier = normalizeBillingPlanTier(input.planTier)
   const subscriptionStatus = normalizeBillingSubscriptionStatus(input.subscriptionStatus)
 
@@ -109,13 +121,26 @@ export function getBillingEntitlements(input: Pick<User, 'planTier' | 'subscript
   return { ...CORE_ENTITLEMENTS }
 }
 
-export function isPaidBillingState(input: Pick<User, 'planTier' | 'subscriptionStatus'>) {
+export function isPaidBillingState(input: Pick<User, 'planTier' | 'subscriptionStatus'> & { email?: string | null }) {
+  if (isBillingAdminEmail(input.email)) {
+    return true
+  }
+
   const planTier = normalizeBillingPlanTier(input.planTier)
   const subscriptionStatus = normalizeBillingSubscriptionStatus(input.subscriptionStatus)
   return planTier !== 'FREE' && isBillingActiveStatus(subscriptionStatus)
 }
 
-export function getBillingState(input: Pick<User, 'planTier' | 'subscriptionStatus'>) {
+export function getBillingState(input: Pick<User, 'planTier' | 'subscriptionStatus'> & { email?: string | null }) {
+  if (isBillingAdminEmail(input.email)) {
+    return {
+      planTier: 'PLANNING_SCENARIOS' as const,
+      subscriptionStatus: 'ACTIVE' as const,
+      isPaid: true,
+      entitlements: { ...PLANNING_ENTITLEMENTS },
+    }
+  }
+
   const planTier = normalizeBillingPlanTier(input.planTier)
   const subscriptionStatus = normalizeBillingSubscriptionStatus(input.subscriptionStatus)
 
