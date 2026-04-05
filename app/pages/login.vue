@@ -14,27 +14,84 @@
         </NuxtLink>
 
         <h1 class="app-login__title">
-          Accedi al tuo spazio forfettario.
+          {{ isSignUp ? 'Crea il tuo account.' : 'Accedi al tuo spazio.' }}
         </h1>
       </div>
 
       <SurfaceCard padding="lg" class="app-login__panel">
         <div class="ui-form-stack app-login__panel-stack">
           <SurfaceCard v-if="errorMessage" variant="soft" padding="sm">
-            <div class="ui-form-stack">
-              <p class="label-xs text-[var(--danger-text)]">Accesso non riuscito</p>
+            <div class="ui-form-stack" style="gap: 0.35rem;">
+              <p class="label-xs text-[var(--danger-text)]">
+                {{ isSignUp ? 'Registrazione non riuscita' : 'Accesso non riuscito' }}
+              </p>
               <p class="text-sm leading-6 text-[var(--text-primary)]">
                 {{ errorMessage }}
               </p>
             </div>
           </SurfaceCard>
 
+          <form class="ui-form-stack" @submit.prevent="handleEmailAuth">
+            <div v-if="isSignUp">
+              <label class="ui-field-label label-xs" for="auth-name">Nome</label>
+              <input
+                id="auth-name"
+                v-model="form.name"
+                type="text"
+                class="ui-input-base"
+                placeholder="Il tuo nome"
+                autocomplete="name"
+                required
+              >
+            </div>
+            <div>
+              <label class="ui-field-label label-xs" for="auth-email">Email</label>
+              <input
+                id="auth-email"
+                v-model="form.email"
+                type="email"
+                class="ui-input-base"
+                placeholder="tu@esempio.it"
+                autocomplete="email"
+                required
+              >
+            </div>
+            <div>
+              <label class="ui-field-label label-xs" for="auth-password">Password</label>
+              <input
+                id="auth-password"
+                v-model="form.password"
+                type="password"
+                class="ui-input-base"
+                :placeholder="isSignUp ? 'Almeno 8 caratteri' : 'La tua password'"
+                :autocomplete="isSignUp ? 'new-password' : 'current-password'"
+                minlength="8"
+                required
+              >
+            </div>
+            <UButton
+              type="submit"
+              block
+              size="lg"
+              color="primary"
+              class="app-login__button ui-action-button"
+              :loading="emailLoading"
+            >
+              {{ isSignUp ? 'Crea account' : 'Accedi' }}
+            </UButton>
+          </form>
+
+          <div class="app-login__divider">
+            <span class="app-login__divider-text">oppure</span>
+          </div>
+
           <UButton
             block
             size="lg"
-            color="primary"
-            class="app-login__button app-login__button--google ui-action-button"
-            :loading="loading"
+            color="neutral"
+            variant="outline"
+            class="app-login__button--google ui-action-button"
+            :loading="googleLoading"
             @click="signInWithGoogle"
           >
             <span class="app-login__button-icon">
@@ -44,7 +101,14 @@
           </UButton>
 
           <p class="app-login__note">
-            Per freelance in regime forfettario.
+            <template v-if="isSignUp">
+              Hai già un account?
+              <button type="button" class="app-login__toggle" @click="switchMode(false)">Accedi</button>
+            </template>
+            <template v-else>
+              Non hai un account?
+              <button type="button" class="app-login__toggle" @click="switchMode(true)">Crea account</button>
+            </template>
           </p>
         </div>
       </SurfaceCard>
@@ -60,17 +124,30 @@ definePageMeta({
 })
 
 const route = useRoute()
+const router = useRouter()
 const colorMode = useColorMode()
-const loading = ref(false)
+const emailLoading = ref(false)
+const googleLoading = ref(false)
+const isSignUp = ref(false)
+const formError = ref('')
+
+const form = reactive({
+  name: '',
+  email: '',
+  password: '',
+})
 
 const errorMessage = computed(() => {
+  if (formError.value)
+    return formError.value
+
   const error = route.query.error
   if (error === 'unauthorized_email')
-    return 'Questo indirizzo non e abilitato per la beta.'
+    return 'Questo indirizzo non è abilitato per la beta.'
   if (error === 'auth_failed')
-    return `L'accesso non e andato a buon fine. Riprova tra qualche secondo.`
+    return 'L\'accesso non è andato a buon fine. Riprova tra qualche secondo.'
   if (typeof error === 'string' && error.length > 0)
-    return `Non sono riuscito a completare l'accesso. Riprova.`
+    return 'Non sono riuscito a completare l\'accesso. Riprova.'
   return ''
 })
 
@@ -78,9 +155,52 @@ function toggleColorMode() {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
 }
 
+function switchMode(signUp: boolean) {
+  isSignUp.value = signUp
+  formError.value = ''
+  if (route.query.error)
+    router.replace({ query: {} })
+}
+
+async function handleEmailAuth() {
+  formError.value = ''
+  emailLoading.value = true
+
+  try {
+    if (isSignUp.value) {
+      const { error } = await authClient.signUp.email({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      })
+      if (error) {
+        formError.value = error.message || 'Registrazione non riuscita.'
+        return
+      }
+    }
+    else {
+      const { error } = await authClient.signIn.email({
+        email: form.email,
+        password: form.password,
+      })
+      if (error) {
+        formError.value = error.message || 'Credenziali non valide.'
+        return
+      }
+    }
+    await navigateTo('/app')
+  }
+  catch {
+    formError.value = 'Si è verificato un errore imprevisto. Riprova.'
+  }
+  finally {
+    emailLoading.value = false
+  }
+}
+
 async function signInWithGoogle() {
   try {
-    loading.value = true
+    googleLoading.value = true
     await authClient.signIn.social({
       provider: 'google',
       callbackURL: '/app',
@@ -88,7 +208,7 @@ async function signInWithGoogle() {
     })
   }
   finally {
-    loading.value = false
+    googleLoading.value = false
   }
 }
 </script>

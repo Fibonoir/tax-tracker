@@ -1,4 +1,5 @@
 import { betterAuth } from 'better-auth'
+import { APIError } from 'better-auth/api'
 import { prismaAdapter } from '@better-auth/prisma-adapter'
 import { prisma } from '~/server/utils/prisma'
 import { isEmailAllowed } from '~/server/utils/auth-allowlist'
@@ -46,6 +47,11 @@ export const auth = betterAuth({
       generateId: 'serial',
     },
   },
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 128,
+  },
   socialProviders: {
     google: {
       clientId: googleClientId,
@@ -73,6 +79,19 @@ export const auth = betterAuth({
     },
   },
   hooks: {
+    before: [
+      {
+        matcher: ctx => ctx.path === '/sign-up/email' || ctx.path === '/sign-in/email',
+        handler: async (ctx) => {
+          const email = ctx.body?.email as string | undefined
+          if (email && !isEmailAllowed(email, betaAllowlist)) {
+            throw new APIError('FORBIDDEN', {
+              message: 'Questo indirizzo non è abilitato per la beta.',
+            })
+          }
+        },
+      },
+    ],
     after: [
       {
         matcher: ctx => ctx.path.startsWith('/callback/'),

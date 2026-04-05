@@ -791,10 +791,43 @@
     box-shadow: 0 1px 0 rgb(255 255 255 / 0.85), 0 3px 8px rgb(7 39 29 / 0.2);
   }
 
+  .app-login__divider {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .app-login__divider::before,
+  .app-login__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-default);
+  }
+
+  .app-login__divider-text {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
   .app-login__note {
     font-size: 0.78rem;
     color: var(--text-secondary);
     text-align: center;
+  }
+
+  .app-login__toggle {
+    color: var(--accent-text);
+    font-weight: 700;
+    transition: color 0.15s ease;
+  }
+
+  .app-login__toggle:hover {
+    color: var(--accent);
   }
 
   .app-login__theme-toggle {
