@@ -23,6 +23,10 @@ export default defineNuxtConfig({
     public: {
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       betterAuthUrl: process.env.BETTER_AUTH_URL ?? '',
+      googleAuthEnabled: Boolean(
+        (process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID)
+        && (process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET),
+      ),
     },
   },
   

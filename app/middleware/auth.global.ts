@@ -3,7 +3,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const { session, loggedIn, refresh: refreshSession, clear: clearSession } = useAuthState()
   const { currentUser, refresh, clear } = useCurrentUser()
-  const isPublicRoute = to.path === '/' || to.path === '/login' || to.path === '/pricing'
+  const isPublicRoute = to.path === '/' || to.path === '/login' || to.path === '/pricing' || to.path === '/forgot-password' || to.path === '/reset-password'
   const requiresAuth = to.path === '/onboarding' || to.path.startsWith('/app')
 
   try {

@@ -23,7 +23,7 @@ async function syncUserFromSession(sessionUser: SessionLikeUser) {
     where: { email: sessionUser.email },
     update: {
       name: sessionUser.name ?? undefined,
-      emailVerified: Boolean(sessionUser.emailVerified),
+      ...(sessionUser.emailVerified ? { emailVerified: true } : {}),
       picture: sessionUser.image ?? undefined,
     },
     create: {
