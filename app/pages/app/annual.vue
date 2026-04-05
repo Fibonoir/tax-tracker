@@ -20,15 +20,11 @@
 
             <div class="app-stage app-stage--annual">
               <div class="app-stage__header">
-                <p class="app-stage__eyebrow">Planning annuale</p>
+                <p class="app-stage__eyebrow">Annuale</p>
                 <p class="app-stage__metric-label">Disponibile a fine anno</p>
                 <p class="app-stage__metric">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
                 <p class="app-stage__summary">
                   Lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · da accantonare {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
-                </p>
-                <p class="app-stage__lead">
-                  L’anno serve a leggere ritmo, scadenze e carico fiscale. La decisione operativa
-                  resta mensile; qui capisci dove sta andando.
                 </p>
               </div>
 
@@ -36,13 +32,13 @@
                 <div class="app-stage__signal app-stage__signal--strong">
                   <p class="app-stage__signal-label">Lordo previsto</p>
                   <p class="app-stage__signal-value">{{ fmt.eur(data.projectedAnnualGross) }}</p>
-                  <p class="app-stage__signal-note">Se mantieni il ritmo attuale, potresti chiudere qui.</p>
+                  <p class="app-stage__signal-note">Proiezione al ritmo attuale.</p>
                 </div>
 
                 <div class="app-stage__signal">
                   <p class="app-stage__signal-label">Aliquota effettiva</p>
                   <p class="app-stage__signal-value">{{ fmt.pct(data.projectedTaxes.effectiveRate) }}</p>
-                  <p class="app-stage__signal-note">Peso stimato tra imposta, INPS e costi distribuiti.</p>
+                  <p class="app-stage__signal-note">Imposta + INPS + costi.</p>
                 </div>
 
                 <div class="app-stage__signal">
@@ -61,12 +57,9 @@
           <div class="ui-form-stack">
             <div>
               <p class="label-xs">In breve</p>
-              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Cosa sta guidando l'anno.
+              <h2 class="font-display text-xl leading-none tracking-[-0.03em] text-[var(--text-primary)] mt-2">
+                Numeri chiave dell'anno
               </h2>
-              <p class="app-page-copy mt-3">
-                Mesi attivi, costi distribuiti e netto stimato: il resto si legge a partire da qui.
-              </p>
             </div>
 
             <div class="ui-form-stack">
@@ -83,21 +76,21 @@
         <DecisionMetric
           label="Lordo previsto"
           :value="fmt.eur(data.projectedAnnualGross)"
-          note="La proiezione dell’anno se il ritmo corrente resta stabile."
+          note="Proiezione al ritmo attuale."
           tone="default"
           compact
         />
         <DecisionMetric
           label="Aliquota effettiva"
           :value="fmt.pct(data.projectedTaxes.effectiveRate)"
-          note="Il peso aggregato di imposta, INPS e costi distribuiti."
+          note="Imposta + INPS + costi."
           tone="info"
           compact
         />
         <DecisionMetric
           label="Accantonamento mensile"
           :value="fmt.eur(data.recommendedMonthlySetAside)"
-          note="Il cuscinetto consigliato per non concentrare il rischio sulle scadenze."
+          note="Quota mensile consigliata."
           tone="danger"
           compact
         />
@@ -183,7 +176,7 @@
       <ExplanationPanel
         v-if="explanationItems.length"
         title="Come leggere il quadro annuale"
-        subtitle="L’annuale non e un numero da celebrare: serve a capire il peso fiscale e ad arrivare preparato alle scadenze."
+        subtitle=""
         :items="explanationItems"
       />
 
@@ -209,7 +202,7 @@
         </SurfaceCard>
       </AppSection>
 
-      <AppSection title="Scenari ed export" subtitle="Il livello alto aggiunge controllo, non altra complessita." :delay="6">
+      <AppSection title="Scenari ed export" :delay="6">
         <SurfaceCard variant="soft" padding="lg">
           <div class="ui-form-stack">
             <div class="ui-kv-row">

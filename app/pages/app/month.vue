@@ -55,15 +55,11 @@
 
           <div class="app-stage">
             <div class="app-stage__header">
-              <p class="app-stage__eyebrow">Mese selezionato</p>
-              <p class="app-stage__metric-label">Quanto puoi usare nel mese</p>
+              <p class="app-stage__eyebrow">Mese</p>
+              <p class="app-stage__metric-label">Disponibile</p>
               <p class="app-stage__metric">{{ fmt.eur(summary.net) }}</p>
               <p class="app-stage__summary">
                 Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
-              </p>
-              <p class="app-stage__lead">
-                Il mese deve leggersi come un conto chiaro: prima il numero spendibile, poi il
-                perche, poi le righe che lo compongono.
               </p>
             </div>
 
@@ -71,19 +67,19 @@
               <div class="app-stage__signal app-stage__signal--strong">
                 <p class="app-stage__signal-label">Da accantonare</p>
                 <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
-                <p class="app-stage__signal-note">La quota che non dovrebbe restare nei soldi liberi del mese.</p>
+                <p class="app-stage__signal-note">Quota da non spendere.</p>
               </div>
 
               <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Registrazioni</p>
                 <p class="app-stage__signal-value">{{ summary.entryCount }}</p>
-                <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} di lavoro gia registrato nel mese.</p>
+                <p class="app-stage__signal-note">{{ fmt.hours(summary.totalHours) }} registrate.</p>
               </div>
 
               <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Stima fine anno</p>
                 <p class="app-stage__signal-value">{{ fmt.eur(summary.runningProjectedAnnual) }}</p>
-                <p class="app-stage__signal-note">Se il ritmo resta cosi, qui potrebbe chiudersi l’anno.</p>
+                <p class="app-stage__signal-note">Proiezione al ritmo attuale.</p>
               </div>
             </div>
           </div>
@@ -94,21 +90,21 @@
         <DecisionMetric
           label="Disponibile del mese"
           :value="fmt.eur(summary.net)"
-          note="Il numero guida del mese, gia ripulito da accantonamenti e costi distribuiti."
+          note="Il netto dopo accantonamenti."
           tone="accent"
           compact
         />
         <DecisionMetric
           label="Incassato del mese"
           :value="fmt.eur(summary.gross)"
-          note="Somma di sessioni orarie e fee progetto registrate in questo mese."
+          note="Lordo registrato nel mese."
           tone="default"
           compact
         />
         <DecisionMetric
           label="Da accantonare"
           :value="fmt.eur(summary.provision)"
-          note="Quota stimata che Chiaro tiene separata dai soldi realmente spendibili."
+          note="Imposte + contributi + costi distribuiti."
           tone="danger"
           compact
         />
@@ -119,8 +115,8 @@
           <div class="ui-form-stack">
             <div>
               <p class="label-xs">Ledger del mese</p>
-              <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Da dove arriva il lordo.
+              <h2 class="font-display text-xl leading-none tracking-[-0.03em] text-[var(--text-primary)] mt-2">
+                Composizione del lordo
               </h2>
             </div>
 
@@ -140,7 +136,7 @@
         <ExplanationPanel
           v-if="explanationItems.length"
           title="Come si forma l'accantonamento del mese"
-          subtitle="La quota del mese non e una penalita astratta: e il modo con cui Chiaro anticipa il peso fiscale e operativo dell’anno."
+          subtitle=""
           :items="explanationItems"
         />
 

@@ -3,8 +3,6 @@
     <NuxtLoadingIndicator />
 
     <div v-if="isAppRoute" class="app-shell">
-      <div class="app-shell__ambient" />
-
       <div class="app-shell__frame">
         <aside class="app-sidebar">
           <div class="app-sidebar__top">
@@ -41,9 +39,9 @@
             </div>
 
             <button type="button" class="app-toolbar-button" @click="toggleColorMode">
-              <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-4 h-4" />
+              <UIcon :name="colorModeIcon" class="w-4 h-4" />
               <span class="app-toggle-copy">
-                {{ colorMode.preference === 'dark' ? 'Tema chiaro' : 'Tema scuro' }}
+                {{ colorMode.preference === 'dark' ? 'Chiaro' : 'Scuro' }}
               </span>
             </button>
 
@@ -62,20 +60,20 @@
 
               <div>
                 <p class="app-brand-title">Chiaro</p>
-                <p class="app-brand-copy">Forfettario · {{ currentYear }}</p>
               </div>
             </div>
 
-            <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="mobileMenuOpen = !mobileMenuOpen">
-              <UIcon :name="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'" class="w-5 h-5" />
-            </button>
+            <div class="app-mobile-header__right">
+              <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="toggleColorMode">
+                <UIcon :name="colorModeIcon" class="w-4 h-4" />
+              </button>
+              <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="mobileMenuOpen = !mobileMenuOpen">
+                <UIcon :name="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'" class="w-5 h-5" />
+              </button>
+            </div>
           </header>
 
           <div v-if="mobileMenuOpen" class="app-mobile-menu md:hidden">
-            <button type="button" class="app-mobile-menu__item" @click="toggleColorMode">
-              <UIcon :name="colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'" class="w-5 h-5" />
-              <span>{{ colorMode.preference === 'dark' ? 'Tema chiaro' : 'Tema scuro' }}</span>
-            </button>
             <button v-if="session?.user" type="button" class="app-mobile-menu__item app-mobile-menu__item--danger" @click="logout">
               <UIcon name="lucide:log-out" class="w-5 h-5" />
               <span>Esci · {{ session.user.email }}</span>
@@ -105,26 +103,18 @@
     </div>
 
     <div v-else-if="isMarketingRoute" class="app-public-shell">
-      <div class="app-shell__ambient" />
       <div class="app-public-shell__frame">
         <header class="app-public-topbar">
           <NuxtLink to="/" class="app-public-brand">
             <div class="app-brand-mark">
               <span class="app-brand-mark__letter">C</span>
             </div>
-
-            <div>
-              <p class="app-brand-title">Chiaro</p>
-              <p class="app-brand-copy">Prodotto di chiarezza per forfettario</p>
-            </div>
+            <p class="app-brand-title">Chiaro</p>
           </NuxtLink>
 
           <nav class="app-public-nav">
-            <button type="button" class="app-public-nav__link" @click="goToMarketingSection('come-funziona')">
-              Come funziona
-            </button>
-            <button type="button" class="app-public-nav__link" @click="goToMarketingSection('prezzi')">
-              Prezzi
+            <button type="button" class="app-toolbar-button app-toolbar-button--icon" @click="toggleColorMode">
+              <UIcon :name="colorModeIcon" class="w-4 h-4" />
             </button>
             <NuxtLink :to="session?.user ? '/app' : '/login'" class="app-toolbar-button app-public-nav__cta">
               {{ session?.user ? 'Apri app' : 'Accedi' }}
@@ -139,7 +129,6 @@
     </div>
 
     <div v-else class="app-public-shell app-public-shell--plain">
-      <div class="app-shell__ambient" />
       <div class="app-public-shell__frame">
         <div class="app-public-shell__content">
           <NuxtPage />
@@ -159,7 +148,11 @@ const currentYear = new Date().getFullYear()
 const mobileMenuOpen = ref(false)
 
 const isAppRoute = computed(() => route.path.startsWith('/app'))
-const isMarketingRoute = computed(() => ['/', '/login', '/pricing'].includes(route.path))
+const isMarketingRoute = computed(() => ['/', '/pricing'].includes(route.path))
+
+const colorModeIcon = computed(() =>
+  colorMode.preference === 'dark' ? 'lucide:sun-medium' : 'lucide:moon-star'
+)
 
 const tabs = [
   { to: '/app', label: 'Home', icon: 'lucide:square-pen' },
@@ -177,19 +170,6 @@ function isActive(path: string) {
 
 function toggleColorMode() {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
-}
-
-async function goToMarketingSection(sectionId: string) {
-  if (import.meta.client && route.path === '/') {
-    const section = document.getElementById(sectionId)
-    if (section) {
-      const top = section.getBoundingClientRect().top + window.scrollY - 88
-      window.scrollTo({ top, behavior: 'smooth' })
-      return
-    }
-  }
-
-  await navigateTo(`/#${sectionId}`)
 }
 
 async function logout() {

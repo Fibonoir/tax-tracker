@@ -1,148 +1,75 @@
 <template>
   <div class="app-landing">
-    <section id="top" class="app-landing__hero reveal-on-scroll is-visible">
+    <section class="app-landing__hero">
       <div class="app-landing__hero-copy">
-        <p class="app-landing__eyebrow">Chiaro · prodotto di chiarezza per forfettario</p>
         <h1 class="app-landing__title">
-          Non spendere soldi che non sono davvero tuoi.
+          Sai sempre quanto puoi spendere.
         </h1>
         <p class="app-landing__lead">
-          Chiaro ti mostra ogni mese quanto hai incassato, quanto devi accantonare e quanto resta
-          davvero disponibile. Una sola lettura, senza rumore, per chi lavora a reddito variabile
-          e vuole vedere il denaro come davvero si muove.
+          Tasse, contributi e scadenze calcolate dal tuo incassato.
+          Il numero che resta e quello che puoi davvero usare.
         </p>
 
         <div class="app-landing__actions">
           <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
-            {{ currentUser ? 'Apri app' : 'Continua con Google' }}
+            {{ currentUser ? 'Apri app' : 'Inizia gratis' }}
           </UButton>
           <UButton size="lg" variant="soft" color="neutral" class="ui-action-button" @click="scrollToSection('prezzi')">
-            Guarda i piani
+            Vedi i piani
           </UButton>
         </div>
       </div>
 
-      <SurfaceCard variant="gradient" padding="lg" class="app-landing__panel">
-        <div class="ui-form-stack">
-          <div class="ui-kv-row">
-            <span class="ui-kv-row__label">Promessa</span>
-            <span class="ui-kv-row__value text-[var(--text-primary)]">Mensile, chiaro, usabile</span>
+      <SurfaceCard padding="lg" class="app-landing__panel">
+        <div class="app-landing__calc">
+          <div class="app-landing__calc-row">
+            <span class="label-xs">Incassato questo mese</span>
+            <span class="font-display text-2xl tracking-tight text-[var(--text-primary)]">€ 4.200</span>
           </div>
-          <div class="ui-kv-row">
-            <span class="ui-kv-row__label">Focus</span>
-            <span class="ui-kv-row__value text-[var(--accent-text)]">Disponibile reale</span>
+          <div class="app-landing__calc-row">
+            <span class="label-xs">Da accantonare</span>
+            <span class="font-display text-2xl tracking-tight text-[var(--danger-text)]">− € 1.176</span>
           </div>
-          <div class="ui-kv-row">
-            <span class="ui-kv-row__label">Metodo</span>
-            <span class="ui-kv-row__value text-[var(--warning)]">Incassato → accantonato → disponibile</span>
-          </div>
-          <div class="ui-kv-row">
-            <span class="ui-kv-row__label">Tempo di setup</span>
-            <span class="ui-kv-row__value text-[var(--text-primary)]">Meno di un minuto</span>
+          <div class="app-landing__calc-divider" />
+          <div class="app-landing__calc-row">
+            <span class="label-xs">Disponibile reale</span>
+            <span class="font-display text-3xl tracking-tight text-[var(--accent-text)]">€ 3.024</span>
           </div>
         </div>
       </SurfaceCard>
     </section>
 
-    <div class="app-landing__metric-grid reveal-on-scroll">
-      <DecisionMetric
-        label="Incassato"
-        value="Quello che entra"
-        note="La base concreta del mese. Chiaro non la confonde con il denaro spendibile."
-        tone="default"
-        compact
-      />
-      <DecisionMetric
-        label="Da accantonare"
-        value="Quello che non tocchi"
-        note="Imposte, contributi e costi distribuiti prima di guardare il saldo."
-        tone="danger"
-        compact
-      />
-      <DecisionMetric
-        label="Disponibile reale"
-        value="Quello che puoi usare"
-        note="Il numero decisionale: quanto resta davvero dopo il modello fiscale."
-        tone="accent"
-        compact
-      />
-    </div>
-
-    <section id="come-funziona" class="app-landing__section reveal-on-scroll">
+    <section id="come-funziona" class="app-landing__section">
       <div>
-        <p class="app-landing__eyebrow">Come funziona</p>
-        <h2 class="app-landing__section-title">Tre passaggi e il controllo mensile è leggibile.</h2>
-        <p class="app-landing__section-copy">
-          Non è un gestionale completo. È il layer che trasforma il fatturato in decisione
-          mensile: prima capisci, poi accantoni, poi spendi il resto con fiducia.
-        </p>
+        <p class="label-xs">Come funziona</p>
+        <h2 class="app-landing__section-title">Tre passaggi.</h2>
       </div>
 
       <div class="app-grid-3">
         <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
-          <p class="label-xs">1. Imposta il profilo</p>
-          <p class="app-page-copy mt-3">
-            ATECO, coefficiente, INPS e costi fissi entrano nel modello una sola volta.
-          </p>
+          <p class="label-xs">1</p>
+          <p class="font-display text-lg tracking-tight text-[var(--text-primary)] mt-2">Configura il modello</p>
+          <p class="app-page-copy mt-2">Coefficiente di redditivita e regime INPS, una volta sola.</p>
         </SurfaceCard>
-
         <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
-          <p class="label-xs">2. Registra gli incassi</p>
-          <p class="app-page-copy mt-3">
-            Ogni incasso aggiorna il mese, il netto e la quota da accantonare in tempo reale.
-          </p>
+          <p class="label-xs">2</p>
+          <p class="font-display text-lg tracking-tight text-[var(--text-primary)] mt-2">Registra gli incassi</p>
+          <p class="app-page-copy mt-2">Ogni fattura incassata aggiorna netto e accantonamento in tempo reale.</p>
         </SurfaceCard>
-
         <SurfaceCard variant="soft" padding="md" class="app-landing__step-card">
-          <p class="label-xs">3. Leggi il disponibile</p>
-          <p class="app-page-copy mt-3">
-            Vedi subito cosa resta davvero tuo e quali scadenze stanno arrivando.
-          </p>
+          <p class="label-xs">3</p>
+          <p class="font-display text-lg tracking-tight text-[var(--text-primary)] mt-2">Leggi il disponibile</p>
+          <p class="app-page-copy mt-2">Quanto resta dopo tasse, contributi e scadenze.</p>
         </SurfaceCard>
       </div>
     </section>
 
-    <section class="app-landing__section reveal-on-scroll">
+    <section id="prezzi" class="app-landing__section">
       <div>
-        <p class="app-landing__eyebrow">Perché esiste</p>
-        <h2 class="app-landing__section-title">Il problema non è il conto. È confondere il saldo con il tuo denaro.</h2>
+        <p class="label-xs">Prezzi</p>
+        <h2 class="app-landing__section-title">Scegli il tuo piano.</h2>
         <p class="app-landing__section-copy">
-          Il freelance in forfettario non ha bisogno di più numeri. Ha bisogno di meno incertezza:
-          sapere cosa può spendere oggi senza rubare a tasse, contributi e scadenze future.
-        </p>
-      </div>
-
-      <div class="app-grid-2">
-        <SurfaceCard padding="lg" class="app-landing__story-card">
-          <p class="label-xs">Relief</p>
-          <h3 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-            Un controllo mensile che abbassa il rumore.
-          </h3>
-          <p class="app-page-copy mt-3">
-            Il prodotto è costruito per il rituale mensile, non per la contabilità totale.
-          </p>
-        </SurfaceCard>
-
-        <SurfaceCard padding="lg" class="app-landing__story-card">
-          <p class="label-xs">Trust</p>
-          <h3 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-            Numeri spiegabili, non solo mostrati.
-          </h3>
-          <p class="app-page-copy mt-3">
-            Ogni numero importante ha una spiegazione leggibile, in italiano e senza gergo da studio.
-          </p>
-        </SurfaceCard>
-      </div>
-    </section>
-
-    <section id="prezzi" class="app-landing__section reveal-on-scroll">
-      <div>
-        <p class="app-landing__eyebrow">Prezzi</p>
-        <h2 class="app-landing__section-title">Tre piani, una promessa sola.</h2>
-        <p class="app-landing__section-copy">
-          Core è il piano consigliato. Planning aggiunge scenario ed export. Free resta una
-          dimostrazione utile, non un vicolo cieco. Hai 30 giorni per capire se il rituale mensile
-          ti dà più controllo del tuo sistema attuale.
+          30 giorni per capire se funziona per te.
         </p>
       </div>
 
@@ -153,11 +80,11 @@
             <span class="app-landing__price-value">0€</span>
           </div>
           <p class="app-page-copy">
-            Per provare il loop base e vedere come cambia il tuo disponibile reale.
+            Il loop base per provare il calcolo del disponibile.
           </p>
           <div class="app-landing__feature-list">
-            <p class="app-landing__feature">Onboarding base</p>
-            <p class="app-landing__feature">Preview del dashboard</p>
+            <p class="app-landing__feature">Onboarding fiscale</p>
+            <p class="app-landing__feature">Dashboard mensile</p>
             <p class="app-landing__feature">Storico limitato</p>
           </div>
           <UButton
@@ -177,12 +104,12 @@
             <span class="app-landing__price-period">/ anno</span>
           </div>
           <p class="app-page-copy">
-            Il piano consigliato per leggere il mese, le scadenze e il denaro davvero disponibile.
+            Controllo mensile completo con scadenze e storico.
           </p>
           <div class="app-landing__feature-list">
             <p class="app-landing__feature">Loop mensile completo</p>
             <p class="app-landing__feature">Scadenze e spiegazioni</p>
-            <p class="app-landing__feature">Storico completo</p>
+            <p class="app-landing__feature">Storico senza limiti</p>
           </div>
           <UButton
             color="primary"
@@ -190,7 +117,7 @@
             :loading="billingLoading && pendingPlan === 'CORE_CLARITY'"
             @click="handlePlanAction('CORE_CLARITY')"
           >
-            {{ currentUser ? coreActionLabel : 'Accedi per scegliere Core' }}
+            {{ currentUser ? coreActionLabel : 'Scegli Core' }}
           </UButton>
         </SurfaceCard>
 
@@ -201,12 +128,12 @@
             <span class="app-landing__price-period">/ anno</span>
           </div>
           <p class="app-page-copy">
-            Per chi vuole confrontare scenari, esportare i dati e leggere l'anno con più profondità.
+            Scenari, export e planning annuale avanzato.
           </p>
           <div class="app-landing__feature-list">
-            <p class="app-landing__feature">Scenario comparison</p>
+            <p class="app-landing__feature">Confronto scenari</p>
             <p class="app-landing__feature">Export per commercialista</p>
-            <p class="app-landing__feature">Planning annuale avanzato</p>
+            <p class="app-landing__feature">Planning annuale</p>
           </div>
           <UButton
             variant="soft"
@@ -215,98 +142,46 @@
             :loading="billingLoading && pendingPlan === 'PLANNING_SCENARIOS'"
             @click="handlePlanAction('PLANNING_SCENARIOS')"
           >
-            {{ currentUser ? planningActionLabel : 'Accedi per scegliere Planning' }}
+            {{ currentUser ? planningActionLabel : 'Scegli Planning' }}
           </UButton>
         </SurfaceCard>
       </div>
     </section>
 
-    <section class="app-landing__section reveal-on-scroll">
+    <section class="app-landing__section">
       <div>
-        <p class="app-landing__eyebrow">Fiducia</p>
-        <h2 class="app-landing__section-title">La chiarezza vale solo se il calcolo si può spiegare.</h2>
-        <p class="app-landing__section-copy">
-          La promessa di Chiaro è semplice: il numero principale è sempre il disponibile reale, e
-          ogni stima importante deve poter dire perché esiste.
-        </p>
-      </div>
-
-      <div class="app-grid-2">
-        <SurfaceCard padding="lg" class="app-landing__story-card">
-          <p class="label-xs">Ruleset</p>
-          <p class="app-page-copy mt-3">
-            Le regole fiscali sono trattate come parte del prodotto, non come un dettaglio nascosto.
-          </p>
-        </SurfaceCard>
-
-        <SurfaceCard padding="lg" class="app-landing__story-card">
-          <p class="label-xs">Spiegazioni</p>
-          <p class="app-page-copy mt-3">
-            Il calcolo si legge in italiano, con assunzioni esplicite e senza gergo da consulente.
-          </p>
-        </SurfaceCard>
-      </div>
-    </section>
-
-    <section class="app-landing__section reveal-on-scroll">
-      <div>
-        <p class="app-landing__eyebrow">FAQ</p>
-        <h2 class="app-landing__section-title">Le domande che contano prima di iniziare.</h2>
+        <p class="label-xs">FAQ</p>
+        <h2 class="app-landing__section-title">Domande frequenti</h2>
       </div>
 
       <div class="app-landing__faq">
         <details class="app-landing__faq-item">
           <summary class="app-landing__faq-question">Chiaro sostituisce il commercialista?</summary>
           <p class="app-landing__faq-answer">
-            No. Chiaro non vuole fare contabilità completa: vuole dirti ogni mese quanto puoi usare
-            davvero.
+            No. Chiaro ti dice quanto puoi spendere ogni mese, non fa contabilita.
           </p>
         </details>
-
         <details class="app-landing__faq-item">
-          <summary class="app-landing__faq-question">A chi serve di più?</summary>
+          <summary class="app-landing__faq-question">A chi serve?</summary>
           <p class="app-landing__faq-answer">
-            A freelance e knowledge worker in forfettario con reddito variabile e poca voglia di
-            fare conti a mano.
+            A freelance in forfettario che vogliono sapere subito quanto e davvero disponibile.
           </p>
         </details>
-
-        <details class="app-landing__faq-item">
-          <summary class="app-landing__faq-question">È pensato solo per il web?</summary>
-          <p class="app-landing__faq-answer">
-            Sì. Il prodotto è web-first e costruito per il controllo mensile, non per essere
-            disperso su troppi canali.
-          </p>
-        </details>
-
         <details class="app-landing__faq-item">
           <summary class="app-landing__faq-question">Posso provarlo prima di pagare?</summary>
           <p class="app-landing__faq-answer">
-            Sì. Il percorso parte dal free layer e ti porta al valore prima di chiederti di
-            comprare il piano giusto.
+            Si, il piano Free da accesso al loop base. Passi a Core quando vuoi.
           </p>
         </details>
       </div>
     </section>
 
-    <section class="app-landing__section reveal-on-scroll">
-      <SurfaceCard variant="gradient" padding="lg">
-        <div class="app-grid-2">
-          <div>
-            <p class="app-landing__eyebrow">Pronto per il controllo mensile</p>
-            <h2 class="app-landing__section-title mt-3">Hai bisogno di una lettura chiara, non di più rumore.</h2>
-          </div>
-
-          <div class="app-landing__actions md:justify-end md:items-start md:pt-1">
-            <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button">
-              {{ currentUser ? 'Apri app' : 'Entra con Google' }}
-            </UButton>
-            <UButton size="lg" variant="soft" color="neutral" class="ui-action-button" @click="scrollToSection('prezzi')">
-              Vedi prezzi
-            </UButton>
-          </div>
-        </div>
-      </SurfaceCard>
+    <section class="app-landing__section">
+      <div class="app-landing__cta-final">
+        <UButton :to="currentUser ? '/app' : '/login'" size="lg" color="primary" class="ui-action-button" style="max-width: 20rem;">
+          {{ currentUser ? 'Apri app' : 'Inizia gratis' }}
+        </UButton>
+      </div>
     </section>
   </div>
 </template>
@@ -319,19 +194,16 @@ const pendingPlan = ref<'CORE_CLARITY' | 'PLANNING_SCENARIOS' | 'PORTAL' | null>
 const billingLoading = computed(() => loading.value)
 
 const coreActionLabel = computed(() => {
-  if (currentUser.value?.billing?.planTier === 'CORE_CLARITY' && currentUser.value.billing.isPaid) {
+  if (currentUser.value?.billing?.planTier === 'CORE_CLARITY' && currentUser.value.billing.isPaid)
     return 'Piano attivo'
-  }
-  if (currentUser.value?.billing?.isPaid) {
+  if (currentUser.value?.billing?.isPaid)
     return 'Passa a Core'
-  }
   return 'Scegli Core'
 })
 
 const planningActionLabel = computed(() => {
-  if (currentUser.value?.billing?.planTier === 'PLANNING_SCENARIOS' && currentUser.value.billing.isPaid) {
+  if (currentUser.value?.billing?.planTier === 'PLANNING_SCENARIOS' && currentUser.value.billing.isPaid)
     return 'Piano attivo'
-  }
   return 'Scegli Planning'
 })
 
@@ -340,14 +212,12 @@ async function handlePlanAction(plan: 'CORE_CLARITY' | 'PLANNING_SCENARIOS') {
     await navigateTo('/login')
     return
   }
-
   if (currentUser.value.billing.planTier === plan && currentUser.value.billing.isPaid) {
     pendingPlan.value = 'PORTAL'
     await openPortal()
     pendingPlan.value = null
     return
   }
-
   pendingPlan.value = plan
   await startCheckout(plan)
   pendingPlan.value = null
@@ -356,21 +226,19 @@ async function handlePlanAction(plan: 'CORE_CLARITY' | 'PLANNING_SCENARIOS') {
 function scrollToSection(sectionId: string) {
   if (!import.meta.client)
     return
-
   const section = document.getElementById(sectionId)
   if (!section)
     return
-
   const top = section.getBoundingClientRect().top + window.scrollY - 88
   window.scrollTo({ top, behavior: 'smooth' })
 }
 
 useHead({
-  title: 'Chiaro',
+  title: 'Chiaro — il tuo disponibile reale',
   meta: [
     {
       name: 'description',
-      content: 'Chiaro è il product di chiarezza per freelance in forfettario: ti dice quanto hai incassato, quanto accantonare e quanto puoi usare davvero.',
+      content: 'Tasse, contributi e scadenze calcolate dal tuo incassato. Per freelance in regime forfettario.',
     },
   ],
 })

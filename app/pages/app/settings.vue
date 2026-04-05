@@ -4,31 +4,27 @@
       <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
         <div class="app-stage">
           <div class="app-stage__header">
-            <p class="app-stage__eyebrow">Modello fiscale</p>
-            <h1 class="app-stage__title">Questi numeri guidano tutte le stime.</h1>
-            <p class="app-stage__lead">
-              Tariffa, coefficiente, imposta e contributi cambiano disponibile, accantonamento e
-              scadenze in ogni schermata.
-            </p>
+            <p class="app-stage__eyebrow">Impostazioni</p>
+            <h1 class="app-stage__title">Modello fiscale</h1>
           </div>
 
           <div class="app-stage__signals">
             <div class="app-stage__signal app-stage__signal--strong">
               <p class="app-stage__signal-label">Tariffa oraria</p>
               <p class="app-stage__signal-value">{{ fmt.eur(form.hourlyRate) }}</p>
-              <p class="app-stage__signal-note">Base per calcolare sessioni, call e giornate a ore.</p>
+              <p class="app-stage__signal-note">Base per sessioni a ore.</p>
             </div>
 
             <div class="app-stage__signal">
               <p class="app-stage__signal-label">Imposta sostitutiva</p>
               <p class="app-stage__signal-value">{{ fmt.num(form.irpefRate) }}%</p>
-              <p class="app-stage__signal-note">Di solito 5% o 15%, in base al tuo regime.</p>
+              <p class="app-stage__signal-note">5% o 15%.</p>
             </div>
 
             <div class="app-stage__signal">
               <p class="app-stage__signal-label">Regime INPS</p>
               <p class="app-stage__signal-value">{{ inpsTypeLabel }}</p>
-              <p class="app-stage__signal-note">Decide se il carico e solo percentuale o include anche quote fisse.</p>
+              <p class="app-stage__signal-note">Percentuale o quote fisse.</p>
             </div>
           </div>
         </div>
@@ -38,12 +34,9 @@
         <div class="ui-form-stack">
           <div>
             <p class="label-xs">Profilo attivo</p>
-            <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-              Il profilo usato nei calcoli.
+            <h2 class="font-display text-xl leading-none tracking-[-0.03em] text-[var(--text-primary)] mt-2">
+              Riepilogo
             </h2>
-            <p class="app-page-copy mt-3">
-              Anno di riferimento e quante uscite entrano nelle stime.
-            </p>
           </div>
 
           <div class="ui-form-stack">
@@ -90,7 +83,7 @@
             </div>
 
             <p class="app-page-copy">
-              Questi dati non cambiano il calcolo base, ma tengono il profilo pulito in tutto il prodotto.
+              Questi dati non cambiano il calcolo base.
             </p>
 
             <UButton block color="primary" class="ui-action-button" :loading="profileSaving" @click="saveProfile">
@@ -112,8 +105,7 @@
               <span class="ui-kv-row__value text-[var(--accent-text)]">{{ billing?.subscriptionStatus || 'INACTIVE' }}</span>
             </div>
             <p class="app-page-copy">
-              Free resta utile per provare il metodo. Core sblocca il loop mensile completo.
-              Planning aggiunge scenari ed export. Rimborso entro 30 giorni.
+              Core sblocca il loop mensile completo. Planning aggiunge scenari ed export.
             </p>
 
             <div class="ui-form-grid-2">

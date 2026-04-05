@@ -8,14 +8,6 @@
     overflow: hidden;
   }
 
-  .app-shell__ambient {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: var(--shell-ambient);
-    opacity: 0.9;
-  }
-
   .app-shell__frame {
     position: relative;
     z-index: 1;
@@ -168,11 +160,13 @@
     position: sticky;
     top: 0;
     z-index: 12;
-    display: grid;
-    gap: 0.9rem;
-    padding: 0.15rem 0 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
     background: transparent;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px);
   }
 
   .app-public-brand {
@@ -183,10 +177,10 @@
   }
 
   .app-public-nav {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.45rem;
-    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
   }
 
   .app-public-nav__link {
@@ -223,62 +217,74 @@
 
   .app-landing {
     display: grid;
-    gap: clamp(1.35rem, 4.8vw, 3rem);
-    padding-bottom: clamp(2.4rem, 9vw, 4rem);
+    gap: clamp(2rem, 6vw, 4rem);
+    padding-bottom: clamp(2rem, 8vw, 3.5rem);
   }
 
   .app-landing__hero {
     display: grid;
-    gap: clamp(0.95rem, 4vw, 1.4rem);
+    gap: clamp(1.25rem, 4vw, 1.75rem);
     align-items: stretch;
   }
 
   .app-landing__hero-copy {
     display: grid;
-    gap: clamp(0.8rem, 3.2vw, 1rem);
+    gap: clamp(0.75rem, 2.8vw, 1rem);
     min-width: 0;
-    max-width: 42rem;
-  }
-
-  .app-landing__eyebrow {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--stage-text-label);
+    max-width: 38rem;
   }
 
   .app-landing__title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.7rem, 7vw, 5.6rem);
-    line-height: 0.9;
-    letter-spacing: -0.06em;
+    font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.055em;
     color: var(--text-primary);
-    max-width: 10ch;
+    max-width: 12ch;
     text-wrap: balance;
   }
 
   .app-landing__lead {
     margin: 0;
-    max-width: 58ch;
-    font-size: clamp(0.98rem, 3.6vw, 1.05rem);
-    line-height: 1.72;
+    max-width: 50ch;
+    font-size: clamp(0.95rem, 3.2vw, 1.02rem);
+    line-height: 1.7;
     color: var(--text-secondary);
   }
 
   .app-landing__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 0.25rem;
+    gap: 0.6rem;
+    margin-top: 0.15rem;
   }
 
   .app-landing__panel {
     display: grid;
     gap: 1rem;
-    align-content: start;
+    align-content: center;
+  }
+
+  .app-landing__calc {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .app-landing__calc-row {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .app-landing__calc-divider {
+    height: 1px;
+    background: var(--border-default);
+  }
+
+  .app-landing__cta-final {
+    display: grid;
+    justify-items: center;
+    padding: 1rem 0;
   }
 
   .app-landing__metric-grid {
@@ -288,27 +294,28 @@
 
   .app-landing__section {
     display: grid;
-    gap: clamp(0.95rem, 3.2vw, 1.2rem);
+    gap: clamp(1rem, 3vw, 1.5rem);
   }
 
   .app-landing__hero,
   .app-landing__section {
-    scroll-margin-top: 6.5rem;
+    scroll-margin-top: 5rem;
   }
 
   .app-landing__section-title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    line-height: 1;
-    letter-spacing: -0.05em;
+    font-size: clamp(1.4rem, 2.8vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
     color: var(--text-primary);
   }
 
   .app-landing__section-copy {
     margin: 0;
-    max-width: 60ch;
-    line-height: 1.7;
+    max-width: 55ch;
+    font-size: 0.95rem;
+    line-height: 1.65;
     color: var(--text-secondary);
   }
 
@@ -423,6 +430,12 @@
     display: flex;
     align-items: center;
     gap: 0.875rem;
+  }
+
+  .app-mobile-header__right {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   .app-toolbar-button--icon {
@@ -703,97 +716,47 @@
      Login page
      ═══════════════════════════════════════════ */
   .app-login {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 1.5rem;
     background: var(--surface-page);
   }
 
   .app-login__container {
     width: 100%;
-    max-width: 72rem;
-  }
-
-  .app-login__layout {
-    align-items: stretch;
+    max-width: 28rem;
   }
 
   .app-login__header {
-    margin-bottom: 1rem;
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
   }
 
   .app-login__title {
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-size: clamp(1.35rem, 3.5vw, 1.6rem);
     font-weight: 700;
-    line-height: 0.96;
-    letter-spacing: -0.05em;
-    color: var(--text-primary);
-    margin: 0;
-    max-width: 12ch;
-  }
-
-  .app-login__subtitle {
-    font-size: 1rem;
-    line-height: 1.65;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
     color: var(--text-secondary);
-    margin: 0.75rem 0 0;
-    max-width: 52ch;
-  }
-
-  .app-login__feature-grid {
-    align-items: stretch;
-  }
-
-  .app-login__feature-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    margin: 0;
   }
 
   .app-login__panel {
-    height: 100%;
+    text-align: center;
   }
 
-  .app-login__facts {
-    display: grid;
-    gap: 0.9rem;
-    padding: 0.15rem 0;
-  }
-
-  .app-login__fact {
-    display: grid;
-    gap: 0.45rem;
-    padding: 0 0 0.9rem;
-    border-bottom: 1px solid var(--border-default);
-  }
-
-  .app-login__fact:last-child {
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .app-login__fact-label {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-  }
-
-  .app-login__fact-value {
-    font-family: var(--font-mono);
-    font-size: clamp(0.95rem, 4.8vw, 1.25rem);
-    line-height: 1.45;
-    font-weight: 600;
-    overflow-wrap: anywhere;
+  .app-login__panel-stack {
+    gap: 1.25rem;
   }
 
   .app-login__button {
-    min-height: 3.5rem;
-    border-radius: 0.95rem;
+    min-height: 3.25rem;
+    border-radius: 0.85rem;
     font-weight: 700;
     border: 1px solid var(--cta-login-border);
     background: var(--cta-login-bg);
@@ -821,21 +784,47 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.5rem;
+    height: 1.5rem;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.95);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.85), 0 4px 10px rgb(7 39 29 / 0.24);
-  }
-
-  .app-login__button--google .iconify {
-    filter: saturate(1.06);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.85), 0 3px 8px rgb(7 39 29 / 0.2);
   }
 
   .app-login__note {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-secondary);
-    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .app-login__theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.65rem;
+    border: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    background: var(--glow-subtle);
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .app-login__theme-toggle:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--glow-hover);
+  }
+
+  .app-login__brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
   }
 
   /* ═══════════════════════════════════════════
@@ -866,9 +855,9 @@
   .app-stage__title {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.35rem, 5vw, 4.15rem);
-    line-height: 0.92;
-    letter-spacing: -0.06em;
+    font-size: clamp(1.75rem, 4vw, 2.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
     color: var(--stage-text-primary);
   }
 
@@ -898,11 +887,11 @@
   .app-stage__metric {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6vw, 4.85rem);
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
     line-height: 0.92;
-    letter-spacing: -0.06em;
+    letter-spacing: -0.05em;
     color: var(--stage-text-primary);
-    max-inline-size: min(100%, 8.75ch);
+    max-inline-size: min(100%, 9ch);
     overflow-wrap: anywhere;
     text-wrap: balance;
   }
@@ -1329,49 +1318,17 @@
     gap: 0.75rem;
   }
 
-  .app-public-nav {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-    align-items: center;
-  }
-
-  .app-public-nav__link,
-  .app-public-nav__cta {
-    width: 100%;
-  }
-
   .app-landing__actions > * {
     flex: 1 1 100%;
   }
 
   .app-login {
-    align-items: flex-start;
-    padding: 0.85rem;
-  }
-
-  .app-login__container {
-    max-width: 100%;
-  }
-
-  .app-login__layout {
-    gap: 0.95rem;
-  }
-
-  .app-login__feature-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    margin-top: 1rem;
+    align-items: center;
+    padding: 1rem;
   }
 
   .app-login__panel {
-    border-radius: 1.45rem;
-  }
-
-  .app-login__panel-stack {
-    gap: 1rem;
-  }
-
-  .app-login__title {
-    max-width: 9ch;
+    border-radius: 1.25rem;
   }
 }
 
@@ -1484,20 +1441,7 @@
   }
 
   .app-public-shell__content {
-    gap: 1.75rem;
-  }
-
-  .app-public-topbar {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-  }
-
-  .app-public-nav {
-    width: auto;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    gap: 2rem;
   }
 
   .app-landing__hero {

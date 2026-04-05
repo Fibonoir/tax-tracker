@@ -4,12 +4,7 @@
       <SurfaceCard v-if="monthData" variant="gradient" padding="lg" class="fade-up fade-up-1">
         <div class="app-stage">
           <div class="app-stage__header">
-            <p class="app-stage__eyebrow">Cockpit mensile</p>
-            <h1 class="app-stage__title">Quanto puoi usare adesso.</h1>
-            <p class="app-stage__lead">
-              Chiaro tiene al centro il numero operativo del mese: quello che resta davvero
-              utilizzabile dopo accantonamenti, contributi e costi gia previsti.
-            </p>
+            <p class="app-stage__eyebrow">{{ monthLabel }}</p>
 
             <div class="app-stage__metric-block">
               <p class="app-stage__metric-label">Disponibile ora</p>
@@ -25,21 +20,21 @@
             <div class="app-stage__signal app-stage__signal--strong">
               <p class="app-stage__signal-label">Da accantonare</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.provision) }}</p>
-              <p class="app-stage__signal-note">La parte del mese che non vuoi spendere per errore.</p>
+              <p class="app-stage__signal-note">Quota da non spendere questo mese.</p>
             </div>
 
             <div class="app-stage__signal">
               <p class="app-stage__signal-label">Prossima scadenza</p>
               <p class="app-stage__signal-value">{{ canUseDeadlines && nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Core' }}</p>
               <p class="app-stage__signal-note">
-                {{ canUseDeadlines && nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Le scadenze complete si sbloccano con Core Clarity.' }}
+                {{ canUseDeadlines && nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Disponibile con Core Clarity.' }}
               </p>
             </div>
 
             <div class="app-stage__signal">
               <p class="app-stage__signal-label">Stima fine anno</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.runningProjectedAnnual) }}</p>
-              <p class="app-stage__signal-note">Il ritmo attuale proiettato sui mesi attivi dell’anno.</p>
+              <p class="app-stage__signal-note">Proiezione al ritmo attuale.</p>
             </div>
           </div>
         </div>
@@ -49,21 +44,21 @@
         <DecisionMetric
           label="Disponibile ora"
           :value="fmt.eur(monthData.net)"
-          note="Quello che puoi usare senza confondere lordo e soldi da mettere via."
+          note="Il netto dopo accantonamenti."
           tone="accent"
           compact
         />
         <DecisionMetric
-          label="Da accantonare questo mese"
+          label="Da accantonare"
           :value="fmt.eur(monthData.provision)"
-          note="Imposte, contributi e costi distribuiti sul mese corrente."
+          note="Imposte + contributi + costi distribuiti."
           tone="danger"
           compact
         />
         <DecisionMetric
           label="Prossima scadenza"
           :value="canUseDeadlines && nextDeadline ? formatDeadlineDate(nextDeadline.date) : 'Core'"
-          :note="canUseDeadlines && nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Le scadenze complete si sbloccano con Core Clarity.'"
+          :note="canUseDeadlines && nextDeadline ? `${nextDeadline.label} · ${fmt.eur(nextDeadline.estimatedAmount)}` : 'Disponibile con Core Clarity.'"
           tone="info"
           compact
         />
@@ -74,12 +69,9 @@
           <div class="ui-form-stack">
             <div>
               <p class="label-xs">Nuovo incasso</p>
-              <h2 class="font-display text-3xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
-                Registra un incasso senza uscire dal flusso.
+              <h2 class="font-display text-2xl leading-none tracking-[-0.04em] text-[var(--text-primary)] mt-3">
+                Registra un incasso.
               </h2>
-              <p class="app-page-copy mt-3">
-                Scegli il tipo di lavoro, salva il lordo e guarda subito quanto resta utilizzabile.
-              </p>
             </div>
 
             <div class="ui-form-grid-2 ui-form-grid-2--compact">
@@ -143,19 +135,16 @@
                 <div>
                   <p class="label-xs">Incasso lordo</p>
                   <p class="num-lg text-[var(--text-primary)] mt-3">{{ fmt.eur(previewGross) }}</p>
-                  <p class="ui-field-help">Calcolato con la tariffa salvata o con l'importo che hai inserito.</p>
                 </div>
 
                 <div>
                   <p class="label-xs">Da accantonare</p>
                   <p class="num-lg text-[var(--danger-text)] mt-3">{{ fmt.eur(previewProvision) }}</p>
-                  <p class="ui-field-help">La parte che Chiaro tiene fuori dai soldi spendibili.</p>
                 </div>
 
                 <div>
                   <p class="label-xs">Quanto puoi usare</p>
                   <p class="num-lg text-[var(--accent-text)] mt-3">{{ fmt.eur(previewNet) }}</p>
-                  <p class="ui-field-help">La stima veloce che guida la decisione, non il lordo.</p>
                 </div>
               </div>
             </SurfaceCard>
@@ -176,8 +165,8 @@
         <div class="app-main-stack">
           <ExplanationPanel
             v-if="explanationItems.length"
-            title="Perche il disponibile non coincide con il lordo"
-            subtitle="La logica e sempre la stessa: togliere prima cio che non e davvero spendibile."
+            title="Come si forma il disponibile"
+            subtitle=""
             :items="explanationItems"
             open
           />
