@@ -62,9 +62,18 @@
               </div>
               <div class="app-login__fact">
                 <span class="app-login__fact-label">Esito</span>
-                <span class="app-login__fact-value text-[var(--info)]">Dal setup al primo incasso</span>
+                <span class="app-login__fact-value text-[var(--info)]">Setup fiscale essenziale, poi dashboard</span>
               </div>
             </div>
+
+            <SurfaceCard v-if="errorMessage" variant="soft" padding="sm">
+              <div class="ui-form-stack">
+                <p class="label-xs text-[var(--danger-text)]">Accesso non riuscito</p>
+                <p class="text-sm leading-6 text-[var(--text-primary)]">
+                  {{ errorMessage }}
+                </p>
+              </div>
+            </SurfaceCard>
 
             <UButton
               block
@@ -81,7 +90,7 @@
             </UButton>
 
             <p class="app-login__note">
-              Ti portiamo dentro il prodotto, poi ti facciamo leggere il mese senza confusione.
+              Accesso con Google, setup rapido di coefficiente e INPS, poi subito il numero che conta.
             </p>
           </div>
         </SurfaceCard>
@@ -97,7 +106,21 @@ definePageMeta({
   layout: false,
 })
 
+const route = useRoute()
 const loading = ref(false)
+const errorMessage = computed(() => {
+  const error = route.query.error
+  if (error === 'unauthorized_email')
+    return 'Questo indirizzo non è abilitato per la beta.'
+
+  if (error === 'auth_failed')
+    return 'L’accesso non è andato a buon fine. Riprova tra qualche secondo.'
+
+  if (typeof error === 'string' && error.length > 0)
+    return 'Non sono riuscito a completare l’accesso. Riprova.'
+
+  return ''
+})
 
 async function signInWithGoogle() {
   try {

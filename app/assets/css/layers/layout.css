@@ -795,19 +795,17 @@
     min-height: 3.5rem;
     border-radius: 0.95rem;
     font-weight: 700;
-    border: 1px solid color-mix(in oklab, var(--accent) 58%, white 16%);
-    background:
-      radial-gradient(circle at top, rgb(255 255 255 / 0.18), transparent 55%),
-      linear-gradient(135deg, color-mix(in oklab, var(--accent) 90%, white 10%), color-mix(in oklab, var(--accent) 76%, black 18%));
+    border: 1px solid var(--cta-login-border);
+    background: var(--cta-login-bg);
     color: white;
-    box-shadow: 0 16px 28px rgb(24 92 70 / 0.18);
+    box-shadow: var(--cta-login-shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   }
 
   .app-login__button:hover {
     transform: translateY(-1px);
-    filter: saturate(1.06) brightness(1.03);
-    box-shadow: 0 18px 30px rgb(24 92 70 / 0.22);
+    filter: brightness(1.03);
+    box-shadow: var(--cta-login-hover-shadow);
   }
 
   .app-login__button:active {
@@ -816,9 +814,7 @@
 
   .app-login__button:focus-visible {
     outline: none;
-    box-shadow:
-      0 0 0 3px rgb(45 185 135 / 0.18),
-      0 18px 30px rgb(24 92 70 / 0.22);
+    box-shadow: var(--cta-login-focus-shadow);
   }
 
   .app-login__button-icon {
@@ -1178,7 +1174,7 @@
 
   .app-annual-month-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--c-green), var(--c-amber));
+    background: linear-gradient(90deg, var(--c-sky), var(--c-amber));
     transition: width 0.25s ease;
   }
 

@@ -6,6 +6,7 @@ import { createDefaultSettings } from './settings'
 import { isEmailAllowed } from './auth-allowlist'
 
 const DEV_USER_EMAIL = 'dev@chiaro.local'
+const betaAllowlist = process.env.BETA_ALLOWLIST ?? process.env.ALLOWED_EMAIL
 
 type BetterAuthSession = Awaited<ReturnType<typeof auth.api.getSession>>
 type SessionLikeUser = BetterAuthSession extends { user: infer T } ? T : never
@@ -126,7 +127,7 @@ export async function requireAppUser(event: H3Event) {
     if (!session?.user?.email)
       throw createError({ statusCode: 401, statusMessage: 'Please login to access this resource.' })
 
-    if (!isEmailAllowed(session.user.email, process.env.BETA_ALLOWLIST)) {
+    if (!isEmailAllowed(session.user.email, betaAllowlist)) {
       throw createError({
         statusCode: 403,
         statusMessage: 'Unauthorized: Your email is not authorized for this beta.',

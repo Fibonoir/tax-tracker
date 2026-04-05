@@ -48,7 +48,7 @@
   }
 
   .ui-segment-btn.is-active {
-    background: linear-gradient(180deg, var(--accent-hover), rgb(31 143 105 / 0.08));
+    background: color-mix(in oklab, var(--accent) 14%, var(--surface-card));
     border-color: var(--border-active);
     color: var(--text-primary);
     box-shadow: var(--shadow-inset);

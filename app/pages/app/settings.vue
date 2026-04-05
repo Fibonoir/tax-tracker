@@ -59,7 +59,48 @@
     <StateBlock v-if="loading" type="loading" text="Sto caricando il modello fiscale e i costi..." />
 
     <template v-else>
-      <AppSection title="Piano e billing" subtitle="Stato del piano, upgrade e gestione dell’abbonamento." :delay="2">
+      <AppSection title="Profilo e attivita" subtitle="Nome, attività e ATECO restano modificabili qui. L'onboarding chiede solo il minimo fiscale." :delay="2">
+        <SurfaceCard>
+          <div class="ui-form-stack">
+            <div class="ui-form-grid-2">
+              <div>
+                <label class="label-xs ui-field-label">Nome in app</label>
+                <UInput v-model="profileForm.displayName" placeholder="Federico" :ui="fieldUi" />
+              </div>
+
+              <div>
+                <label class="label-xs ui-field-label">Attivita</label>
+                <UInput v-model="profileForm.activityLabel" placeholder="Sviluppatore freelance" :ui="fieldUi" />
+              </div>
+
+              <div>
+                <label class="label-xs ui-field-label">Codice ATECO</label>
+                <UInput v-model="profileForm.atecoCode" placeholder="62.01.00" :ui="fieldUi" />
+              </div>
+
+              <div>
+                <label class="label-xs ui-field-label">Etichetta ATECO</label>
+                <UInput v-model="profileForm.atecoLabel" placeholder="Produzione di software" :ui="fieldUi" />
+              </div>
+
+              <div>
+                <label class="label-xs ui-field-label">Anno fiscale</label>
+                <UInput v-model="profileForm.taxYear" type="number" step="1" min="2024" max="2035" :ui="fieldUi" />
+              </div>
+            </div>
+
+            <p class="app-page-copy">
+              Questi dati non cambiano il calcolo base, ma tengono il profilo pulito in tutto il prodotto.
+            </p>
+
+            <UButton block color="primary" class="ui-action-button" :loading="profileSaving" @click="saveProfile">
+              Salva profilo
+            </UButton>
+          </div>
+        </SurfaceCard>
+      </AppSection>
+
+      <AppSection title="Piano e billing" subtitle="Stato del piano, upgrade e gestione dell’abbonamento." :delay="3">
         <SurfaceCard>
           <div class="ui-form-stack">
             <div class="ui-kv-row">
@@ -110,7 +151,7 @@
         </SurfaceCard>
       </AppSection>
 
-      <AppSection title="Parametri di base" subtitle="Sono i numeri usati per calcolare disponibile, accantonamento e scadenze." :delay="3">
+      <AppSection title="Parametri di base" subtitle="Sono i numeri usati per calcolare disponibile, accantonamento e scadenze." :delay="4">
         <SurfaceCard>
           <div class="app-settings-stack">
             <div class="ui-form-grid-2">
@@ -207,7 +248,7 @@
       </AppSection>
 
       <div class="app-main-stack">
-        <AppSection title="Costi ricorrenti" subtitle="Abbonamenti e altre uscite che Chiaro distribuisce nelle stime annuali." :delay="4">
+        <AppSection title="Costi ricorrenti" subtitle="Abbonamenti e altre uscite che Chiaro distribuisce nelle stime annuali." :delay="5">
           <template #header-right>
             <button type="button" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]" @click="showRecurringForm = !showRecurringForm">
               {{ showRecurringForm ? 'Chiudi' : 'Nuovo costo' }}
@@ -266,7 +307,7 @@
           </SurfaceCard>
         </AppSection>
 
-        <AppSection :title="`Uscite una tantum (${currentYear})`" subtitle="Spese eccezionali che pesano solo sull'anno selezionato." :delay="5">
+        <AppSection :title="`Uscite una tantum (${currentYear})`" subtitle="Spese eccezionali che pesano solo sull'anno selezionato." :delay="6">
           <template #header-right>
             <button type="button" class="app-toolbar-button font-mono text-xs uppercase tracking-[0.18em]" @click="showOnetimeForm = !showOnetimeForm">
               {{ showOnetimeForm ? 'Chiudi' : 'Nuova uscita' }}
@@ -338,6 +379,7 @@ const { startCheckout, openPortal, loading: billingLoading } = useBilling()
 
 const loading = ref(true)
 const saving = ref(false)
+const profileSaving = ref(false)
 const settings = ref<any>(null)
 const recurringPayments = ref<any[]>([])
 const onetimePayments = ref<any[]>([])
@@ -345,6 +387,13 @@ const showRecurringForm = ref(false)
 const showOnetimeForm = ref(false)
 const currentYear = new Date().getFullYear()
 const billing = computed(() => currentUser.value?.billing ?? null)
+const profileForm = reactive({
+  displayName: '',
+  activityLabel: '',
+  atecoCode: '',
+  atecoLabel: '',
+  taxYear: currentYear,
+})
 
 const form = reactive({
   hourlyRate: 30,
@@ -419,6 +468,15 @@ function formatFrequency(frequency: string) {
 async function loadData() {
   loading.value = true
   await refresh(true)
+
+  Object.assign(profileForm, {
+    displayName: currentUser.value?.displayName || currentUser.value?.name || '',
+    activityLabel: currentUser.value?.activityLabel || '',
+    atecoCode: currentUser.value?.atecoCode || '',
+    atecoLabel: currentUser.value?.atecoLabel || '',
+    taxYear: currentUser.value?.taxYear || currentYear,
+  })
+
   const [s, r, o] = await Promise.all([
     $fetch('/api/settings'),
     $fetch('/api/payments/recurring'),
@@ -441,6 +499,31 @@ async function loadData() {
   recurringPayments.value = r
   onetimePayments.value = o
   loading.value = false
+}
+
+async function saveProfile() {
+  profileSaving.value = true
+  try {
+    await $fetch('/api/onboarding', {
+      method: 'POST',
+      body: {
+        profileOnly: true,
+        markOnboardingCompleted: false,
+        displayName: profileForm.displayName,
+        activityLabel: profileForm.activityLabel,
+        atecoCode: profileForm.atecoCode,
+        atecoLabel: profileForm.atecoLabel,
+        taxYear: Number(profileForm.taxYear),
+      },
+    })
+
+    toast.add({ title: 'Profilo aggiornato.', color: 'success' })
+    await loadData()
+  } catch {
+    toast.add({ title: 'Non sono riuscito a salvare il profilo. Riprova.', color: 'error' })
+  } finally {
+    profileSaving.value = false
+  }
 }
 
 async function saveSettings() {

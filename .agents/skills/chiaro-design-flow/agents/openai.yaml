@@ -1,4 +1,0 @@
-interface:
-  display_name: "Chiaro Design Flow"
-  short_description: "Run Chiaro design reviews and redesigns"
-  default_prompt: "Use $chiaro-design-flow to redesign a Fattura Tracker screen using the docs and Impeccable commands."

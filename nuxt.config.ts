@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     betterAuthUrl: process.env.BETTER_AUTH_URL,
     googleClientId: process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
-    betaAllowlist: process.env.BETA_ALLOWLIST,
+    betaAllowlist: process.env.BETA_ALLOWLIST ?? process.env.ALLOWED_EMAIL,
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
     stripeCoreClarityPriceId: process.env.STRIPE_CORE_CLARITY_PRICE_ID,

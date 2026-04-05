@@ -1,30 +1,42 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from '@better-auth/prisma-adapter'
-import { createError } from 'h3'
 import { prisma } from '~/server/utils/prisma'
 import { isEmailAllowed } from '~/server/utils/auth-allowlist'
 
-const googleClientId = process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET
-const configuredAuthOrigin = process.env.BETTER_AUTH_URL
-  ? new URL(process.env.BETTER_AUTH_URL).origin
-  : null
+function requireEnv(value: string | undefined, names: string) {
+  const normalized = value?.trim()
+  if (normalized)
+    return normalized
+
+  throw new Error(`[auth] Missing required environment variable: ${names}`)
+}
+
+function getOriginFromUrl(rawUrl: string) {
+  try {
+    return new URL(rawUrl).origin
+  } catch {
+    throw new Error(`[auth] BETTER_AUTH_URL is not a valid URL: ${rawUrl}`)
+  }
+}
+
+const betterAuthUrl = requireEnv(process.env.BETTER_AUTH_URL, 'BETTER_AUTH_URL')
+const betterAuthSecret = requireEnv(process.env.BETTER_AUTH_SECRET, 'BETTER_AUTH_SECRET')
+const googleClientId = requireEnv(
+  process.env.GOOGLE_CLIENT_ID ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_ID,
+  'GOOGLE_CLIENT_ID or NUXT_OAUTH_GOOGLE_CLIENT_ID',
+)
+const googleClientSecret = requireEnv(
+  process.env.GOOGLE_CLIENT_SECRET ?? process.env.NUXT_OAUTH_GOOGLE_CLIENT_SECRET,
+  'GOOGLE_CLIENT_SECRET or NUXT_OAUTH_GOOGLE_CLIENT_SECRET',
+)
+const betaAllowlist = process.env.BETA_ALLOWLIST ?? process.env.ALLOWED_EMAIL
+const configuredAuthOrigin = getOriginFromUrl(betterAuthUrl)
 
 export const auth = betterAuth({
   appName: 'Chiaro',
-  baseURL: process.env.BETTER_AUTH_URL,
-  secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: async (request) => {
-    const origins = new Set<string>()
-
-    if (configuredAuthOrigin)
-      origins.add(configuredAuthOrigin)
-
-    if (request)
-      origins.add(new URL(request.url).origin)
-
-    return Array.from(origins)
-  },
+  baseURL: betterAuthUrl,
+  secret: betterAuthSecret,
+  trustedOrigins: [configuredAuthOrigin],
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
     usePlural: false,
@@ -36,8 +48,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: googleClientId!,
-      clientSecret: googleClientSecret!,
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
       scope: ['email', 'profile'],
     },
   },
@@ -66,17 +78,14 @@ export const auth = betterAuth({
         matcher: ctx => ctx.path.startsWith('/callback/'),
         handler: async (ctx) => {
           const email = ctx.context.session?.user?.email
-          if (!email || isEmailAllowed(email, process.env.BETA_ALLOWLIST))
+          if (!email || isEmailAllowed(email, betaAllowlist))
             return
 
           await auth.api.signOut({
             headers: ctx.headers,
-          })
+          }).catch(() => undefined)
 
-          throw createError({
-            statusCode: 403,
-            statusMessage: 'Unauthorized: Your email is not authorized for this beta.',
-          })
+          return ctx.redirect('/login?error=unauthorized_email')
         },
       },
     ],

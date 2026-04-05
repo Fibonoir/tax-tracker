@@ -230,7 +230,7 @@
   }
 
   .ui-entry-badge.is-hourly {
-    background: rgb(31 143 105 / 0.1);
+    background: color-mix(in oklab, var(--accent) 14%, transparent);
     color: var(--accent-text);
   }
 
@@ -316,8 +316,8 @@
     width: 0.6rem;
     height: 0.6rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--c-green), var(--c-amber));
-    box-shadow: 0 0 0 6px rgb(31 143 105 / 0.08);
+    background: linear-gradient(135deg, var(--c-sky), var(--c-amber));
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 14%, transparent);
   }
 
   .ui-stat-value {
