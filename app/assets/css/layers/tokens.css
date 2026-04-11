@@ -96,7 +96,7 @@
   --surface-elevated: oklch(0.998 0.001 286);
   --surface-inset: oklch(0.908 0.016 284);
   --surface-input: oklch(0.968 0.006 285);
-  --surface-stage: oklch(0.952 0.015 278);
+  --surface-stage: oklch(0.990 0.003 286);
   --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.5);
 
   --text-primary: oklch(0.20 0.025 270);
@@ -133,8 +133,8 @@
   --stage-text-label: oklch(0.44 0.022 274);
   --stage-text-primary: var(--text-primary);
   --stage-text-secondary: oklch(0.38 0.018 274);
-  --stage-signal-surface: rgb(255 255 255 / 0.80);
-  --stage-signal-surface-strong: rgb(255 255 255 / 0.92);
+  --stage-signal-surface: oklch(0.948 0.014 280 / 0.85);
+  --stage-signal-surface-strong: oklch(0.940 0.018 278 / 0.92);
   --stage-signal-border: oklch(0.87 0.010 283);
   --stage-signal-border-strong: rgb(58 74 223 / 0.22);
 

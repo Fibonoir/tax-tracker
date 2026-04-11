@@ -2,17 +2,17 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --color-royal-50:  #eef0ff;
-  --color-royal-100: #e0e3ff;
-  --color-royal-200: #c7cbfe;
-  --color-royal-300: #a5abfc;
-  --color-royal-400: #7e80f7;
-  --color-royal-500: #5e5ef0;
-  --color-royal-600: #3A4ADF;
-  --color-royal-700: #3240c6;
-  --color-royal-800: #2a36a4;
-  --color-royal-900: #273082;
-  --color-royal-950: #1a1e54;
+  --color-royal-50:  #eff1ff;
+  --color-royal-100: #e1e4ff;
+  --color-royal-200: #c8cdfe;
+  --color-royal-300: #a6adfb;
+  --color-royal-400: #7880f4;
+  --color-royal-500: #3A4ADF;
+  --color-royal-600: #2c3bc6;
+  --color-royal-700: #2533a2;
+  --color-royal-800: #222c84;
+  --color-royal-900: #1f276a;
+  --color-royal-950: #141845;
 }
 
 @custom-variant light (&:where(.light, .light *));
