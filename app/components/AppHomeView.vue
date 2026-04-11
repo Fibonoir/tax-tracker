@@ -7,10 +7,10 @@
             <p class="app-stage__eyebrow">{{ monthLabel }}</p>
 
             <div class="app-stage__metric-block">
-              <p class="app-stage__metric-label">Disponibile ora</p>
+              <p class="app-stage__metric-label">{{ homeMonthUi?.availabilityLabel }}</p>
               <p class="app-stage__metric" :class="{ 'is-negative': monthData.net < 0 }">{{ fmt.eur(monthData.net) }}</p>
               <p class="app-stage__summary">
-                {{ monthLabel }} · incassato {{ fmt.eur(monthData.gross) }} · da accantonare
+                {{ monthLabel }} · {{ currentMonthGrossLabel.toLowerCase() }} {{ fmt.eur(currentMonthGrossValue) }} · da accantonare
                 {{ fmt.eur(monthData.provision) }}
               </p>
             </div>
@@ -18,9 +18,9 @@
 
           <div class="app-stage__signals">
             <div class="app-stage__signal app-stage__signal--strong">
-              <p class="app-stage__signal-label">Da accantonare</p>
+              <p class="app-stage__signal-label">{{ homeMonthUi?.provisionLabel }}</p>
               <p class="app-stage__signal-value">{{ fmt.eur(monthData.provision) }}</p>
-              <p class="app-stage__signal-note">Quota da non spendere questo mese.</p>
+              <p class="app-stage__signal-note">{{ homeMonthUi?.provisionNote }}</p>
             </div>
 
             <div class="app-stage__signal">
@@ -42,14 +42,14 @@
 
       <div v-if="monthData" class="app-decision-grid fade-up fade-up-2">
         <DecisionMetric
-          label="Disponibile ora"
+          :label="homeMonthUi?.availabilityLabel || 'Disponibile ora'"
           :value="fmt.eur(monthData.net)"
-          note="Il netto dopo accantonamenti."
+          :note="homeMonthUi?.availabilityNote || 'Il netto dopo accantonamenti.'"
           :tone="monthData.net < 0 ? 'danger' : 'accent'"
           compact
         />
         <DecisionMetric
-          label="Da accantonare"
+          :label="homeMonthUi?.provisionLabel || 'Da accantonare'"
           :value="fmt.eur(monthData.provision)"
           note="Imposte + contributi + costi distribuiti."
           tone="danger"
@@ -283,6 +283,8 @@
 </template>
 
 <script setup lang="ts">
+import { getMonthSummaryUiState } from '../../shared/month-ui.ts'
+
 const fmt = useFmt()
 const { fieldUi } = useUiStyles()
 const { currentUser } = useCurrentUser()
@@ -369,6 +371,18 @@ const explanationItems = computed(() => {
     tone: item.tone === 'warning' ? 'warning' : item.tone,
   }))
 })
+
+const currentMonthGrossLabel = computed(() =>
+  homeMonthUi.value?.grossLabel || 'Incassato'
+)
+
+const currentMonthGrossValue = computed(() => (
+  homeMonthUi.value?.grossValue || 0
+))
+
+const homeMonthUi = computed(() => (
+  monthData.value ? getMonthSummaryUiState(monthData.value, 'home') : null
+))
 
 async function loadEntries() {
   loadingEntries.value = true

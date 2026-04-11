@@ -65,12 +65,13 @@ it('actual average mode annualizes a single high first invoice', () => {
   expect(summary.projectedAnnualGross).toBe(51300)
 })
 
-it('expected monthly hours mode dampens a bonus month instead of using it as baseline', () => {
+it('expected monthly hours mode uses closed actuals plus baseline for the current open month and future months', () => {
   const summary = buildAnnualSummaryData({
     year: 2026,
     referenceDate: new Date('2026-04-11T12:00:00Z'),
-    entries: [projectEntry('2026-04-05', 5700)],
+    entries: [projectEntry('2026-04-05', 5700, '2026-03-01')],
     settings: createSettings({
+      projectionStartMonth: 2,
       projectionMode: 'EXPECTED_MONTHLY_HOURS',
       projectionMonthlyHours: 132,
     }),
@@ -81,7 +82,11 @@ it('expected monthly hours mode dampens a bonus month instead of using it as bas
 
   expect(summary.projectionBasis.mode).toBe('EXPECTED_MONTHLY_HOURS')
   expect(summary.projectionBasis.monthlyGross).toBe(3960)
-  expect(summary.projectedAnnualGross).toBe(37380)
+  expect(summary.monthsElapsed).toBe(1)
+  expect(summary.projectedAnnualGross).toBe(41340)
+  expect(summary.months[3].usesForecastGross).toBe(true)
+  expect(summary.months[3].displayGross).toBe(3960)
+  expect(summary.months[3].runningProjectedAnnual).toBe(41340)
 })
 
 it('expected monthly gross mode uses the configured monthly gross for future months', () => {

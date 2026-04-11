@@ -58,20 +58,20 @@
               <p class="app-stage__eyebrow">Mese</p>
 
               <div class="app-stage__metric-block">
-                <p class="app-stage__metric-label">Disponibile</p>
+                <p class="app-stage__metric-label">{{ summaryUi?.availabilityLabel || 'Disponibile del mese' }}</p>
                 <p class="app-stage__metric" :class="{ 'is-negative': summary.net < 0 }">{{ fmt.eur(summary.net) }}</p>
                 <p class="app-stage__summary">
-                  Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
+                  {{ summaryGrossLabel }} {{ fmt.eur(summaryGrossValue) }} · da accantonare {{ fmt.eur(summary.provision) }}
                 </p>
               </div>
             </div>
 
             <div class="app-stage__signals">
-              <div class="app-stage__signal app-stage__signal--strong">
-                <p class="app-stage__signal-label">Da accantonare</p>
-                <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
-                <p class="app-stage__signal-note">Quota da non spendere.</p>
-              </div>
+            <div class="app-stage__signal app-stage__signal--strong">
+              <p class="app-stage__signal-label">{{ summaryUi?.provisionLabel || 'Da accantonare' }}</p>
+              <p class="app-stage__signal-value">{{ fmt.eur(summary.provision) }}</p>
+              <p class="app-stage__signal-note">{{ summaryUi?.provisionNote || 'Quota da non spendere.' }}</p>
+            </div>
 
               <div class="app-stage__signal">
                 <p class="app-stage__signal-label">Registrazioni</p>
@@ -91,21 +91,21 @@
 
       <div class="app-decision-grid fade-up fade-up-2">
         <DecisionMetric
-          label="Disponibile del mese"
+          :label="summaryUi?.availabilityLabel || 'Disponibile del mese'"
           :value="fmt.eur(summary.net)"
-          note="Il netto dopo accantonamenti."
+          :note="summaryUi?.availabilityNote || 'Il netto dopo accantonamenti.'"
           :tone="summary.net < 0 ? 'danger' : 'accent'"
           compact
         />
         <DecisionMetric
-          label="Incassato del mese"
-          :value="fmt.eur(summary.gross)"
-          note="Lordo registrato nel mese."
+          :label="summaryUi?.grossLabel || 'Incassato del mese'"
+          :value="fmt.eur(summaryGrossValue)"
+          :note="summary?.usesForecastGross ? 'Baseline usata per il mese aperto.' : 'Lordo registrato nel mese.'"
           tone="default"
           compact
         />
         <DecisionMetric
-          label="Da accantonare"
+          :label="summaryUi?.provisionLabel || 'Da accantonare'"
           :value="fmt.eur(summary.provision)"
           note="Imposte + contributi + costi distribuiti."
           tone="danger"
@@ -219,6 +219,8 @@
 </template>
 
 <script setup lang="ts">
+import { getMonthSummaryUiState } from '../../../shared/month-ui.ts'
+
 definePageMeta({
   alias: ['/app/month'],
 })
@@ -242,6 +244,11 @@ const pendingDeleteId = ref<number | null>(null)
 const hasMonthlyAccess = computed(() => currentUser.value?.billing?.entitlements.canUseMonthlyLoop ?? false)
 
 const summary = computed(() => annualData.value?.months?.[viewMonth.value] ?? null)
+const summaryUi = computed(() => (
+  summary.value ? getMonthSummaryUiState(summary.value, 'month') : null
+))
+const summaryGrossValue = computed(() => summaryUi.value?.grossValue || 0)
+const summaryGrossLabel = computed(() => summaryUi.value?.grossLabel || 'Incassato')
 
 const isCurrentMonth = computed(() =>
   viewYear.value === now.getFullYear() && viewMonth.value === now.getMonth()

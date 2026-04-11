@@ -30,6 +30,7 @@ export interface ProjectionMeta {
 export interface AnnualSummaryMonth {
   month: number
   gross: number
+  displayGross: number
   hourlyGross: number
   projectGross: number
   totalHours: number
@@ -41,6 +42,7 @@ export interface AnnualSummaryMonth {
   net: number
   projectedTaxes: TaxBreakdown | null
   isFutureMonth: boolean
+  usesForecastGross: boolean
   locked?: boolean
 }
 
@@ -186,12 +188,18 @@ export function projectAnnualGross(input: {
   observedMonthsCount: number
   activeMonths: number
   settings: TaxSettings
+  includeCurrentOpenMonthForecast?: boolean
+  currentOpenMonthActualGross?: number
 }) {
   const projection = resolveProjectionMeta(input.settings, input.actualGrossObserved, input.observedMonthsCount)
-  const remainingMonths = Math.max(0, input.activeMonths - input.observedMonthsCount)
+  const includeCurrentOpenMonthForecast = input.includeCurrentOpenMonthForecast === true
+  const currentOpenMonthGross = includeCurrentOpenMonthForecast
+    ? Math.max(0, input.currentOpenMonthActualGross || 0, projection.monthlyGross)
+    : 0
+  const remainingMonths = Math.max(0, input.activeMonths - input.observedMonthsCount - (includeCurrentOpenMonthForecast ? 1 : 0))
 
   return {
-    projectedAnnualGross: input.actualGrossObserved + projection.monthlyGross * remainingMonths,
+    projectedAnnualGross: input.actualGrossObserved + currentOpenMonthGross + projection.monthlyGross * remainingMonths,
     projection,
   }
 }
@@ -249,7 +257,10 @@ export function buildAnnualSummaryData(input: {
   const effectiveStart = clampMonth(settings.projectionStartMonth)
     ?? (firstIncomeMonth >= 0 ? firstIncomeMonth : (isCurrentYear ? currentMonth : 0))
   const activeMonths = 12 - effectiveStart
-  const observedMonthEnd = isCurrentYear ? currentMonth : 11
+  const treatCurrentMonthAsForecast = isCurrentYear && settings.projectionMode !== 'ACTUAL_AVERAGE'
+  const observedMonthEnd = isCurrentYear
+    ? (treatCurrentMonthAsForecast ? currentMonth - 1 : currentMonth)
+    : 11
   const monthsElapsed = Math.max(0, observedMonthEnd - effectiveStart + 1)
   const actualGrossObserved = monthsElapsed > 0 ? sumGross(months, effectiveStart, observedMonthEnd) : 0
   const projectedSummary = projectAnnualGross({
@@ -257,6 +268,8 @@ export function buildAnnualSummaryData(input: {
     observedMonthsCount: monthsElapsed,
     activeMonths,
     settings,
+    includeCurrentOpenMonthForecast: treatCurrentMonthAsForecast && currentMonth >= effectiveStart,
+    currentOpenMonthActualGross: currentMonth >= effectiveStart ? (months[currentMonth]?.gross || 0) : 0,
   })
 
   const ytdTaxesBase = calcTaxesWithSettings(annualGross, settings)
@@ -276,7 +289,10 @@ export function buildAnnualSummaryData(input: {
   const monthsWithCalculations: AnnualSummaryMonth[] = months.map((month, idx) => {
     const beforeStart = idx < effectiveStart
     const isFutureMonth = isCurrentYear && idx > currentMonth
-    const observedEnd = isCurrentYear ? Math.min(idx, currentMonth) : idx
+    const isCurrentOpenMonth = treatCurrentMonthAsForecast && idx === currentMonth
+    const observedEnd = isCurrentYear
+      ? Math.min(idx, treatCurrentMonthAsForecast ? currentMonth - 1 : currentMonth)
+      : idx
     const observedMonthsCount = beforeStart ? 0 : Math.max(0, observedEnd - effectiveStart + 1)
     const cumulativeGross = observedMonthsCount > 0 ? sumGross(months, effectiveStart, observedEnd) : 0
     const projection = projectAnnualGross({
@@ -284,19 +300,26 @@ export function buildAnnualSummaryData(input: {
       observedMonthsCount,
       activeMonths,
       settings,
+      includeCurrentOpenMonthForecast: treatCurrentMonthAsForecast && idx >= currentMonth && currentMonth >= effectiveStart,
+      currentOpenMonthActualGross: currentMonth >= effectiveStart ? (months[currentMonth]?.gross || 0) : 0,
     })
     const projected = calcTaxesWithSettings(projection.projectedAnnualGross, settings)
     const provision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
+    const displayGross = isCurrentOpenMonth
+      ? Math.max(month.gross, projection.projection.monthlyGross)
+      : month.gross
 
     return {
       ...month,
+      displayGross,
       cumulativeGross,
       runningAvgMonthly: projection.projection.monthlyGross,
       runningProjectedAnnual: beforeStart ? 0 : projection.projectedAnnualGross,
       provision,
-      net: beforeStart || isFutureMonth ? 0 : month.gross - provision - monthlyPayments,
+      net: beforeStart || isFutureMonth ? 0 : displayGross - provision - monthlyPayments,
       projectedTaxes: beforeStart ? null : projected,
       isFutureMonth,
+      usesForecastGross: isCurrentOpenMonth && displayGross > month.gross,
     }
   })
 
@@ -313,6 +336,7 @@ export function buildAnnualSummaryData(input: {
           : {
               ...month,
               gross: 0,
+              displayGross: 0,
               hourlyGross: 0,
               projectGross: 0,
               totalHours: 0,
@@ -323,6 +347,7 @@ export function buildAnnualSummaryData(input: {
               provision: 0,
               net: 0,
               projectedTaxes: null,
+              usesForecastGross: false,
               locked: true,
             }
       })
