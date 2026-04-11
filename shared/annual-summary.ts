@@ -375,10 +375,16 @@ export function buildAnnualSummaryData(input: {
       : lifecycle === 'future'
         ? projection.projection.monthlyGross
         : month.gross
-    const projectedProvision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
+    const fixedAnnualTax = settings.accountantAnnual + (settings.inpsType === 'ARTIGIANI' ? projected.inpsFixed : 0)
+    const variableAnnualTax = Math.max(0, projected.totalTax - fixedAnnualTax)
+    const fixedMonthlyTax = fixedAnnualTax / Math.max(1, activeMonths)
+    const variableMonthlyTax = variableAnnualTax / Math.max(1, activeMonths)
     const displayGross = month.gross
-    const provisionScale = projectionGross > 0 ? Math.min(month.gross / projectionGross, 1) : 0
-    const provision = beforeStart || isFutureMonth ? 0 : projectedProvision * provisionScale
+    const provisionScale = projectionGross > 0 ? month.gross / projectionGross : 0
+    const taxProvision = beforeStart || isFutureMonth
+      ? 0
+      : fixedMonthlyTax + variableMonthlyTax * provisionScale
+    const provision = beforeStart || isFutureMonth ? 0 : taxProvision + monthlyPayments
 
     return {
       ...month,
@@ -388,7 +394,7 @@ export function buildAnnualSummaryData(input: {
       runningAvgMonthly: projection.projection.monthlyGross,
       runningProjectedAnnual: beforeStart ? 0 : projection.projectedAnnualGross,
       provision,
-      net: beforeStart || isFutureMonth ? 0 : month.gross - provision - monthlyPayments,
+      net: beforeStart || isFutureMonth ? 0 : month.gross - provision,
       projectedTaxes: beforeStart ? null : projected,
       isFutureMonth,
       usesForecastGross: projectionGross > month.gross,

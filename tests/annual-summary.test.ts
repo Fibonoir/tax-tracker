@@ -90,8 +90,8 @@ it('expected monthly hours mode uses closed actuals plus baseline for the curren
   expect(summary.months[3].displayGross).toBe(0)
   expect(summary.months[3].projectionGross).toBe(3960)
   expect(summary.months[3].runningProjectedAnnual).toBe(41340)
-  expect(summary.months[3].provision).toBe(0)
-  expect(summary.months[3].net).toBe(0)
+  expect(summary.months[3].provision).toBe(30)
+  expect(summary.months[3].net).toBe(-30)
 })
 
 it('expected monthly gross mode uses the configured monthly gross for future months', () => {
@@ -179,6 +179,8 @@ it('once the grace period passes, an uninvoiced month is closed at zero until ba
   expect(summary.months[3].lifecycle).toBe('closed')
   expect(summary.months[3].projectionGross).toBe(0)
   expect(summary.projectedAnnualGross).toBe(37380)
+  expect(summary.months[3].provision).toBe(30)
+  expect(summary.months[3].net).toBe(-30)
 })
 
 it('manual start month override keeps empty opening months inside the observed baseline', () => {
