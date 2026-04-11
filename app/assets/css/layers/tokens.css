@@ -89,14 +89,14 @@
 }
 
 :root.light {
-  --surface-page: oklch(0.942 0.008 285);
-  --surface-card: oklch(0.985 0.005 286);
+  --surface-page: oklch(0.924 0.013 284);
+  --surface-card: oklch(0.992 0.003 286);
   --surface-card-gradient: var(--surface-card);
-  --surface-soft: oklch(0.930 0.011 283);
-  --surface-elevated: oklch(0.995 0.002 286);
-  --surface-inset: oklch(0.916 0.013 284);
-  --surface-input: oklch(0.952 0.007 285);
-  --surface-stage: oklch(0.932 0.010 280);
+  --surface-soft: oklch(0.960 0.008 283);
+  --surface-elevated: oklch(0.998 0.001 286);
+  --surface-inset: oklch(0.908 0.016 284);
+  --surface-input: oklch(0.968 0.006 285);
+  --surface-stage: oklch(0.952 0.015 278);
   --surface-stage-overlay: inset 0 0 0 1px rgb(255 255 255 / 0.5);
 
   --text-primary: oklch(0.20 0.025 270);
@@ -122,8 +122,8 @@
   --focus-ring: 0 0 0 3px rgb(58 74 223 / 0.14);
 
   --shell-sidebar-surface: var(--surface-card);
-  --shell-sidebar-shadow: 0 1px 3px rgb(28 28 68 / 0.05), 0 12px 28px rgb(28 28 68 / 0.06);
-  --shell-dock-surface: oklch(0.985 0.005 285 / 0.88);
+  --shell-sidebar-shadow: 0 1px 2px rgb(28 28 68 / 0.04), 0 4px 12px rgb(28 28 68 / 0.05);
+  --shell-dock-surface: oklch(0.992 0.003 285 / 0.88);
   --shell-dock-border: var(--border-subtle);
   --brand-mark-surface:
     linear-gradient(145deg, oklch(0.50 0.22 270), oklch(0.36 0.16 274));
@@ -151,7 +151,7 @@
   --calendar-selection-bg: linear-gradient(135deg, oklch(0.46 0.22 270), oklch(0.40 0.20 274));
   --calendar-selection-text: #fff;
 
-  --app-shadow-sm: 0 1px 3px rgb(28 28 68 / 0.04), 0 8px 18px rgb(28 28 68 / 0.05);
-  --app-shadow-md: 0 1px 3px rgb(28 28 68 / 0.04), 0 14px 28px rgb(28 28 68 / 0.07);
-  --app-shadow-lg: 0 1px 3px rgb(28 28 68 / 0.04), 0 20px 40px rgb(28 28 68 / 0.09);
+  --app-shadow-sm: 0 1px 2px rgb(28 28 68 / 0.03), 0 3px 8px rgb(28 28 68 / 0.04);
+  --app-shadow-md: 0 1px 2px rgb(28 28 68 / 0.03), 0 6px 16px rgb(28 28 68 / 0.05);
+  --app-shadow-lg: 0 1px 2px rgb(28 28 68 / 0.03), 0 12px 28px rgb(28 28 68 / 0.07);
 }

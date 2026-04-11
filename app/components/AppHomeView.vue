@@ -8,7 +8,7 @@
 
             <div class="app-stage__metric-block">
               <p class="app-stage__metric-label">Disponibile ora</p>
-              <p class="app-stage__metric">{{ fmt.eur(monthData.net) }}</p>
+              <p class="app-stage__metric" :class="{ 'is-negative': monthData.net < 0 }">{{ fmt.eur(monthData.net) }}</p>
               <p class="app-stage__summary">
                 {{ monthLabel }} · incassato {{ fmt.eur(monthData.gross) }} · da accantonare
                 {{ fmt.eur(monthData.provision) }}
@@ -45,7 +45,7 @@
           label="Disponibile ora"
           :value="fmt.eur(monthData.net)"
           note="Il netto dopo accantonamenti."
-          tone="accent"
+          :tone="monthData.net < 0 ? 'danger' : 'accent'"
           compact
         />
         <DecisionMetric

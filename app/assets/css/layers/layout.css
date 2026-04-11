@@ -929,6 +929,10 @@
     text-wrap: balance;
   }
 
+  .app-stage__metric.is-negative {
+    color: var(--danger-text);
+  }
+
   .app-stage__summary {
     margin: 0;
     font-family: var(--font-mono);

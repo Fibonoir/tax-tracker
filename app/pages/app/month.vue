@@ -56,11 +56,14 @@
           <div class="app-stage">
             <div class="app-stage__header">
               <p class="app-stage__eyebrow">Mese</p>
-              <p class="app-stage__metric-label">Disponibile</p>
-              <p class="app-stage__metric">{{ fmt.eur(summary.net) }}</p>
-              <p class="app-stage__summary">
-                Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
-              </p>
+
+              <div class="app-stage__metric-block">
+                <p class="app-stage__metric-label">Disponibile</p>
+                <p class="app-stage__metric" :class="{ 'is-negative': summary.net < 0 }">{{ fmt.eur(summary.net) }}</p>
+                <p class="app-stage__summary">
+                  Incassato {{ fmt.eur(summary.gross) }} · da accantonare {{ fmt.eur(summary.provision) }}
+                </p>
+              </div>
             </div>
 
             <div class="app-stage__signals">
@@ -91,7 +94,7 @@
           label="Disponibile del mese"
           :value="fmt.eur(summary.net)"
           note="Il netto dopo accantonamenti."
-          tone="accent"
+          :tone="summary.net < 0 ? 'danger' : 'accent'"
           compact
         />
         <DecisionMetric
