@@ -283,7 +283,7 @@
 </template>
 
 <script setup lang="ts">
-import { getMonthSummaryUiState } from '../../shared/month-ui.ts'
+import { getMonthSummaryUiState } from '~~/shared/month-ui'
 
 const fmt = useFmt()
 const { fieldUi } = useUiStyles()

@@ -1,7 +1,7 @@
 import { prisma } from './prisma'
 import { createDefaultSettings, DEFAULT_TAX_SETTINGS } from './settings'
-import { calcTaxesWithSettings, normalizeProjectionMode } from '../../../shared/tax-engine'
-import type { TaxBreakdown, TaxSettings } from '../../../shared/tax-engine'
+import { calcTaxesWithSettings, normalizeProjectionMode } from '~~/shared/tax-engine'
+import type { TaxBreakdown, TaxSettings } from '~~/shared/tax-engine'
 
 export type { TaxBreakdown, TaxSettings } from '../../../shared/tax-engine'
 export { calcTaxesWithSettings } from '../../../shared/tax-engine'

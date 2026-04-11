@@ -219,7 +219,7 @@
 </template>
 
 <script setup lang="ts">
-import { getMonthSummaryUiState } from '../../../shared/month-ui.ts'
+import { getMonthSummaryUiState } from '~~/shared/month-ui'
 
 definePageMeta({
   alias: ['/app/month'],

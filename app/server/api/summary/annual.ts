@@ -4,7 +4,7 @@ import { getSettings } from '~/server/utils/taxes'
 import { recordCalculationRun } from '~/server/utils/calculations'
 import { buildProvisionExplanations } from '~/server/utils/explanations'
 import { requireAppUser } from '~/server/utils/users'
-import { buildAnnualSummaryData, getEffectiveEntryDate, isDateInYear } from '../../../../shared/annual-summary'
+import { buildAnnualSummaryData, getEffectiveEntryDate, isDateInYear } from '~~/shared/annual-summary'
 
 export default defineEventHandler(async (event) => {
   const currentUser = await requireAppUser(event)
