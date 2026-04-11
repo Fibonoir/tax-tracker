@@ -90,7 +90,8 @@ it('expected monthly hours mode uses closed actuals plus baseline for the curren
   expect(summary.months[3].displayGross).toBe(0)
   expect(summary.months[3].projectionGross).toBe(3960)
   expect(summary.months[3].runningProjectedAnnual).toBe(41340)
-  expect(summary.months[3].net).toBeGreaterThan(0)
+  expect(summary.months[3].provision).toBe(0)
+  expect(summary.months[3].net).toBe(0)
 })
 
 it('expected monthly gross mode uses the configured monthly gross for future months', () => {

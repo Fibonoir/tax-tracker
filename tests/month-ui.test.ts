@@ -31,13 +31,12 @@ describe('month summary UI contract', () => {
       lifecycle: 'open',
     }, 'month')
 
-    expect(state.availabilityLabel).toBe('Disponibile stimato')
-    expect(state.availabilityNote).toBe('Stima del mese aperto dopo accantonamenti.')
+    expect(state.availabilityLabel).toBe('Disponibile del mese')
+    expect(state.availabilityNote).toBe('Il netto dopo costi e accantonamenti reali.')
     expect(state.grossLabel).toBe('Incassato del mese')
     expect(state.grossValue).toBe(0)
-    expect(state.provisionLabel).toBe('Da accantonare stimato')
-    expect(state.projectionHint?.label).toBe('Proiezione del mese')
-    expect(state.projectionHint?.value).toBe(3960)
+    expect(state.provisionLabel).toBe('Da accantonare')
+    expect(state.projectionHint).toBeNull()
   })
 
   it('uses the home-specific wording for the cockpit card', () => {
@@ -51,9 +50,9 @@ describe('month summary UI contract', () => {
       lifecycle: 'pending',
     }, 'home')
 
-    expect(state.availabilityLabel).toBe('Disponibile stimato')
+    expect(state.availabilityLabel).toBe('Disponibile ora')
     expect(state.grossLabel).toBe('Incassato')
-    expect(state.provisionNote).toBe('Quota stimata sul mese aperto.')
-    expect(state.projectionHint?.text).toContain('periodo di tolleranza')
+    expect(state.provisionNote).toBe('Quota reale da non spendere questo mese.')
+    expect(state.projectionHint).toBeNull()
   })
 })

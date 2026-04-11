@@ -375,9 +375,10 @@ export function buildAnnualSummaryData(input: {
       : lifecycle === 'future'
         ? projection.projection.monthlyGross
         : month.gross
-    const provision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
+    const projectedProvision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
     const displayGross = month.gross
-    const netGross = beforeStart || isFutureMonth ? 0 : projectionGross
+    const provisionScale = projectionGross > 0 ? Math.min(month.gross / projectionGross, 1) : 0
+    const provision = beforeStart || isFutureMonth ? 0 : projectedProvision * provisionScale
 
     return {
       ...month,
@@ -387,7 +388,7 @@ export function buildAnnualSummaryData(input: {
       runningAvgMonthly: projection.projection.monthlyGross,
       runningProjectedAnnual: beforeStart ? 0 : projection.projectedAnnualGross,
       provision,
-      net: netGross - provision - monthlyPayments,
+      net: beforeStart || isFutureMonth ? 0 : month.gross - provision - monthlyPayments,
       projectedTaxes: beforeStart ? null : projected,
       isFutureMonth,
       usesForecastGross: projectionGross > month.gross,

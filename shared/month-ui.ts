@@ -9,29 +9,13 @@ export interface MonthUiInput {
 }
 
 export function getMonthSummaryUiState(input: MonthUiInput, context: 'home' | 'month') {
-  const isForecast = input.usesForecastGross
-
   return {
-    availabilityLabel: isForecast
-      ? 'Disponibile stimato'
-      : (context === 'home' ? 'Disponibile ora' : 'Disponibile del mese'),
-    availabilityNote: isForecast
-      ? 'Stima del mese aperto dopo accantonamenti.'
-      : 'Il netto dopo accantonamenti.',
+    availabilityLabel: context === 'home' ? 'Disponibile ora' : 'Disponibile del mese',
+    availabilityNote: 'Il netto dopo costi e accantonamenti reali.',
     grossLabel: context === 'home' ? 'Incassato' : 'Incassato del mese',
     grossValue: input.displayGross,
-    provisionLabel: isForecast ? 'Da accantonare stimato' : 'Da accantonare',
-    provisionNote: isForecast
-      ? 'Quota stimata sul mese aperto.'
-      : (context === 'home' ? 'Quota da non spendere questo mese.' : 'Quota da non spendere.'),
-    projectionHint: isForecast
-      ? {
-          label: context === 'home' ? 'Proiezione mese' : 'Proiezione del mese',
-          value: input.projectionGross,
-          text: input.lifecycle === 'pending'
-            ? 'Il mese e terminato ma resta nel periodo di tolleranza per la fattura.'
-            : 'La proiezione usa il ritmo atteso finche il mese non viene chiuso.',
-        }
-      : null,
+    provisionLabel: 'Da accantonare',
+    provisionNote: context === 'home' ? 'Quota reale da non spendere questo mese.' : 'Quota reale da non spendere.',
+    projectionHint: null,
   }
 }
