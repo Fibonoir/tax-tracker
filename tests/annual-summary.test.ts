@@ -85,8 +85,12 @@ it('expected monthly hours mode uses closed actuals plus baseline for the curren
   expect(summary.monthsElapsed).toBe(1)
   expect(summary.projectedAnnualGross).toBe(41340)
   expect(summary.months[3].usesForecastGross).toBe(true)
-  expect(summary.months[3].displayGross).toBe(3960)
+  expect(summary.months[3].lifecycle).toBe('open')
+  expect(summary.months[3].gross).toBe(0)
+  expect(summary.months[3].displayGross).toBe(0)
+  expect(summary.months[3].projectionGross).toBe(3960)
   expect(summary.months[3].runningProjectedAnnual).toBe(41340)
+  expect(summary.months[3].net).toBeGreaterThan(0)
 })
 
 it('expected monthly gross mode uses the configured monthly gross for future months', () => {
@@ -106,6 +110,74 @@ it('expected monthly gross mode uses the configured monthly gross for future mon
   expect(summary.projectionBasis.mode).toBe('EXPECTED_MONTHLY_GROSS')
   expect(summary.projectionBasis.monthlyGross).toBe(4100)
   expect(summary.projectedAnnualGross).toBe(38500)
+})
+
+it('pending months inside the grace period still use the baseline for projections when actual is lower', () => {
+  const summary = buildAnnualSummaryData({
+    year: 2026,
+    referenceDate: new Date('2026-05-03T12:00:00Z'),
+    entries: [
+      projectEntry('2026-04-05', 5700, '2026-03-01'),
+      projectEntry('2026-05-03', 3500, '2026-04-01'),
+    ],
+    settings: createSettings({
+      projectionStartMonth: 2,
+      projectionMode: 'EXPECTED_MONTHLY_HOURS',
+      projectionMonthlyHours: 132,
+    }),
+    recurringPayments: [],
+    onetimePayments: [],
+    previousYearEntriesCount: 0,
+  })
+
+  expect(summary.months[3].lifecycle).toBe('pending')
+  expect(summary.months[3].gross).toBe(3500)
+  expect(summary.months[3].displayGross).toBe(3500)
+  expect(summary.months[3].projectionGross).toBe(3960)
+  expect(summary.projectedAnnualGross).toBe(41340)
+})
+
+it('pending months use the actual for projections when actual overtakes the baseline', () => {
+  const summary = buildAnnualSummaryData({
+    year: 2026,
+    referenceDate: new Date('2026-05-03T12:00:00Z'),
+    entries: [
+      projectEntry('2026-04-05', 5700, '2026-03-01'),
+      projectEntry('2026-05-03', 5000, '2026-04-01'),
+    ],
+    settings: createSettings({
+      projectionStartMonth: 2,
+      projectionMode: 'EXPECTED_MONTHLY_HOURS',
+      projectionMonthlyHours: 132,
+    }),
+    recurringPayments: [],
+    onetimePayments: [],
+    previousYearEntriesCount: 0,
+  })
+
+  expect(summary.months[3].lifecycle).toBe('pending')
+  expect(summary.months[3].projectionGross).toBe(5000)
+  expect(summary.projectedAnnualGross).toBe(42380)
+})
+
+it('once the grace period passes, an uninvoiced month is closed at zero until backfilled', () => {
+  const summary = buildAnnualSummaryData({
+    year: 2026,
+    referenceDate: new Date('2026-05-10T12:00:00Z'),
+    entries: [projectEntry('2026-04-05', 5700, '2026-03-01')],
+    settings: createSettings({
+      projectionStartMonth: 2,
+      projectionMode: 'EXPECTED_MONTHLY_HOURS',
+      projectionMonthlyHours: 132,
+    }),
+    recurringPayments: [],
+    onetimePayments: [],
+    previousYearEntriesCount: 0,
+  })
+
+  expect(summary.months[3].lifecycle).toBe('closed')
+  expect(summary.months[3].projectionGross).toBe(0)
+  expect(summary.projectedAnnualGross).toBe(37380)
 })
 
 it('manual start month override keeps empty opening months inside the observed baseline', () => {

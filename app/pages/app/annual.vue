@@ -7,13 +7,13 @@
         <SurfaceCard variant="gradient" padding="lg" class="fade-up fade-up-1">
           <div class="ui-form-stack">
             <div class="app-period-nav">
-              <button class="app-period-nav__btn" @click="viewYear--; load()">
+              <button class="app-period-nav__btn" @click="viewYear--">
                 <UIcon name="lucide:chevron-left" class="w-5 h-5" />
               </button>
 
               <h1 class="app-period-nav__title">{{ viewYear }}</h1>
 
-              <button class="app-period-nav__btn" @click="viewYear++; load()">
+              <button class="app-period-nav__btn" @click="viewYear++">
                 <UIcon name="lucide:chevron-right" class="w-5 h-5" />
               </button>
             </div>
@@ -253,11 +253,20 @@ const { startCheckout, loading: billingLoading } = useBilling()
 const now = new Date()
 const currentMonth = now.getMonth()
 const viewYear = ref(now.getFullYear())
-const loading = ref(true)
-const data = ref<any>(null)
 const breakdownView = ref<'projected' | 'ytd'>('projected')
 const annualVisibilityLimit = computed(() => currentUser.value?.billing?.entitlements.annualVisibilityLimitMonths ?? null)
 const hasPlanningAccess = computed(() => currentUser.value?.billing?.entitlements.canCompareScenarios ?? false)
+
+const { data, status } = await useAsyncData(
+  'annual-summary-page',
+  () => $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=annual`),
+  {
+    watch: [viewYear],
+    default: () => null,
+  },
+)
+
+const loading = computed(() => status.value === 'pending' && !data.value)
 
 const MONTHS = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
 
@@ -418,12 +427,4 @@ function formatDeadlineDate(dateStr: string) {
 async function startPlanningCheckout() {
   await startCheckout('PLANNING_SCENARIOS')
 }
-
-async function load() {
-  loading.value = true
-  data.value = await $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=annual`)
-  loading.value = false
-}
-
-onMounted(load)
 </script>

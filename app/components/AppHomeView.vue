@@ -13,6 +13,9 @@
                 {{ monthLabel }} · {{ currentMonthGrossLabel.toLowerCase() }} {{ fmt.eur(currentMonthGrossValue) }} · da accantonare
                 {{ fmt.eur(monthData.provision) }}
               </p>
+              <p v-if="homeMonthUi?.projectionHint" class="app-stage__summary">
+                {{ homeMonthUi.projectionHint.label }} {{ fmt.eur(homeMonthUi.projectionHint.value) }} · {{ homeMonthUi.projectionHint.text }}
+              </p>
             </div>
           </div>
 
@@ -289,6 +292,8 @@ const fmt = useFmt()
 const { fieldUi } = useUiStyles()
 const { currentUser } = useCurrentUser()
 const now = new Date()
+const currentYear = now.getFullYear()
+const currentMonth = now.getMonth()
 const monthLabel = now.toLocaleString('it-IT', { month: 'long', year: 'numeric' })
 
 const typeOptions = [
@@ -314,11 +319,6 @@ const form = reactive({
 })
 
 const saving = ref(false)
-const loadingEntries = ref(true)
-const entries = ref<any[]>([])
-const annualData = ref<any>(null)
-const monthData = ref<any>(null)
-const settings = ref<any>(null)
 const selectedEntry = ref<any | null>(null)
 const detailsOpen = ref(false)
 const savingEntry = ref(false)
@@ -331,6 +331,36 @@ const canUseDeadlines = computed(() => billing.value?.entitlements.canUseDeadlin
 const hasHistoryPaywall = computed(() =>
   recentHistoryLimit.value !== null && entries.value.length >= recentHistoryLimit.value
 )
+
+const { data: dashboardData, status: dashboardStatus, refresh: refreshDashboard } = await useAsyncData(
+  'home-dashboard',
+  async () => {
+    const [entries, annualData] = await Promise.all([
+      $fetch<any[]>(`/api/entries?year=${currentYear}&month=${currentMonth}&source=home`),
+      $fetch<any>(`/api/summary/annual?year=${currentYear}&source=home`),
+    ])
+
+    return { entries, annualData }
+  },
+  {
+    default: () => null,
+    dedupe: 'defer',
+  },
+)
+
+const { data: settings } = await useAsyncData(
+  'tax-settings',
+  () => $fetch<any>('/api/settings'),
+  {
+    default: () => null,
+    dedupe: 'defer',
+  },
+)
+
+const loadingEntries = computed(() => dashboardStatus.value === 'pending' && !dashboardData.value)
+const entries = computed(() => dashboardData.value?.entries ?? [])
+const annualData = computed(() => dashboardData.value?.annualData ?? null)
+const monthData = computed(() => annualData.value?.months?.[currentMonth] ?? null)
 
 const canSubmit = computed(() => {
   if (!form.date) return false
@@ -384,22 +414,6 @@ const homeMonthUi = computed(() => (
   monthData.value ? getMonthSummaryUiState(monthData.value, 'home') : null
 ))
 
-async function loadEntries() {
-  loadingEntries.value = true
-  entries.value = await $fetch(`/api/entries?year=${now.getFullYear()}&month=${now.getMonth()}&source=home`)
-  loadingEntries.value = false
-}
-
-async function loadMonthData() {
-  const data = await $fetch<any>(`/api/summary/annual?year=${now.getFullYear()}&source=home`)
-  annualData.value = data
-  monthData.value = data?.months?.[now.getMonth()] ?? null
-}
-
-async function loadSettings() {
-  settings.value = await $fetch('/api/settings')
-}
-
 async function submit() {
   saving.value = true
   try {
@@ -418,7 +432,10 @@ async function submit() {
     form.hours = ''
     form.amount = ''
     form.description = ''
-    await Promise.all([loadEntries(), loadMonthData()])
+    await Promise.all([
+      refreshDashboard(),
+      refreshNuxtData(['month-page-data', 'annual-summary-page']),
+    ])
   } finally {
     saving.value = false
   }
@@ -436,7 +453,10 @@ function openDeleteConfirm(id: number) {
 
 async function deleteEntry(id: number) {
   await $fetch(`/api/entries/${id}`, { method: 'DELETE' })
-  await Promise.all([loadEntries(), loadMonthData()])
+  await Promise.all([
+    refreshDashboard(),
+    refreshNuxtData(['month-page-data', 'annual-summary-page']),
+  ])
 }
 
 async function updateEntry(payload: any) {
@@ -451,7 +471,10 @@ async function updateEntry(payload: any) {
 
     detailsOpen.value = false
     selectedEntry.value = null
-    await Promise.all([loadEntries(), loadMonthData()])
+    await Promise.all([
+      refreshDashboard(),
+      refreshNuxtData(['month-page-data', 'annual-summary-page']),
+    ])
   } finally {
     savingEntry.value = false
   }
@@ -477,10 +500,4 @@ function formatDeadlineDate(dateStr: string) {
   const d = new Date(dateStr)
   return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })
 }
-
-onMounted(() => {
-  loadEntries()
-  loadMonthData()
-  loadSettings()
-})
 </script>

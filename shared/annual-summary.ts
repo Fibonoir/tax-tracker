@@ -31,6 +31,7 @@ export interface AnnualSummaryMonth {
   month: number
   gross: number
   displayGross: number
+  projectionGross: number
   hourlyGross: number
   projectGross: number
   totalHours: number
@@ -43,6 +44,7 @@ export interface AnnualSummaryMonth {
   projectedTaxes: TaxBreakdown | null
   isFutureMonth: boolean
   usesForecastGross: boolean
+  lifecycle: 'before_start' | 'future' | 'open' | 'pending' | 'closed'
   locked?: boolean
 }
 
@@ -73,6 +75,8 @@ export interface AnnualSummaryResult {
   paymentDeadlines: { date: string; label: string; estimatedAmount: number; isPast: boolean }[]
   months: AnnualSummaryMonth[]
 }
+
+export const DEFAULT_INVOICE_GRACE_DAYS = 7
 
 export function annualizeRecurring(payments: SummaryRecurringPayment[]) {
   return payments
@@ -134,6 +138,36 @@ export function clampMonth(value: number | null | undefined) {
   return value
 }
 
+export function getMonthLifecycle(input: {
+  year: number
+  monthIndex: number
+  effectiveStart: number
+  referenceDate: Date
+  graceDays?: number
+}): AnnualSummaryMonth['lifecycle'] {
+  if (input.monthIndex < input.effectiveStart)
+    return 'before_start'
+
+  const graceDays = input.graceDays ?? DEFAULT_INVOICE_GRACE_DAYS
+  const refYear = input.referenceDate.getFullYear()
+  const refMonth = input.referenceDate.getMonth()
+
+  if (input.year < refYear)
+    return 'closed'
+
+  if (input.year > refYear)
+    return 'future'
+
+  if (input.monthIndex > refMonth)
+    return 'future'
+
+  if (input.monthIndex === refMonth)
+    return 'open'
+
+  const graceDeadline = new Date(input.year, input.monthIndex + 1, 1 + graceDays)
+  return input.referenceDate < graceDeadline ? 'pending' : 'closed'
+}
+
 export function getEffectiveEntryDate(entry: SummaryEntry) {
   return new Date(entry.competenceDate ?? entry.date)
 }
@@ -184,22 +218,27 @@ export function resolveProjectionMeta(
 }
 
 export function projectAnnualGross(input: {
+  months: Array<{ gross: number; lifecycle: AnnualSummaryMonth['lifecycle'] }>
+  settings: TaxSettings
   actualGrossObserved: number
   observedMonthsCount: number
-  activeMonths: number
-  settings: TaxSettings
-  includeCurrentOpenMonthForecast?: boolean
-  currentOpenMonthActualGross?: number
 }) {
   const projection = resolveProjectionMeta(input.settings, input.actualGrossObserved, input.observedMonthsCount)
-  const includeCurrentOpenMonthForecast = input.includeCurrentOpenMonthForecast === true
-  const currentOpenMonthGross = includeCurrentOpenMonthForecast
-    ? Math.max(0, input.currentOpenMonthActualGross || 0, projection.monthlyGross)
-    : 0
-  const remainingMonths = Math.max(0, input.activeMonths - input.observedMonthsCount - (includeCurrentOpenMonthForecast ? 1 : 0))
+  const projectedAnnualGross = input.months.reduce((sum, month) => {
+    if (month.lifecycle === 'before_start')
+      return sum
+
+    if (month.lifecycle === 'closed')
+      return sum + month.gross
+
+    if (month.lifecycle === 'open' || month.lifecycle === 'pending')
+      return sum + Math.max(month.gross, projection.monthlyGross)
+
+    return sum + projection.monthlyGross
+  }, 0)
 
   return {
-    projectedAnnualGross: input.actualGrossObserved + currentOpenMonthGross + projection.monthlyGross * remainingMonths,
+    projectedAnnualGross,
     projection,
   }
 }
@@ -256,20 +295,30 @@ export function buildAnnualSummaryData(input: {
   const firstIncomeMonth = months.findIndex(month => month.gross > 0)
   const effectiveStart = clampMonth(settings.projectionStartMonth)
     ?? (firstIncomeMonth >= 0 ? firstIncomeMonth : (isCurrentYear ? currentMonth : 0))
-  const activeMonths = 12 - effectiveStart
-  const treatCurrentMonthAsForecast = isCurrentYear && settings.projectionMode !== 'ACTUAL_AVERAGE'
-  const observedMonthEnd = isCurrentYear
-    ? (treatCurrentMonthAsForecast ? currentMonth - 1 : currentMonth)
-    : 11
-  const monthsElapsed = Math.max(0, observedMonthEnd - effectiveStart + 1)
-  const actualGrossObserved = monthsElapsed > 0 ? sumGross(months, effectiveStart, observedMonthEnd) : 0
+  const lifecycleByMonth = months.map(month => getMonthLifecycle({
+    year,
+    monthIndex: month.month,
+    effectiveStart,
+    referenceDate,
+  }))
+  const activeMonths = lifecycleByMonth.filter(lifecycle => lifecycle !== 'before_start').length
+  const actualAverageObservedMonths = months.filter((month) =>
+    month.month >= effectiveStart && month.month <= (isCurrentYear ? currentMonth : 11)
+  )
+  const closedMonths = months.filter((month, index) => lifecycleByMonth[index] === 'closed')
+  const observedMonths = settings.projectionMode === 'ACTUAL_AVERAGE'
+    ? actualAverageObservedMonths
+    : closedMonths
+  const monthsElapsed = observedMonths.length
+  const actualGrossObserved = observedMonths.reduce((sum, month) => sum + month.gross, 0)
   const projectedSummary = projectAnnualGross({
+    months: months.map((month, index) => ({
+      gross: month.gross,
+      lifecycle: lifecycleByMonth[index],
+    })),
+    settings,
     actualGrossObserved,
     observedMonthsCount: monthsElapsed,
-    activeMonths,
-    settings,
-    includeCurrentOpenMonthForecast: treatCurrentMonthAsForecast && currentMonth >= effectiveStart,
-    currentOpenMonthActualGross: currentMonth >= effectiveStart ? (months[currentMonth]?.gross || 0) : 0,
   })
 
   const ytdTaxesBase = calcTaxesWithSettings(annualGross, settings)
@@ -288,38 +337,61 @@ export function buildAnnualSummaryData(input: {
 
   const monthsWithCalculations: AnnualSummaryMonth[] = months.map((month, idx) => {
     const beforeStart = idx < effectiveStart
-    const isFutureMonth = isCurrentYear && idx > currentMonth
-    const isCurrentOpenMonth = treatCurrentMonthAsForecast && idx === currentMonth
-    const observedEnd = isCurrentYear
-      ? Math.min(idx, treatCurrentMonthAsForecast ? currentMonth - 1 : currentMonth)
-      : idx
-    const observedMonthsCount = beforeStart ? 0 : Math.max(0, observedEnd - effectiveStart + 1)
-    const cumulativeGross = observedMonthsCount > 0 ? sumGross(months, effectiveStart, observedEnd) : 0
+    const lifecycle = lifecycleByMonth[idx]
+    const isFutureMonth = lifecycle === 'future'
+    const observedMonths = settings.projectionMode === 'ACTUAL_AVERAGE'
+      ? months.slice(effectiveStart, idx + 1)
+      : months
+          .slice(0, idx + 1)
+          .filter((_, monthIndex) => lifecycleByMonth[monthIndex] === 'closed' && monthIndex >= effectiveStart)
+    const observedMonthsCount = observedMonths.length
+    const cumulativeGross = observedMonths.reduce((sum, observedMonth) => sum + observedMonth.gross, 0)
     const projection = projectAnnualGross({
+      months: months.map((candidateMonth, candidateIndex) => {
+        let scenarioLifecycle: AnnualSummaryMonth['lifecycle']
+
+        if (candidateIndex < effectiveStart) {
+          scenarioLifecycle = 'before_start'
+        } else if (candidateIndex < idx) {
+          scenarioLifecycle = 'closed'
+        } else if (candidateIndex === idx) {
+          scenarioLifecycle = lifecycle
+        } else {
+          scenarioLifecycle = 'future'
+        }
+
+        return {
+          gross: candidateMonth.gross,
+          lifecycle: scenarioLifecycle,
+        }
+      }),
+      settings,
       actualGrossObserved: cumulativeGross,
       observedMonthsCount,
-      activeMonths,
-      settings,
-      includeCurrentOpenMonthForecast: treatCurrentMonthAsForecast && idx >= currentMonth && currentMonth >= effectiveStart,
-      currentOpenMonthActualGross: currentMonth >= effectiveStart ? (months[currentMonth]?.gross || 0) : 0,
     })
     const projected = calcTaxesWithSettings(projection.projectedAnnualGross, settings)
-    const provision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
-    const displayGross = isCurrentOpenMonth
+    const projectionGross = lifecycle === 'open' || lifecycle === 'pending'
       ? Math.max(month.gross, projection.projection.monthlyGross)
-      : month.gross
+      : lifecycle === 'future'
+        ? projection.projection.monthlyGross
+        : month.gross
+    const provision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
+    const displayGross = month.gross
+    const netGross = beforeStart || isFutureMonth ? 0 : projectionGross
 
     return {
       ...month,
       displayGross,
+      projectionGross,
       cumulativeGross,
       runningAvgMonthly: projection.projection.monthlyGross,
       runningProjectedAnnual: beforeStart ? 0 : projection.projectedAnnualGross,
       provision,
-      net: beforeStart || isFutureMonth ? 0 : displayGross - provision - monthlyPayments,
+      net: netGross - provision - monthlyPayments,
       projectedTaxes: beforeStart ? null : projected,
       isFutureMonth,
-      usesForecastGross: isCurrentOpenMonth && displayGross > month.gross,
+      usesForecastGross: projectionGross > month.gross,
+      lifecycle,
     }
   })
 
@@ -337,6 +409,7 @@ export function buildAnnualSummaryData(input: {
               ...month,
               gross: 0,
               displayGross: 0,
+              projectionGross: 0,
               hourlyGross: 0,
               projectGross: 0,
               totalHours: 0,
@@ -348,6 +421,7 @@ export function buildAnnualSummaryData(input: {
               net: 0,
               projectedTaxes: null,
               usesForecastGross: false,
+              lifecycle: 'before_start',
               locked: true,
             }
       })

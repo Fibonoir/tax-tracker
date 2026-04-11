@@ -474,12 +474,8 @@ const toast = useToast()
 const { currentUser, refresh } = useCurrentUser()
 const { startCheckout, openPortal, loading: billingLoading } = useBilling()
 
-const loading = ref(true)
 const saving = ref(false)
 const profileSaving = ref(false)
-const settings = ref<any>(null)
-const recurringPayments = ref<any[]>([])
-const onetimePayments = ref<any[]>([])
 const showRecurringForm = ref(false)
 const showOnetimeForm = ref(false)
 const currentYear = new Date().getFullYear()
@@ -579,46 +575,78 @@ function optionToMonthIndex(option: string) {
   return index <= 0 ? null : index - 1
 }
 
-async function loadData() {
-  loading.value = true
-  await refresh(true)
+const { data: settingsPageData, status, refresh: refreshSettingsPage } = await useAsyncData(
+  'settings-page-data',
+  async () => {
+    const [settings, recurringPayments, onetimePayments] = await Promise.all([
+      $fetch<any>('/api/settings'),
+      $fetch<any[]>('/api/payments/recurring'),
+      $fetch<any[]>(`/api/payments/onetime?year=${currentYear}`),
+    ])
 
-  Object.assign(profileForm, {
-    displayName: currentUser.value?.displayName || currentUser.value?.name || '',
-    activityLabel: currentUser.value?.activityLabel || '',
-    atecoCode: currentUser.value?.atecoCode || '',
-    atecoLabel: currentUser.value?.atecoLabel || '',
-    taxYear: currentUser.value?.taxYear || currentYear,
-  })
+    return { settings, recurringPayments, onetimePayments }
+  },
+  {
+    default: () => null,
+    dedupe: 'defer',
+  },
+)
 
-  const [s, r, o] = await Promise.all([
-    $fetch('/api/settings'),
-    $fetch('/api/payments/recurring'),
-    $fetch(`/api/payments/onetime?year=${currentYear}`),
+const loading = computed(() => status.value === 'pending' && !settingsPageData.value)
+const recurringPayments = computed(() => settingsPageData.value?.recurringPayments ?? [])
+const onetimePayments = computed(() => settingsPageData.value?.onetimePayments ?? [])
+
+watch(
+  () => currentUser.value,
+  () => {
+    Object.assign(profileForm, {
+      displayName: currentUser.value?.displayName || currentUser.value?.name || '',
+      activityLabel: currentUser.value?.activityLabel || '',
+      atecoCode: currentUser.value?.atecoCode || '',
+      atecoLabel: currentUser.value?.atecoLabel || '',
+      taxYear: currentUser.value?.taxYear || currentYear,
+    })
+  },
+  { immediate: true },
+)
+
+watch(
+  settingsPageData,
+  (payload) => {
+    const settings = payload?.settings
+    if (!settings)
+      return
+
+    Object.assign(form, {
+      hourlyRate: settings.hourlyRate,
+      coefficiente: settings.coefficiente,
+      irpefRate: settings.irpefRate * 100,
+      inpsType: settings.inpsType,
+      inpsRate: settings.inpsRate * 100,
+      inpsFixedAnnual: settings.inpsFixedAnnual,
+      inpsMinimaleThreshold: settings.inpsMinimaleThreshold,
+      inpsExcessRate: settings.inpsExcessRate * 100,
+      accountantAnnual: settings.accountantAnnual,
+      projectionMode: settings.projectionMode,
+      projectionMonthlyHours: settings.projectionMonthlyHours ?? '',
+      projectionMonthlyGross: settings.projectionMonthlyGross ?? '',
+      applyBollo: settings.applyBollo,
+      bolloAmount: settings.bolloAmount,
+    })
+    startMonthSelection.value = monthIndexToOption(settings.projectionStartMonth)
+  },
+  { immediate: true },
+)
+
+async function refreshFinancialViews() {
+  await refreshNuxtData(['tax-settings', 'home-dashboard', 'month-page-data', 'annual-summary-page'])
+}
+
+async function reloadSettingsPage() {
+  await Promise.all([
+    refreshSettingsPage(),
+    refreshFinancialViews(),
   ])
-
-  settings.value = s
-  Object.assign(form, {
-    hourlyRate: s.hourlyRate,
-    coefficiente: s.coefficiente,
-    irpefRate: s.irpefRate * 100,
-    inpsType: s.inpsType,
-    inpsRate: s.inpsRate * 100,
-    inpsFixedAnnual: s.inpsFixedAnnual,
-    inpsMinimaleThreshold: s.inpsMinimaleThreshold,
-    inpsExcessRate: s.inpsExcessRate * 100,
-    accountantAnnual: s.accountantAnnual,
-    projectionMode: s.projectionMode,
-    projectionMonthlyHours: s.projectionMonthlyHours ?? '',
-    projectionMonthlyGross: s.projectionMonthlyGross ?? '',
-    applyBollo: s.applyBollo,
-    bolloAmount: s.bolloAmount,
-  })
-  startMonthSelection.value = monthIndexToOption(s.projectionStartMonth)
-
-  recurringPayments.value = r
-  onetimePayments.value = o
-  loading.value = false
 }
 
 async function saveProfile() {
@@ -638,7 +666,10 @@ async function saveProfile() {
     })
 
     toast.add({ title: 'Profilo aggiornato.', color: 'success' })
-    await loadData()
+    await Promise.all([
+      refresh(true),
+      refreshSettingsPage(),
+    ])
   } catch {
     toast.add({ title: 'Non sono riuscito a salvare il profilo. Riprova.', color: 'error' })
   } finally {
@@ -674,6 +705,7 @@ async function saveSettings() {
       },
     })
     toast.add({ title: 'Modello salvato. Le nuove stime sono gia aggiornate.', color: 'success' })
+    await reloadSettingsPage()
   } catch {
     toast.add({ title: 'Non sono riuscito a salvare il modello. Riprova.', color: 'error' })
   } finally {
@@ -690,12 +722,12 @@ async function addRecurringPayment() {
   recurringForm.amount = ''
   recurringForm.frequency = 'MONTHLY'
   showRecurringForm.value = false
-  await loadData()
+  await reloadSettingsPage()
 }
 
 async function deleteRecurringPayment(id: number) {
   await $fetch(`/api/payments/recurring?id=${id}`, { method: 'DELETE' })
-  await loadData()
+  await reloadSettingsPage()
 }
 
 async function addOnetimePayment() {
@@ -707,13 +739,11 @@ async function addOnetimePayment() {
   onetimeForm.amount = ''
   onetimeForm.date = new Date().toISOString().split('T')[0]
   showOnetimeForm.value = false
-  await loadData()
+  await reloadSettingsPage()
 }
 
 async function deleteOnetimePayment(id: number) {
   await $fetch(`/api/payments/onetime?id=${id}`, { method: 'DELETE' })
-  await loadData()
+  await reloadSettingsPage()
 }
-
-onMounted(loadData)
 </script>

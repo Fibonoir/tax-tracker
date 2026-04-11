@@ -63,6 +63,9 @@
                 <p class="app-stage__summary">
                   {{ summaryGrossLabel }} {{ fmt.eur(summaryGrossValue) }} · da accantonare {{ fmt.eur(summary.provision) }}
                 </p>
+                <p v-if="summaryUi?.projectionHint" class="app-stage__summary">
+                  {{ summaryUi.projectionHint.label }} {{ fmt.eur(summaryUi.projectionHint.value) }} · {{ summaryUi.projectionHint.text }}
+                </p>
               </div>
             </div>
 
@@ -100,7 +103,7 @@
         <DecisionMetric
           :label="summaryUi?.grossLabel || 'Incassato del mese'"
           :value="fmt.eur(summaryGrossValue)"
-          :note="summary?.usesForecastGross ? 'Baseline usata per il mese aperto.' : 'Lordo registrato nel mese.'"
+          :note="summaryUi?.projectionHint?.text || 'Lordo registrato nel mese.'"
           tone="default"
           compact
         />
@@ -231,10 +234,6 @@ const { startCheckout, loading: billingLoading } = useBilling()
 const now = new Date()
 const viewYear = ref(now.getFullYear())
 const viewMonth = ref(now.getMonth())
-const loading = ref(true)
-const entries = ref<any[]>([])
-const annualData = ref<any>(null)
-const settings = ref<any>(null)
 const selectedEntry = ref<any | null>(null)
 const detailsOpen = ref(false)
 const savingEntry = ref(false)
@@ -242,6 +241,40 @@ const deleteConfirmOpen = ref(false)
 const deleting = ref(false)
 const pendingDeleteId = ref<number | null>(null)
 const hasMonthlyAccess = computed(() => currentUser.value?.billing?.entitlements.canUseMonthlyLoop ?? false)
+
+const { data: monthPageData, status, refresh: refreshMonthPage } = await useAsyncData(
+  'month-page-data',
+  async () => {
+    if (!hasMonthlyAccess.value)
+      return null
+
+    const [entries, annualData] = await Promise.all([
+      $fetch<any[]>(`/api/entries?year=${viewYear.value}&month=${viewMonth.value}`),
+      $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=month`),
+    ])
+
+    return { entries, annualData }
+  },
+  {
+    watch: [viewYear, viewMonth, hasMonthlyAccess],
+    default: () => null,
+    dedupe: 'defer',
+  },
+)
+
+const { data: settings } = await useAsyncData(
+  'tax-settings',
+  () => hasMonthlyAccess.value ? $fetch<any>('/api/settings') : null,
+  {
+    watch: [hasMonthlyAccess],
+    default: () => null,
+    dedupe: 'defer',
+  },
+)
+
+const loading = computed(() => hasMonthlyAccess.value && status.value === 'pending' && !monthPageData.value)
+const entries = computed(() => monthPageData.value?.entries ?? [])
+const annualData = computed(() => monthPageData.value?.annualData ?? null)
 
 const summary = computed(() => annualData.value?.months?.[viewMonth.value] ?? null)
 const summaryUi = computed(() => (
@@ -356,8 +389,6 @@ function prevMonth() {
   } else {
     viewMonth.value--
   }
-
-  load()
 }
 
 function nextMonth() {
@@ -369,8 +400,6 @@ function nextMonth() {
   } else {
     viewMonth.value++
   }
-
-  load()
 }
 
 function openInvoiceDetails(entry: any) {
@@ -385,7 +414,10 @@ function openDeleteConfirm(id: number) {
 
 async function deleteEntry(id: number) {
   await $fetch(`/api/entries/${id}`, { method: 'DELETE' })
-  await load()
+  await Promise.all([
+    refreshMonthPage(),
+    refreshNuxtData(['home-dashboard', 'annual-summary-page']),
+  ])
 }
 
 async function updateEntry(payload: any) {
@@ -400,7 +432,10 @@ async function updateEntry(payload: any) {
 
     detailsOpen.value = false
     selectedEntry.value = null
-    await load()
+    await Promise.all([
+      refreshMonthPage(),
+      refreshNuxtData(['home-dashboard', 'annual-summary-page']),
+    ])
   } finally {
     savingEntry.value = false
   }
@@ -423,27 +458,7 @@ async function confirmDelete() {
   }
 }
 
-async function load() {
-  if (!hasMonthlyAccess.value) {
-    loading.value = false
-    return
-  }
-
-  loading.value = true
-  const [e, a, s] = await Promise.all([
-    $fetch<any[]>(`/api/entries?year=${viewYear.value}&month=${viewMonth.value}`),
-    $fetch<any>(`/api/summary/annual?year=${viewYear.value}&source=month`),
-    $fetch<any>('/api/settings'),
-  ])
-  entries.value = e
-  annualData.value = a
-  settings.value = s
-  loading.value = false
-}
-
 async function startCoreCheckout() {
   await startCheckout('CORE_CLARITY')
 }
-
-onMounted(load)
 </script>
