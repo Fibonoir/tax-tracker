@@ -5,6 +5,22 @@ import { recordCalculationRun } from '~/server/utils/calculations'
 import { buildProvisionExplanations } from '~/server/utils/explanations'
 import { requireAppUser } from '~/server/utils/users'
 
+type SummaryEntry = {
+  date: Date
+  competenceDate: Date | null
+  type: 'HOURLY' | 'PROJECT'
+  hours: number | null
+  amount: number | null
+}
+
+type ProjectionMeta = {
+  mode: TaxSettings['projectionMode']
+  label: string
+  monthlyGross: number
+  monthlyHours: number | null
+  manualStartMonth: number | null
+}
+
 function annualizeRecurring(payments: { amount: number; frequency: string; active: boolean }[]) {
   return payments
     .filter(p => p.active)
@@ -25,7 +41,7 @@ function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: 
   if (!isFirstYear) {
     deadlines.push({
       date: `${year}-06-30`,
-      label: 'Imposta sost. saldo + 1\u00B0 acconto + INPS ecc.',
+      label: 'Imposta sost. saldo + 1° acconto + INPS ecc.',
       estimatedAmount: projected.irpef * 0.4 + projected.inpsExcess * 0.4,
     })
   }
@@ -36,7 +52,7 @@ function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: 
   if (!isFirstYear) {
     deadlines.push({
       date: `${year}-11-30`,
-      label: 'Imposta sost. 2\u00B0 acconto + INPS ecc.',
+      label: 'Imposta sost. 2° acconto + INPS ecc.',
       estimatedAmount: projected.irpef * 0.6 + projected.inpsExcess * 0.6,
     })
   }
@@ -48,6 +64,87 @@ function buildPaymentDeadlines(year: number, projected: TaxBreakdown, settings: 
     estimatedAmount: Math.round(d.estimatedAmount * 100) / 100,
     isPast: new Date(d.date) < now,
   }))
+}
+
+function clampMonth(value: number | null | undefined) {
+  if (typeof value !== 'number' || !Number.isInteger(value))
+    return null
+
+  if (value < 0 || value > 11)
+    return null
+
+  return value
+}
+
+function getEffectiveEntryDate(entry: SummaryEntry) {
+  return new Date(entry.competenceDate ?? entry.date)
+}
+
+function isDateInYear(value: Date, year: number) {
+  return value >= new Date(year, 0, 1) && value < new Date(year + 1, 0, 1)
+}
+
+function getEntryGross(entry: SummaryEntry, settings: TaxSettings) {
+  return entry.type === 'HOURLY'
+    ? (entry.hours || 0) * settings.hourlyRate
+    : (entry.amount || 0)
+}
+
+function resolveProjectionMeta(
+  settings: TaxSettings,
+  actualGrossObserved: number,
+  observedMonthsCount: number,
+): ProjectionMeta {
+  if (settings.projectionMode === 'EXPECTED_MONTHLY_GROSS') {
+    return {
+      mode: settings.projectionMode,
+      label: 'Lordo mensile atteso',
+      monthlyGross: Math.max(0, settings.projectionMonthlyGross || 0),
+      monthlyHours: null,
+      manualStartMonth: clampMonth(settings.projectionStartMonth),
+    }
+  }
+
+  if (settings.projectionMode === 'EXPECTED_MONTHLY_HOURS') {
+    const monthlyHours = Math.max(0, settings.projectionMonthlyHours || 0)
+    return {
+      mode: settings.projectionMode,
+      label: 'Baseline mensile attesa',
+      monthlyGross: monthlyHours * settings.hourlyRate,
+      monthlyHours,
+      manualStartMonth: clampMonth(settings.projectionStartMonth),
+    }
+  }
+
+  return {
+    mode: 'ACTUAL_AVERAGE',
+    label: 'Media mensile osservata',
+    monthlyGross: observedMonthsCount > 0 ? actualGrossObserved / observedMonthsCount : 0,
+    monthlyHours: null,
+    manualStartMonth: clampMonth(settings.projectionStartMonth),
+  }
+}
+
+function projectAnnualGross(input: {
+  actualGrossObserved: number
+  observedMonthsCount: number
+  activeMonths: number
+  settings: TaxSettings
+}) {
+  const projection = resolveProjectionMeta(input.settings, input.actualGrossObserved, input.observedMonthsCount)
+  const remainingMonths = Math.max(0, input.activeMonths - input.observedMonthsCount)
+
+  return {
+    projectedAnnualGross: input.actualGrossObserved + projection.monthlyGross * remainingMonths,
+    projection,
+  }
+}
+
+function sumGross(months: { gross: number }[], startMonth: number, endMonth: number) {
+  if (endMonth < startMonth)
+    return 0
+
+  return months.slice(startMonth, endMonth + 1).reduce((sum, month) => sum + month.gross, 0)
 }
 
 export default defineEventHandler(async (event) => {
@@ -68,13 +165,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const isCurrentYear = year === currentYear
-  const rulesetVersion = '2026.1'
+  const rulesetVersion = '2026.2'
+  const yearStart = new Date(year, 0, 1)
+  const yearEnd = new Date(year + 1, 0, 1)
+  const previousYear = year - 1
 
-  const [entries, settings, recurringPayments, onetimePayments, prevYearCount] = await Promise.all([
+  const [rawEntries, settings, recurringPayments, onetimePayments, rawPrevYearCount] = await Promise.all([
     prisma.entry.findMany({
       where: {
         userId: currentUser.id,
-        date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
+        OR: [
+          { date: { gte: yearStart, lt: yearEnd } },
+          { competenceDate: { gte: yearStart, lt: yearEnd } },
+        ],
       },
     }),
     getSettings(currentUser.id),
@@ -84,48 +187,65 @@ export default defineEventHandler(async (event) => {
     prisma.oneTimePayment.findMany({
       where: {
         userId: currentUser.id,
-        date: { gte: new Date(year, 0, 1), lt: new Date(year + 1, 0, 1) },
+        date: { gte: yearStart, lt: yearEnd },
       },
     }),
-    prisma.entry.count({
+    prisma.entry.findMany({
       where: {
         userId: currentUser.id,
-        date: { gte: new Date(year - 1, 0, 1), lt: new Date(year, 0, 1) },
+        OR: [
+          { date: { gte: new Date(previousYear, 0, 1), lt: yearStart } },
+          { competenceDate: { gte: new Date(previousYear, 0, 1), lt: yearStart } },
+        ],
       },
+      select: { date: true, competenceDate: true },
     }),
   ])
 
+  const entries = rawEntries.filter(entry => isDateInYear(getEffectiveEntryDate(entry as SummaryEntry), year)) as SummaryEntry[]
+  const prevYearCount = rawPrevYearCount.filter(entry => isDateInYear(new Date(entry.competenceDate ?? entry.date), previousYear)).length
   const isFirstYear = prevYearCount === 0
 
   const months = Array.from({ length: 12 }, (_, i) => {
-    const me = entries.filter(e => new Date(e.date).getMonth() === i)
-    const hourlyGross = me.filter(e => e.type === 'HOURLY').reduce((s, e) => s + (e.hours || 0) * settings.hourlyRate, 0)
-    const projectGross = me.filter(e => e.type === 'PROJECT').reduce((s, e) => s + (e.amount || 0), 0)
-    const totalHours = me.filter(e => e.type === 'HOURLY').reduce((s, e) => s + (e.hours || 0), 0)
+    const monthEntries = entries.filter(entry => getEffectiveEntryDate(entry).getMonth() === i)
+    const hourlyGross = monthEntries
+      .filter(entry => entry.type === 'HOURLY')
+      .reduce((sum, entry) => sum + getEntryGross(entry, settings), 0)
+    const projectGross = monthEntries
+      .filter(entry => entry.type === 'PROJECT')
+      .reduce((sum, entry) => sum + getEntryGross(entry, settings), 0)
+    const totalHours = monthEntries
+      .filter(entry => entry.type === 'HOURLY')
+      .reduce((sum, entry) => sum + (entry.hours || 0), 0)
     const gross = hourlyGross + projectGross
-    return { month: i, gross, hourlyGross, projectGross, totalHours, entryCount: me.length }
+
+    return { month: i, gross, hourlyGross, projectGross, totalHours, entryCount: monthEntries.length }
   })
 
-  const annualGross = months.reduce((s, m) => s + m.gross, 0)
-
-  const firstIncomeMonth = months.findIndex(m => m.gross > 0)
-  const effectiveStart = firstIncomeMonth >= 0 ? firstIncomeMonth : (isCurrentYear ? currentMonth : 0)
+  const annualGross = months.reduce((sum, month) => sum + month.gross, 0)
+  const firstIncomeMonth = months.findIndex(month => month.gross > 0)
+  const effectiveStart = clampMonth(settings.projectionStartMonth)
+    ?? (firstIncomeMonth >= 0 ? firstIncomeMonth : (isCurrentYear ? currentMonth : 0))
   const activeMonths = 12 - effectiveStart
-  const monthsElapsed = isCurrentYear
-    ? Math.max(1, currentMonth - effectiveStart + 1)
-    : activeMonths
+  const observedMonthEnd = isCurrentYear ? currentMonth : 11
+  const monthsElapsed = Math.max(0, observedMonthEnd - effectiveStart + 1)
+  const actualGrossObserved = monthsElapsed > 0 ? sumGross(months, effectiveStart, observedMonthEnd) : 0
+  const projectedSummary = projectAnnualGross({
+    actualGrossObserved,
+    observedMonthsCount: monthsElapsed,
+    activeMonths,
+    settings,
+  })
 
   const ytdTaxes = calcTaxesWithSettings(annualGross, settings)
-
-  const runningAvgTopLevel = monthsElapsed > 0 ? annualGross / monthsElapsed : 0
-  const projectedAnnualGross = runningAvgTopLevel * activeMonths
-  const projectedTaxes = calcTaxesWithSettings(projectedAnnualGross, settings)
-  const recommendedMonthlySetAside = projectedTaxes.totalTax / activeMonths
+  const projectedTaxes = calcTaxesWithSettings(projectedSummary.projectedAnnualGross, settings)
+  const recommendedMonthlySetAside = projectedTaxes.totalTax / Math.max(1, activeMonths)
 
   const recurringTotal = annualizeRecurring(recurringPayments)
-  const onetimeTotal = onetimePayments.reduce((s, p) => s + p.amount, 0)
-  const paymentsTotal = recurringTotal + onetimeTotal
-  const monthlyPayments = paymentsTotal / activeMonths
+  const onetimeTotal = onetimePayments.reduce((sum, payment) => sum + payment.amount, 0)
+  const bolloTotal = settings.applyBollo ? entries.length * settings.bolloAmount : 0
+  const paymentsTotal = recurringTotal + onetimeTotal + bolloTotal
+  const monthlyPayments = paymentsTotal / Math.max(1, activeMonths)
 
   const paymentDeadlines = buildPaymentDeadlines(year, projectedTaxes, settings, isFirstYear)
   const explanations = buildProvisionExplanations({
@@ -145,6 +265,7 @@ export default defineEventHandler(async (event) => {
     inputSnapshot: {
       annualGross,
       activeMonths,
+      monthsElapsed,
       monthlyPayments,
       isFirstYear,
       settings: {
@@ -157,34 +278,47 @@ export default defineEventHandler(async (event) => {
         inpsMinimaleThreshold: settings.inpsMinimaleThreshold,
         inpsExcessRate: settings.inpsExcessRate,
         accountantAnnual: settings.accountantAnnual,
+        projectionStartMonth: settings.projectionStartMonth,
+        projectionMode: settings.projectionMode,
+        projectionMonthlyHours: settings.projectionMonthlyHours,
+        projectionMonthlyGross: settings.projectionMonthlyGross,
+        applyBollo: settings.applyBollo,
+        bolloAmount: settings.bolloAmount,
       },
     },
     outputSnapshot: {
-      projectedAnnualGross,
+      projectedAnnualGross: projectedSummary.projectedAnnualGross,
       recommendedMonthlySetAside,
       projectedTaxes,
       paymentDeadlines,
+      projection: projectedSummary.projection,
     },
   })
 
-  const monthsWithCalculations = months.map((m, idx) => {
+  const monthsWithCalculations = months.map((month, idx) => {
     const beforeStart = idx < effectiveStart
-    const cumulativeGross = months.slice(0, idx + 1).reduce((s, x) => s + x.gross, 0)
-    const monthsSinceStart = Math.max(1, idx - effectiveStart + 1)
-    const runningAvg = beforeStart ? 0 : cumulativeGross / monthsSinceStart
-    const runningProjectedAnnual = runningAvg * activeMonths
-
-    const projected = calcTaxesWithSettings(runningProjectedAnnual, settings)
-    const provision = beforeStart ? 0 : projected.totalTax / activeMonths
+    const isFutureMonth = isCurrentYear && idx > currentMonth
+    const observedEnd = isCurrentYear ? Math.min(idx, currentMonth) : idx
+    const observedMonthsCount = beforeStart ? 0 : Math.max(0, observedEnd - effectiveStart + 1)
+    const cumulativeGross = observedMonthsCount > 0 ? sumGross(months, effectiveStart, observedEnd) : 0
+    const projection = projectAnnualGross({
+      actualGrossObserved: cumulativeGross,
+      observedMonthsCount,
+      activeMonths,
+      settings,
+    })
+    const projected = calcTaxesWithSettings(projection.projectedAnnualGross, settings)
+    const provision = beforeStart || isFutureMonth ? 0 : projected.totalTax / Math.max(1, activeMonths)
 
     return {
-      ...m,
+      ...month,
       cumulativeGross,
-      runningAvgMonthly: runningAvg,
-      runningProjectedAnnual,
+      runningAvgMonthly: projection.projection.monthlyGross,
+      runningProjectedAnnual: beforeStart ? 0 : projection.projectedAnnualGross,
       provision,
-      net: beforeStart ? 0 : m.gross - provision - monthlyPayments,
+      net: beforeStart || isFutureMonth ? 0 : month.gross - provision - monthlyPayments,
       projectedTaxes: beforeStart ? null : projected,
+      isFutureMonth,
     }
   })
 
@@ -225,14 +359,34 @@ export default defineEventHandler(async (event) => {
     annualGross,
     isFirstYear,
     startMonth: effectiveStart,
+    startMonthOverridden: clampMonth(settings.projectionStartMonth) !== null,
     activeMonths,
     monthsElapsed,
-    projectedAnnualGross,
+    projectedAnnualGross: projectedSummary.projectedAnnualGross,
+    projectionBasis: projectedSummary.projection,
     recommendedMonthlySetAside,
     monthlyPayments,
     explanations,
-    ytdTaxes: { ...ytdTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: ytdTaxes.annualNet - paymentsTotal },
-    projectedTaxes: { ...projectedTaxes, recurringTotal, onetimeTotal, paymentsTotal, annualNet: projectedTaxes.annualNet - paymentsTotal },
+    ytdTaxes: {
+      ...ytdTaxes,
+      recurringTotal,
+      onetimeTotal,
+      bolloTotal,
+      paymentsTotal,
+      effectiveRate: annualGross > 0 ? ((ytdTaxes.totalTax + paymentsTotal) / annualGross) * 100 : 0,
+      annualNet: ytdTaxes.annualNet - paymentsTotal,
+    },
+    projectedTaxes: {
+      ...projectedTaxes,
+      recurringTotal,
+      onetimeTotal,
+      bolloTotal,
+      paymentsTotal,
+      effectiveRate: projectedSummary.projectedAnnualGross > 0
+        ? ((projectedTaxes.totalTax + paymentsTotal) / projectedSummary.projectedAnnualGross) * 100
+        : 0,
+      annualNet: projectedTaxes.annualNet - paymentsTotal,
+    },
     paymentDeadlines: billing.entitlements.canUseDeadlines ? paymentDeadlines : [],
     months: maskedAnnualMonths,
   }

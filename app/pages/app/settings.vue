@@ -173,6 +173,73 @@
 
             <div class="app-settings-divider">
               <div>
+                <p class="label-xs">Previsioni</p>
+                <p class="app-page-copy mt-3">
+                  Decidi se la proiezione deve seguire la media osservata oppure una baseline piu realistica per il tuo mese tipo.
+                </p>
+              </div>
+
+              <label class="label-xs ui-field-label">Modalita proiezione</label>
+
+              <div class="ui-form-grid-2 ui-form-grid-2--compact app-settings-mb">
+                <button
+                  type="button"
+                  class="ui-segment-btn"
+                  :class="{ 'is-active': form.projectionMode === 'ACTUAL_AVERAGE' }"
+                  @click="form.projectionMode = 'ACTUAL_AVERAGE'"
+                >
+                  <span>Media osservata</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Usa gli incassi gia registrati.</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="ui-segment-btn"
+                  :class="{ 'is-active': form.projectionMode === 'EXPECTED_MONTHLY_GROSS' }"
+                  @click="form.projectionMode = 'EXPECTED_MONTHLY_GROSS'"
+                >
+                  <span>Lordo atteso</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Imposta il lordo mensile che reputi normale.</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="ui-segment-btn"
+                  :class="{ 'is-active': form.projectionMode === 'EXPECTED_MONTHLY_HOURS' }"
+                  @click="form.projectionMode = 'EXPECTED_MONTHLY_HOURS'"
+                >
+                  <span>Ore attese</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Proietta i mesi futuri da ore medie x tariffa.</span>
+                </button>
+              </div>
+
+              <div class="ui-form-grid-2">
+                <div>
+                  <label class="label-xs ui-field-label">Mese iniziale</label>
+                  <USelect
+                    v-model="startMonthSelection"
+                    :items="startMonthOptions"
+                    :ui="selectUi"
+                  />
+                  <p class="ui-field-help">Serve quando vuoi iniziare da marzo anche se il primo incasso registrato arriva ad aprile.</p>
+                </div>
+
+                <div v-if="form.projectionMode === 'EXPECTED_MONTHLY_GROSS'">
+                  <label class="label-xs ui-field-label">Lordo mensile atteso (€)</label>
+                  <UInput v-model="form.projectionMonthlyGross" type="number" step="50" min="0" :ui="fieldUi" />
+                  <p class="ui-field-help">Usalo se vuoi evitare che un bonus singolo diventi la baseline annuale.</p>
+                </div>
+
+                <div v-else-if="form.projectionMode === 'EXPECTED_MONTHLY_HOURS'">
+                  <label class="label-xs ui-field-label">Ore attese al mese</label>
+                  <UInput v-model="form.projectionMonthlyHours" type="number" step="1" min="0" :ui="fieldUi" />
+                  <p class="ui-field-help">Per esempio 130-132 ore se quello e il tuo mese medio.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="app-settings-divider">
+              <div>
                 <p class="label-xs">Contributi</p>
                 <p class="app-page-copy mt-3">
                   Scegli il regime INPS e compila solo i campi che incidono davvero sul tuo caso.
@@ -228,6 +295,44 @@
                   <label class="label-xs ui-field-label">Aliquota eccedenza (%)</label>
                   <UInput v-model="form.inpsExcessRate" type="number" step="0.01" min="0" max="100" :ui="fieldUi" />
                   <p class="ui-field-help">Indicativamente 15.6% ridotta o 24% standard.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="app-settings-divider">
+              <div>
+                <p class="label-xs">Bollo e-fattura</p>
+                <p class="app-page-copy mt-3">
+                  Attivalo solo se ogni registrazione corrisponde davvero a una fattura soggetta a bollo.
+                </p>
+              </div>
+
+              <div class="ui-form-grid-2 ui-form-grid-2--compact app-settings-mb">
+                <button
+                  type="button"
+                  class="ui-segment-btn"
+                  :class="{ 'is-active': form.applyBollo }"
+                  @click="form.applyBollo = true"
+                >
+                  <span>Applica bollo</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Distribuisci il costo per registrazione.</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="ui-segment-btn"
+                  :class="{ 'is-active': !form.applyBollo }"
+                  @click="form.applyBollo = false"
+                >
+                  <span>Ignora bollo</span>
+                  <span class="text-xs leading-6 text-[var(--text-secondary)]">Lascia il bollo fuori dalle stime.</span>
+                </button>
+              </div>
+
+              <div v-if="form.applyBollo" class="app-settings-grid-single">
+                <div>
+                  <label class="label-xs ui-field-label">Importo bollo per registrazione (€)</label>
+                  <UInput v-model="form.bolloAmount" type="number" step="0.01" min="0" :ui="fieldUi" />
                 </div>
               </div>
             </div>
@@ -379,6 +484,8 @@ const showRecurringForm = ref(false)
 const showOnetimeForm = ref(false)
 const currentYear = new Date().getFullYear()
 const billing = computed(() => currentUser.value?.billing ?? null)
+const startMonthOptions = ['Automatico', 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']
+const startMonthSelection = ref('Automatico')
 const profileForm = reactive({
   displayName: '',
   activityLabel: '',
@@ -397,6 +504,11 @@ const form = reactive({
   inpsMinimaleThreshold: 18808,
   inpsExcessRate: 15.6,
   accountantAnnual: 300,
+  projectionMode: 'ACTUAL_AVERAGE' as 'ACTUAL_AVERAGE' | 'EXPECTED_MONTHLY_GROSS' | 'EXPECTED_MONTHLY_HOURS',
+  projectionMonthlyHours: '',
+  projectionMonthlyGross: '',
+  applyBollo: false,
+  bolloAmount: 2,
 })
 
 const recurringForm = reactive({
@@ -457,6 +569,16 @@ function formatFrequency(frequency: string) {
   return frequency
 }
 
+function monthIndexToOption(monthIndex: number | null | undefined) {
+  if (monthIndex === null || monthIndex === undefined) return 'Automatico'
+  return startMonthOptions[monthIndex + 1] || 'Automatico'
+}
+
+function optionToMonthIndex(option: string) {
+  const index = startMonthOptions.indexOf(option)
+  return index <= 0 ? null : index - 1
+}
+
 async function loadData() {
   loading.value = true
   await refresh(true)
@@ -486,7 +608,13 @@ async function loadData() {
     inpsMinimaleThreshold: s.inpsMinimaleThreshold,
     inpsExcessRate: s.inpsExcessRate * 100,
     accountantAnnual: s.accountantAnnual,
+    projectionMode: s.projectionMode,
+    projectionMonthlyHours: s.projectionMonthlyHours ?? '',
+    projectionMonthlyGross: s.projectionMonthlyGross ?? '',
+    applyBollo: s.applyBollo,
+    bolloAmount: s.bolloAmount,
   })
+  startMonthSelection.value = monthIndexToOption(s.projectionStartMonth)
 
   recurringPayments.value = r
   onetimePayments.value = o
@@ -533,6 +661,16 @@ async function saveSettings() {
         inpsMinimaleThreshold: parseFloat(form.inpsMinimaleThreshold as any),
         inpsExcessRate: parseFloat(form.inpsExcessRate as any) / 100,
         accountantAnnual: parseFloat(form.accountantAnnual as any),
+        projectionStartMonth: optionToMonthIndex(startMonthSelection.value),
+        projectionMode: form.projectionMode,
+        projectionMonthlyHours: form.projectionMode === 'EXPECTED_MONTHLY_HOURS'
+          ? (form.projectionMonthlyHours || null)
+          : null,
+        projectionMonthlyGross: form.projectionMode === 'EXPECTED_MONTHLY_GROSS'
+          ? (form.projectionMonthlyGross || null)
+          : null,
+        applyBollo: form.applyBollo,
+        bolloAmount: parseFloat(form.bolloAmount as any),
       },
     })
     toast.add({ title: 'Modello salvato. Le nuove stime sono gia aggiornate.', color: 'success' })

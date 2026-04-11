@@ -8,6 +8,12 @@ export const DEFAULT_TAX_SETTINGS = {
   inpsMinimaleThreshold: 18808,
   inpsExcessRate: 0.156,
   accountantAnnual: 300,
+  projectionStartMonth: null,
+  projectionMode: 'ACTUAL_AVERAGE',
+  projectionMonthlyHours: null,
+  projectionMonthlyGross: null,
+  applyBollo: false,
+  bolloAmount: 2,
 } as const
 
 export function createDefaultSettings(userId?: number) {

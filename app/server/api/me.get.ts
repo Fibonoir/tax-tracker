@@ -33,6 +33,12 @@ export default defineEventHandler(async (event) => {
       inpsMinimaleThreshold: settings.inpsMinimaleThreshold,
       inpsExcessRate: settings.inpsExcessRate,
       accountantAnnual: settings.accountantAnnual,
+      projectionStartMonth: settings.projectionStartMonth,
+      projectionMode: settings.projectionMode,
+      projectionMonthlyHours: settings.projectionMonthlyHours,
+      projectionMonthlyGross: settings.projectionMonthlyGross,
+      applyBollo: settings.applyBollo,
+      bolloAmount: settings.bolloAmount,
     },
   }
 })

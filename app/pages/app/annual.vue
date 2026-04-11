@@ -24,7 +24,7 @@
                 <p class="app-stage__metric-label">Disponibile a fine anno</p>
                 <p class="app-stage__metric">{{ fmt.eur(data.projectedTaxes.annualNet) }}</p>
                 <p class="app-stage__summary">
-                  Lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · da accantonare {{ fmt.eur(data.recommendedMonthlySetAside) }}/mese
+                  Lordo previsto {{ fmt.eur(data.projectedAnnualGross) }} · {{ data.projectionBasis?.label || 'media mensile' }} {{ fmt.eur(data.projectionBasis?.monthlyGross || 0) }}/mese
                 </p>
               </div>
 
@@ -287,6 +287,11 @@ const headlineRows = computed(() => {
         : 'text-[var(--text-secondary)]',
     },
     {
+      label: 'Baseline proiezione',
+      value: `${data.value.projectionBasis?.label || 'Media'} · ${fmt.eur(data.value.projectionBasis?.monthlyGross || 0)}/mese`,
+      class: 'text-[var(--text-primary)]',
+    },
+    {
       label: 'Disponibile a fine anno',
       value: fmt.eur(data.value.projectedTaxes.annualNet),
       class: 'text-[var(--accent-text)]',
@@ -323,6 +328,7 @@ const taxTable = computed(() => {
   const isProj = breakdownView.value === 'projected'
   const grossLabel = isProj ? 'Lordo previsto a fine anno' : 'Lordo da inizio anno'
   const grossValue = isProj ? data.value.projectedAnnualGross : data.value.annualGross
+  const distributedCosts = t.paymentsTotal || 0
 
   const rows = [
     {
@@ -357,6 +363,18 @@ const taxTable = computed(() => {
     { label: 'Imponibile dopo INPS', value: fmt.eur(t.adjustedTaxableBase), tone: 'muted', detail: 'Base residua su cui viene calcolata l’imposta sostitutiva.' },
     { label: 'Imposta sostitutiva', value: `−${fmt.eur(t.irpef)}`, tone: 'danger', detail: 'Il carico fiscale principale del forfettario.' },
     { label: 'Costo commercialista', value: `−${fmt.eur(t.accountant)}`, tone: 'danger', detail: 'Distribuito nel modello per mostrare un netto piu realistico.' },
+  )
+
+  if (distributedCosts > 0) {
+    rows.push({
+      label: 'Costi distribuiti extra',
+      value: `−${fmt.eur(distributedCosts)}`,
+      tone: 'danger',
+      detail: 'Include costi ricorrenti, una tantum e bollo inseriti nel modello.',
+    })
+  }
+
+  rows.push(
     { label: 'Aliquota effettiva', value: fmt.pct(t.effectiveRate), tone: 'info', detail: 'Sintesi del peso complessivo tra imposta, INPS e costi.' },
     {
       label: isProj ? 'Disponibile a fine anno' : 'Disponibile da inizio anno',

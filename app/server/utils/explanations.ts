@@ -22,7 +22,7 @@ export function buildProvisionExplanations(input: {
       value: Math.round(input.monthlyPayments * 100) / 100,
       tone: input.monthlyPayments > 0 ? 'warning' : 'neutral',
       text: input.monthlyPayments > 0
-        ? 'I costi ricorrenti e le uscite una tantum pesano sulle stime del mese per mostrarti un disponibile piu realistico.'
+        ? 'I costi ricorrenti, le uscite una tantum e gli extra distribuiti pesano sulle stime del mese per mostrarti un disponibile piu realistico.'
         : 'Non ci sono costi distribuiti oltre al carico fiscale salvato nel modello attuale.',
     },
     {

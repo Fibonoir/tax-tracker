@@ -2,6 +2,31 @@ import { prisma } from '~/server/utils/prisma'
 import { logAuditEvent } from '~/server/utils/audit'
 import { requireAppUser } from '~/server/utils/users'
 
+function parseStoredDate(value: unknown) {
+  if (typeof value !== 'string')
+    return undefined
+
+  const [year, month, day] = value.split('-').map(Number)
+  if (!year || !month || !day)
+    return undefined
+
+  return new Date(year, month - 1, day)
+}
+
+function parseCompetenceDate(value: unknown) {
+  if (value === '' || value === null || value === undefined)
+    return null
+
+  if (typeof value !== 'string')
+    return undefined
+
+  const parts = value.split('-').map(Number)
+  if (parts.length < 2 || !parts[0] || !parts[1])
+    return undefined
+
+  return new Date(parts[0], parts[1] - 1, 1)
+}
+
 export default defineEventHandler(async (event) => {
   const currentUser = await requireAppUser(event)
   const id = parseInt(getRouterParam(event, 'id') as string)
@@ -42,7 +67,8 @@ export default defineEventHandler(async (event) => {
     const entry = await prisma.entry.update({
       where: { id },
       data: {
-        date: body.date ? new Date(body.date) : undefined,
+        date: body.date ? (parseStoredDate(body.date) ?? new Date(body.date)) : undefined,
+        competenceDate: parseCompetenceDate(body.competenceMonth),
         type: body.type,
         hours: body.hours ? parseFloat(body.hours) : null,
         amount: body.amount ? parseFloat(body.amount) : null,
@@ -59,6 +85,7 @@ export default defineEventHandler(async (event) => {
         previousType: existing.type,
         nextType: entry.type,
         date: entry.date.toISOString(),
+        competenceDate: entry.competenceDate?.toISOString() ?? null,
       },
     })
 

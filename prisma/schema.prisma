@@ -40,6 +40,7 @@ model Entry {
   id          Int       @id @default(autoincrement())
   userId      Int?
   date        DateTime
+  competenceDate DateTime?
   type        EntryType
   hours       Float?
   amount      Float?
@@ -69,6 +70,12 @@ model Settings {
   inpsMinimaleThreshold Float    @default(18808)
   inpsExcessRate        Float    @default(0.156)
   accountantAnnual      Float    @default(300)
+  projectionStartMonth  Int?
+  projectionMode        String   @default("ACTUAL_AVERAGE")
+  projectionMonthlyHours Float?
+  projectionMonthlyGross Float?
+  applyBollo            Boolean  @default(false)
+  bolloAmount           Float    @default(2)
   updatedAt             DateTime @updatedAt @default(now())
   user                  User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

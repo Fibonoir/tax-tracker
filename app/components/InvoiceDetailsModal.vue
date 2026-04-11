@@ -28,6 +28,15 @@
               <AppDateField v-model="draft.date" />
             </div>
 
+            <div>
+              <label class="label-xs ui-field-label">Competenza (opzionale)</label>
+              <UInput
+                v-model="draft.competenceMonth"
+                type="month"
+                :ui="fieldUi"
+              />
+            </div>
+
             <div v-if="draft.type === 'HOURLY'">
               <label class="label-xs ui-field-label">Ore lavorate</label>
               <UInput
@@ -83,6 +92,11 @@
           <div class="ui-invoice-detail__row">
             <span class="ui-invoice-detail__label">Data</span>
             <span class="ui-invoice-detail__value">{{ fmt.date(entry.date) }}</span>
+          </div>
+
+          <div class="ui-invoice-detail__row">
+            <span class="ui-invoice-detail__label">Competenza</span>
+            <span class="ui-invoice-detail__value">{{ competenceLabel }}</span>
           </div>
 
           <div class="ui-invoice-detail__row">
@@ -168,6 +182,7 @@
 type InvoiceEntry = {
   id: number
   date: string | Date
+  competenceDate?: string | Date | null
   type: 'HOURLY' | 'PROJECT'
   hours?: number | null
   amount?: number | null
@@ -189,6 +204,7 @@ const emit = defineEmits<{
   (e: 'request-save', payload: {
     id: number
     date: string
+    competenceMonth: string | null
     type: 'HOURLY' | 'PROJECT'
     hours: string | null
     amount: string | null
@@ -215,6 +231,7 @@ const typeOptions = [
 
 const draft = reactive({
   date: '',
+  competenceMonth: '',
   type: 'HOURLY' as 'HOURLY' | 'PROJECT',
   hours: '',
   amount: '',
@@ -243,6 +260,13 @@ const draftTypeLabel = computed(() =>
   draft.type === 'HOURLY' ? 'Sessione oraria' : 'Fee progetto'
 )
 
+const competenceLabel = computed(() => {
+  if (!props.entry?.competenceDate)
+    return 'Stesso mese della data fattura'
+
+  return formatMonthLabel(props.entry.competenceDate)
+})
+
 const gross = computed(() => {
   if (!props.entry) return 0
   return props.entry.type === 'HOURLY'
@@ -266,10 +290,25 @@ function formatInputDate(value: string | Date) {
   return new Date(value).toISOString().split('T')[0]
 }
 
+function formatInputMonth(value: string | Date | null | undefined) {
+  if (!value)
+    return ''
+
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return `${year}-${month}`
+}
+
+function formatMonthLabel(value: string | Date) {
+  return new Date(value).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })
+}
+
 function syncDraft() {
   if (!props.entry) return
 
   draft.date = formatInputDate(props.entry.date)
+  draft.competenceMonth = formatInputMonth(props.entry.competenceDate)
   draft.type = props.entry.type
   draft.hours = props.entry.type === 'HOURLY' && props.entry.hours != null ? String(props.entry.hours) : ''
   draft.amount = props.entry.type === 'PROJECT' && props.entry.amount != null ? String(props.entry.amount) : ''
@@ -293,6 +332,7 @@ function requestSave() {
   emit('request-save', {
     id: props.entry.id,
     date: draft.date,
+    competenceMonth: draft.competenceMonth || null,
     type: draft.type,
     hours: draft.type === 'HOURLY' ? draft.hours : null,
     amount: draft.type === 'PROJECT' ? draft.amount : null,

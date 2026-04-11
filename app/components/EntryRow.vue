@@ -37,6 +37,7 @@ const props = defineProps<{
   entry: {
     id: number
     date: string | Date
+    competenceDate?: string | Date | null
     type: 'HOURLY' | 'PROJECT'
     hours?: number | null
     amount?: number | null
@@ -57,10 +58,29 @@ const gross = computed(() =>
 )
 
 const detailText = computed(() => {
+  const competence = competenceSuffix(props.entry.competenceDate)
+
   if (props.entry.type === 'HOURLY') {
-    return `${fmt.hours(props.entry.hours || 0)} · ${fmt.eur(props.hourlyRate || 30)}/h`
+    return `${fmt.hours(props.entry.hours || 0)} · ${fmt.eur(props.hourlyRate || 30)}/h${competence}`
   }
 
-  return 'Importo concordato'
+  return `Importo concordato${competence}`
 })
+
+function competenceSuffix(value: string | Date | null | undefined) {
+  if (!value)
+    return ''
+
+  const competenceDate = new Date(value)
+  const issueDate = new Date(props.entry.date)
+
+  if (
+    competenceDate.getMonth() === issueDate.getMonth()
+    && competenceDate.getFullYear() === issueDate.getFullYear()
+  ) {
+    return ''
+  }
+
+  return ` · competenza ${competenceDate.toLocaleDateString('it-IT', { month: 'short', year: 'numeric' })}`
+}
 </script>

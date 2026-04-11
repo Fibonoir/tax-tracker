@@ -41,6 +41,12 @@ export interface CurrentUserState {
     inpsMinimaleThreshold: number
     inpsExcessRate: number
     accountantAnnual: number
+    projectionStartMonth: number | null
+    projectionMode: 'ACTUAL_AVERAGE' | 'EXPECTED_MONTHLY_GROSS' | 'EXPECTED_MONTHLY_HOURS'
+    projectionMonthlyHours: number | null
+    projectionMonthlyGross: number | null
+    applyBollo: boolean
+    bolloAmount: number
   }
 }
 

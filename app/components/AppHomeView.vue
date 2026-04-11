@@ -94,6 +94,15 @@
                 <AppDateField v-model="form.date" />
               </div>
 
+              <div>
+                <label class="label-xs ui-field-label">Competenza (opzionale)</label>
+                <UInput
+                  v-model="form.competenceMonth"
+                  type="month"
+                  :ui="fieldUi"
+                />
+              </div>
+
               <div v-if="form.type === 'HOURLY'">
                 <label class="label-xs ui-field-label">Ore lavorate</label>
                 <UInput
@@ -185,6 +194,7 @@
             :avg-monthly="monthData?.runningAvgMonthly ?? 0"
             :projected-annual="monthData?.runningProjectedAnnual ?? 0"
             :monthly-set-aside="annualData?.recommendedMonthlySetAside"
+            :avg-label="annualData?.projectionBasis?.label"
             class="fade-up fade-up-2"
           />
         </div>
@@ -295,6 +305,7 @@ const typeOptions = [
 const form = reactive({
   type: 'HOURLY' as 'HOURLY' | 'PROJECT',
   date: now.toISOString().split('T')[0],
+  competenceMonth: '',
   hours: '',
   amount: '',
   description: '',
@@ -383,11 +394,13 @@ async function submit() {
       body: {
         type: form.type,
         date: form.date,
+        competenceMonth: form.competenceMonth || null,
         hours: form.type === 'HOURLY' ? form.hours : null,
         amount: form.type === 'PROJECT' ? form.amount : null,
         description: form.description || null,
       },
     })
+    form.competenceMonth = ''
     form.hours = ''
     form.amount = ''
     form.description = ''

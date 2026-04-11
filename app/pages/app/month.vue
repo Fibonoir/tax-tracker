@@ -144,6 +144,7 @@
           v-if="summary?.runningAvgMonthly > 0"
           :avg-monthly="summary?.runningAvgMonthly ?? 0"
           :projected-annual="summary?.runningProjectedAnnual ?? 0"
+          :avg-label="annualData?.projectionBasis?.label"
           class="fade-up fade-up-3"
         />
       </div>
@@ -284,6 +285,7 @@ const taxRows = computed(() => {
   if (!summary.value?.projectedTaxes) return []
   const t = summary.value.projectedTaxes
   const n = activeMonths.value
+  const extraDistributedCosts = (annualData.value?.projectedTaxes?.paymentsTotal || 0) / n
   const rows: { label: string; value: string; tone: 'default' | 'accent' | 'danger' | 'info'; detail?: string }[] = [
     {
       label: 'Imposta sostitutiva',
@@ -309,8 +311,18 @@ const taxRows = computed(() => {
 
   rows.push(
     { label: 'Commercialista', value: `−${fmt.eur(t.accountant / n)}`, tone: 'danger', detail: 'Distribuito sui mesi attivi per non alterare il netto in un solo momento.' },
-    { label: 'Disponibile del mese', value: fmt.eur(summary.value.net), tone: 'accent', detail: 'Il netto operativo dopo il carico del mese.' },
   )
+
+  if (extraDistributedCosts > 0) {
+    rows.push({
+      label: 'Costi distribuiti extra',
+      value: `−${fmt.eur(extraDistributedCosts)}`,
+      tone: 'danger',
+      detail: 'Include costi ricorrenti, una tantum e bollo distribuiti sui mesi attivi.',
+    })
+  }
+
+  rows.push({ label: 'Disponibile del mese', value: fmt.eur(summary.value.net), tone: 'accent', detail: 'Il netto operativo dopo il carico del mese.' })
 
   return rows
 })

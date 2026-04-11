@@ -12,10 +12,23 @@ export interface TaxSettings {
   inpsMinimaleThreshold: number
   inpsExcessRate: number
   accountantAnnual: number
+  projectionStartMonth: number | null
+  projectionMode: 'ACTUAL_AVERAGE' | 'EXPECTED_MONTHLY_GROSS' | 'EXPECTED_MONTHLY_HOURS'
+  projectionMonthlyHours: number | null
+  projectionMonthlyGross: number | null
+  applyBollo: boolean
+  bolloAmount: number
 }
 
 export function getDefaultTaxSettings(): TaxSettings {
   return { ...DEFAULT_TAX_SETTINGS }
+}
+
+function normalizeProjectionMode(value: string | null | undefined): TaxSettings['projectionMode'] {
+  if (value === 'EXPECTED_MONTHLY_GROSS' || value === 'EXPECTED_MONTHLY_HOURS')
+    return value
+
+  return 'ACTUAL_AVERAGE'
 }
 
 export async function getSettings(userId: number): Promise<TaxSettings> {
@@ -30,7 +43,10 @@ export async function getSettings(userId: number): Promise<TaxSettings> {
     })
   }
 
-  return settings
+  return {
+    ...settings,
+    projectionMode: normalizeProjectionMode(settings.projectionMode),
+  }
 }
 
 export interface TaxBreakdown {

@@ -6,7 +6,7 @@
     </div>
 
     <div class="ui-projection-summary__row">
-      <span class="ui-projection-summary__label">Media mensile</span>
+      <span class="ui-projection-summary__label">{{ avgLabel || 'Media mensile' }}</span>
       <span class="ui-projection-summary__value">{{ fmt.eur(avgMonthly) }}/mese</span>
     </div>
 
@@ -27,6 +27,7 @@ defineProps<{
   avgMonthly: number
   projectedAnnual: number
   monthlySetAside?: number | null
+  avgLabel?: string
 }>()
 
 const fmt = useFmt()
