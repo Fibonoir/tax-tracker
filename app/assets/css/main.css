@@ -1,6 +1,20 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@theme static {
+  --color-royal-50:  #eef0ff;
+  --color-royal-100: #e0e3ff;
+  --color-royal-200: #c7cbfe;
+  --color-royal-300: #a5abfc;
+  --color-royal-400: #7e80f7;
+  --color-royal-500: #5e5ef0;
+  --color-royal-600: #3A4ADF;
+  --color-royal-700: #3240c6;
+  --color-royal-800: #2a36a4;
+  --color-royal-900: #273082;
+  --color-royal-950: #1a1e54;
+}
+
 @custom-variant light (&:where(.light, .light *));
 
 @import "./layers/tokens.css";
